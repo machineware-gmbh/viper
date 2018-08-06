@@ -1,0 +1,6 @@
+*.tmp
+*.bak
+*.swp
+
+target/
+
