@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_6wlLcMgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.application" bindingContexts="_6wlLecgZEeSyMNYR5xypkQ">
-  <children xsi:type="basic:TrimmedWindow" xmi:id="_6wlLccgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.window.main" label="vcml explorer" width="1280" height="720">
-    <children xsi:type="basic:PartSashContainer" xmi:id="_6wlLksgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.partsashcontainer.sample">
-      <children xsi:type="basic:PartStack" xmi:id="_6wlLk8gZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.partstack.sample">
-        <children xsi:type="basic:Part" xmi:id="_6wlLlMgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.part.sample" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.parts.SamplePart" label="Sample Part" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/home.png"/>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_6wlLcMgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.application" bindingContexts="_6wlLecgZEeSyMNYR5xypkQ">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_6wlLccgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.window.main" label="viper" width="1280" height="720">
+    <children xsi:type="advanced:PerspectiveStack" xmi:id="_PEYbsJoyEeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.perspectivestack.0">
+      <children xsi:type="advanced:Perspective" xmi:id="_Px4a4JoyEeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.perspective.default" label="Default">
+        <children xsi:type="basic:PartSashContainer" xmi:id="_zHEC8Jo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partsashcontainer.0">
+          <children xsi:type="basic:PartSashContainer" xmi:id="_2EHp8Jo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partsashcontainer.1" containerData="70" horizontal="true">
+            <children xsi:type="basic:PartStack" xmi:id="_CnqqEJo3EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partstack.left" containerData="25">
+              <children xsi:type="basic:Part" xmi:id="_H7mo4Jo3EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.part.hierarchy" containerData="25" label="Hierarchy"/>
+            </children>
+            <children xsi:type="advanced:Area" xmi:id="_Gy57cJo3EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.area.middle" containerData="50"/>
+            <children xsi:type="basic:PartStack" xmi:id="_HXEYcJo3EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partstack.right" containerData="25">
+              <children xsi:type="basic:Part" xmi:id="_J1054Jo3EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.part.attributes" containerData="25" label="Attributes"/>
+            </children>
+          </children>
+          <children xsi:type="basic:PartSashContainer" xmi:id="_2u6TYJo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partsashcontainer.2" containerData="30" horizontal="true">
+            <children xsi:type="basic:PartStack" xmi:id="_55cVsJo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partstack.bottomleft" containerData="50">
+              <children xsi:type="basic:Part" xmi:id="_8bUckJo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.part.sessions" label="Sessions"/>
+            </children>
+            <children xsi:type="basic:PartStack" xmi:id="_7pRUkJo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partstack.bottomright" containerData="50">
+              <children xsi:type="basic:Part" xmi:id="_-s1MMJo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.part.console" label="Console"/>
+            </children>
+          </children>
+        </children>
       </children>
     </children>
     <mainMenu xmi:id="_6wlLicgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.main.menu">
@@ -48,4 +66,5 @@
   <addons xmi:id="_6wlLdsgZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.ui.workbench.handler.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"/>
   <addons xmi:id="_6wlLd8gZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
   <addons xmi:id="_6wlLeMgZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
+  <addons xmi:id="_0BQl4JosEeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.addon.0" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.dndaddon.DnDAddon"/>
 </application:Application>

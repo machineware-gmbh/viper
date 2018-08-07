@@ -275,15 +275,6 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-<!--
-   <plugin
-         id="org.eclipse.swt.gtk.linux.x86_64"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
--->
 
    <plugin
          id="org.eclipse.equinox.app"
@@ -411,16 +402,6 @@
          version="0.0.0"
          unpack="false"/>
 
-<!--
-   <plugin
-         id="org.eclipse.e4.ui.swt.gtk"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
-         unpack="false"/>
--->
-
    <plugin
          id="org.w3c.dom.smil"
          download-size="0"
@@ -486,6 +467,20 @@
 
    <plugin
          id="org.eclipse.e4.ui.di"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.vcml.session"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.e4.ui.workbench.addons.swt"
          download-size="0"
          install-size="0"
          version="0.0.0"
