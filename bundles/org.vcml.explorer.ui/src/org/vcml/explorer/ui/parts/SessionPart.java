@@ -16,63 +16,12 @@
  *                                                                            *
  ******************************************************************************/
 
-package org.vcml.explorer.ui.services;
+package org.vcml.explorer.ui.parts;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.eclipse.ui.AbstractSourceProvider;
-import org.vcml.session.Session;
-
-public class SessionProvider extends AbstractSourceProvider {
-	
-	public static final String SESSION = "org.vcml.session";
-	
-	private Session current = null;
-	
-	private static SessionProvider instance = null;
-	
-	public static SessionProvider getInstance() {
-		return instance;
-	}
-	
-	public SessionProvider() {
-		instance = this;
-	}
-
-	@Override
-	public void dispose() {
-		current = null;
-		instance = null;
-	}
-
-	@Override
-	public Map<String, Session> getCurrentState() {
-		Map<String, Session> map = new HashMap<String, Session>();
-		if (hasSession())
-		    map.put(SESSION, getCurrentSession());
-		return map;
-	}
-
-	@Override
-	public String[] getProvidedSourceNames() {
-		return new String[] { SESSION };
-	}
-	
-	public boolean hasSession() {
-		return current != null;
-	}
-	
-	public Session getCurrentSession() {
-		return current;
-	}
-	
-	public void setCurrentSession(Session session) {
-		if (session == current)
-			fireSourceChanged(0, SESSION, null);
-		
-		current = session;
-		fireSourceChanged(0, SESSION, current);
-	}
+/**
+ * @author jan
+ *
+ */
+public class SessionPart {
 
 }

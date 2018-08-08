@@ -26,8 +26,8 @@
     </children>
     <mainMenu xmi:id="_6wlLicgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.main.menu">
       <children xsi:type="menu:Menu" xmi:id="_6wlLisgZEeSyMNYR5xypkQ" elementId="file" label="File">
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_6wlLi8gZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.handleditem.file.open" label="Open" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/open_in_app.png" command="_6wlLgMgZEeSyMNYR5xypkQ"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_6wlLjMgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.handleditem.save" label="Save" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/save_edit.png" command="_6wlLg8gZEeSyMNYR5xypkQ"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_cSCAUJsEEeiKHfwWwPWdxA" elementId="org.vcml.explorer.ui.handledmenuitem.connect" label="Connect..." iconURI="platform:/plugin/org.vcml.explorer.ui/icons/add.gif" command="_K4BAgJsEEeiKHfwWwPWdxA"/>
+        <children xsi:type="menu:MenuSeparator" xmi:id="_ewXrAJsEEeiKHfwWwPWdxA" elementId="org.vcml.explorer.ui.menuseparator.0"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_6wlLjcgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.handleditem.quit" label="Quit" command="_6wlLfMgZEeSyMNYR5xypkQ"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_6wlLjsgZEeSyMNYR5xypkQ" elementId="help" label="Help">
@@ -36,19 +36,17 @@
     </mainMenu>
     <trimBars xmi:id="_6wlLlcgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.trimbar.top">
       <children xsi:type="menu:ToolBar" xmi:id="_6wlLlsgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.main.toolbar">
-        <children xsi:type="menu:HandledToolItem" xmi:id="_6wlLmMgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.handleditem.trimbar.top.save" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/save_edit.png" command="_6wlLg8gZEeSyMNYR5xypkQ"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_6wlLl8gZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.handleditem.trimbar.top.open" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/open_in_app.png" command="_6wlLgMgZEeSyMNYR5xypkQ"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_uMSmcJsEEeiKHfwWwPWdxA" elementId="org.vcml.explorer.ui.handledtoolitem." label="" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/add.gif" command="_K4BAgJsEEeiKHfwWwPWdxA"/>
       </children>
     </trimBars>
   </children>
   <handlers xmi:id="_6wlLfcgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.handler.quitCommand" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.handlers.QuitHandler" command="_6wlLfMgZEeSyMNYR5xypkQ"/>
-  <handlers xmi:id="_6wlLgcgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.handler.openCommand" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.handlers.OpenHandler" command="_6wlLgMgZEeSyMNYR5xypkQ"/>
-  <handlers xmi:id="_6wlLhMgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.handler.saveCommand" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.handlers.SaveHandler" command="_6wlLg8gZEeSyMNYR5xypkQ"/>
   <handlers xmi:id="_6wlLh8gZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.handler.aboutCommand" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.handlers.AboutHandler" command="_6wlLhsgZEeSyMNYR5xypkQ"/>
+  <handlers xmi:id="_-wdY0JsDEeiKHfwWwPWdxA" elementId="org.vcml.explorer.ui.handler.0" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.handlers.ConnectHandler" command="_K4BAgJsEEeiKHfwWwPWdxA"/>
   <bindingTables xmi:id="_6wlLfsgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.bindingtable" bindingContext="_6wlLecgZEeSyMNYR5xypkQ">
     <bindings xmi:id="_6wlLf8gZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.keybinding.m1q" keySequence="M1+Q" command="_6wlLfMgZEeSyMNYR5xypkQ"/>
-    <bindings xmi:id="_6wlLgsgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.keybinding.m1o" keySequence="M1+O" command="_6wlLgMgZEeSyMNYR5xypkQ"/>
-    <bindings xmi:id="_6wlLhcgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.keybinding.m1s" keySequence="M1+S" command="_6wlLg8gZEeSyMNYR5xypkQ"/>
+    <bindings xmi:id="_6wlLgsgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.keybinding.m1o" keySequence="M1+O"/>
+    <bindings xmi:id="_6wlLhcgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.keybinding.m1s" keySequence="M1+S"/>
     <bindings xmi:id="_6wlLiMgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.keybinding.m1a" keySequence="M1+A" command="_6wlLhsgZEeSyMNYR5xypkQ"/>
   </bindingTables>
   <rootContext xmi:id="_6wlLecgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
@@ -56,9 +54,8 @@
     <children xmi:id="_6wlLe8gZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.contexts.dialog" name="In Dialogs"/>
   </rootContext>
   <commands xmi:id="_6wlLfMgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.file.exit" commandName="quitCommand"/>
-  <commands xmi:id="_6wlLgMgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.file.open" commandName="openCommand"/>
-  <commands xmi:id="_6wlLg8gZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.file.save" commandName="saveCommand"/>
   <commands xmi:id="_6wlLhsgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.help.aboutAction" commandName="aboutCommand"/>
+  <commands xmi:id="_K4BAgJsEEeiKHfwWwPWdxA" elementId="org.vcml.explorer.ui.command.connect" commandName="connectCommand"/>
   <addons xmi:id="_6wlLcsgZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_6wlLc8gZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_6wlLdMgZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>

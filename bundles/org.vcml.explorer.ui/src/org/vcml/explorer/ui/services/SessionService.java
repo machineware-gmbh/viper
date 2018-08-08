@@ -31,24 +31,20 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.services.IDisposable;
-import org.eclipse.ui.services.IServiceLocator;
-import org.eclipse.ui.services.ISourceProviderService;
+
 import org.vcml.session.Module;
 import org.vcml.session.Session;
 import org.vcml.session.SessionException;
 
 public class SessionService implements ISessionService, IDisposable {
-	
-	private SessionProvider provider;
 
 	private List<Session> sessions = new ArrayList<Session>();
+
+	private Session current = null;
 	
 	private ListenerList<IPropertyChangeListener> listeners = new ListenerList<IPropertyChangeListener>(ListenerList.IDENTITY);
 	
 	private void updateSession(String property, Session session) {
-		if (session == provider.getCurrentSession())
-			provider.setCurrentSession(session);
-
 		if (!listeners.isEmpty()) {
 			PropertyChangeEvent event = new PropertyChangeEvent(this, property, null, session);
 			Object[] array = listeners.getListeners();
@@ -73,9 +69,7 @@ public class SessionService implements ISessionService, IDisposable {
 		updateSession(PROP_REMOVED, session);
 	}
 	
-	public SessionService(IServiceLocator locator) {
-		ISourceProviderService service = locator.getService(ISourceProviderService.class);
-		provider = (SessionProvider)service.getSourceProvider(SessionProvider.SESSION);
+	public SessionService() {
 		refreshSessions();
 	}
 
@@ -86,12 +80,12 @@ public class SessionService implements ISessionService, IDisposable {
 
 	@Override
 	public Session currentSession() {
-		return provider.getCurrentSession();
+		return current;
 	}
 	
 	@Override
 	public void selectSession(Session session) {
-		provider.setCurrentSession(session);
+		current = session;
 	}
 
 	@Override
