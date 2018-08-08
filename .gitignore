@@ -4,4 +4,4 @@
 *.class
 
 target/
-
+bin/
