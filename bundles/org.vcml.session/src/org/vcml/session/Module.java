@@ -23,51 +23,29 @@ import java.util.Arrays;
 
 public class Module {
 	
-	public static final String KIND_SC_OBJECT = "sc_object";
+	public static final String KIND_SC_OBJECT          = "sc_object";
+	public static final String KIND_SC_MODULE          = "sc_module";
+	public static final String KIND_SC_SIGNAL          = "sc_signal";
+	public static final String KIND_SC_PORT            = "sc_port";
+	public static final String KIND_SC_EXPORT          = "sc_export";
+	public static final String KIND_SC_OUT             = "sc_out";
+	public static final String KIND_SC_IN              = "sc_in";
+	public static final String KIND_SC_METHOD_PROCESS  = "sc_method_process";
+	public static final String KIND_SC_THREAD_PROCESS  = "sc_thread_process";
 	
-	public static final String KIND_SC_MODULE = "sc_module";
-	
-	public static final String KIND_SC_SIGNAL = "sc_signal";
-	
-	public static final String KIND_SC_PORT = "sc_port";
-	
-	public static final String KIND_SC_EXPORT = "sc_export";
-	
-	public static final String KIND_SC_OUT = "sc_out";
-	
-	public static final String KIND_SC_IN = "sc_in";
-	
-	public static final String KIND_SC_METHOD_PROCESS = "sc_method_process";
-	
-	public static final String KIND_SC_THREAD_PROCESS = "sc_thread_process";
-	
-	public static final String KIND_VCL_IN_PORT = "vcl::in_port";
-	
-	public static final String KIND_VCL_OUT_PORT = "vcl::out_port";
-	
-	public static final String KIND_VCL_MASTER_SOCKET = "vcl::master_socket";
-	
-	public static final String KIND_VCL_SLAVE_SOCKET = "vcl::slave_socket";
-	
-	public static final String KIND_VCL_MODULE = "vcl::module";
-	
-	public static final String KIND_VCL_PROCESSOR = "vcl::processor";
-	
-	public static final String KIND_VCL_BUS = "vcl::bus";
-	
-	public static final String KIND_VCL_ROM = "vcl::rom";
-	
-	public static final String KIND_VCL_RAM = "vcl::ram";
-	
-	public static final String KIND_VCL_DRAM = "vcl::dram";
-	
-	public static final String KIND_VCL_XBAR = "vcl::xbar";
-	
-	public static final String KIND_VCL_PERIPHERAL = "vcl::peripheral";
-	
-	public static final String KIND_VCL_UART = "vcl::uart";
-	
-	public static final String KIND_VCL_ETHERNET = "vcl::ethernet";
+	public static final String KIND_VCML_IN_PORT       = "vcml::in_port";
+	public static final String KIND_VCML_OUT_PORT      = "vcml::out_port";
+	public static final String KIND_VCML_MASTER_SOCKET = "vcml::master_socket";
+	public static final String KIND_VCML_SLAVE_SOCKET  = "vcml::slave_socket";
+	public static final String KIND_VCML_COMPONENT     = "vcml::component";
+	public static final String KIND_VCML_PROCESSOR     = "vcml::processor";
+	public static final String KIND_VCML_BUS           = "vcml::bus";
+	public static final String KIND_VCML_ROM           = "vcml::rom";
+	public static final String KIND_VCML_RAM           = "vcml::ram";
+	public static final String KIND_VCML_XBAR          = "vcml::xbar";
+	public static final String KIND_VCML_PERIPHERAL    = "vcml::peripheral";
+	public static final String KIND_VCML_UART          = "vcml::uart";
+	public static final String KIND_VCML_ETHERNET      = "vcl::ethernet";
 	
 	private RemoteSerialProtocol protocol;
 	

@@ -6,7 +6,7 @@
         <children xsi:type="basic:PartSashContainer" xmi:id="_zHEC8Jo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partsashcontainer.0">
           <children xsi:type="basic:PartSashContainer" xmi:id="_2EHp8Jo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partsashcontainer.1" containerData="70" horizontal="true">
             <children xsi:type="basic:PartStack" xmi:id="_CnqqEJo3EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partstack.left" containerData="25">
-              <children xsi:type="basic:Part" xmi:id="_H7mo4Jo3EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.part.hierarchy" containerData="25" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.parts.SamplePart" label="Hierarchy"/>
+              <children xsi:type="basic:Part" xmi:id="_H7mo4Jo3EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.part.hierarchy" containerData="25" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.parts.HierarchyPart" label="Hierarchy" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/hierarchy.gif"/>
             </children>
             <children xsi:type="advanced:Area" xmi:id="_Gy57cJo3EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.area.middle" containerData="50"/>
             <children xsi:type="basic:PartStack" xmi:id="_HXEYcJo3EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partstack.right" containerData="25">

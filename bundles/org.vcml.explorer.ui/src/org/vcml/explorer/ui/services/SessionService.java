@@ -95,9 +95,13 @@ public class SessionService implements ISessionService, IDisposable {
 	
 	@Override
 	public void selectSession(Session session) {
+		if (session == current)
+			return;
+		
 		current = session;
 		if (eventBroker != null)
 			eventBroker.post(UIEvents.REQUEST_ENABLEMENT_UPDATE_TOPIC, UIEvents.ALL_ELEMENT_ID);
+		updateSession(PROP_SELECT, current);
 	}
 
 	@Override

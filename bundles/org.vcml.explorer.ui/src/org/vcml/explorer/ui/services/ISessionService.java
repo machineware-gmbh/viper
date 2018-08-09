@@ -44,6 +44,11 @@ public interface ISessionService {
 	public static final String PROP_UPDATED = "updated";
 	
 	/**
+	 * Fired when current session has changed
+	 */
+	public static final String PROP_SELECT = "selected";
+	
+	/**
 	 * The collection of sessions we are currently connected to.
 	 * 
 	 * @return an unmodifiable Collection. For looking, not touching. Will not
