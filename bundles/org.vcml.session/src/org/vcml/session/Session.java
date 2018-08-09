@@ -209,7 +209,7 @@ public class Session {
         File directory = new File(ANNOUNCE_DIR);
         File[] files = directory.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
-                return Pattern.matches("vcl_session_[0-9]+", name);
+                return Pattern.matches("vcml_session_[0-9]+", name);
             }
         });
 

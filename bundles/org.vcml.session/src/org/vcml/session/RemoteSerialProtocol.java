@@ -21,6 +21,7 @@ package org.vcml.session;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class RemoteSerialProtocol {
@@ -41,8 +42,9 @@ public class RemoteSerialProtocol {
 
 	public RemoteSerialProtocol(String host, int port) throws SessionException  {
 		try {
-			socket = new Socket(host, port);
+			socket = new Socket();
 			socket.setTcpNoDelay(true);
+			socket.connect(new InetSocketAddress(host, port), 1000);
 		} catch (IOException e) {
 			throw new SessionException("Failed to connect to session", e);
 		}

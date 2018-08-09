@@ -45,6 +45,7 @@ public class SessionService implements ISessionService, IDisposable {
 	private ListenerList<IPropertyChangeListener> listeners = new ListenerList<IPropertyChangeListener>(ListenerList.IDENTITY);
 	
 	private void updateSession(String property, Session session) {
+		System.out.println("ISessionService firing event " + property + " for session " + session);
 		if (!listeners.isEmpty()) {
 			PropertyChangeEvent event = new PropertyChangeEvent(this, property, null, session);
 			Object[] array = listeners.getListeners();
