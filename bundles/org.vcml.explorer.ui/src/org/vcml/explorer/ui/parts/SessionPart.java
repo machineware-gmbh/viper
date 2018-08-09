@@ -23,7 +23,9 @@ import javax.inject.Inject;
 
 import java.util.Iterator;
 
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.Focus;
+
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -67,6 +69,9 @@ public class SessionPart {
 	
 	@Inject
 	private ISessionService sessionService;
+	
+	@Inject
+	IEventBroker eventBroker;
 	
 	private TableViewer viewer;
 	

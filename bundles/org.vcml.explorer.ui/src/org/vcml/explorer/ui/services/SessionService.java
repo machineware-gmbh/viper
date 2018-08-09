@@ -23,7 +23,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -44,8 +48,13 @@ public class SessionService implements ISessionService, IDisposable {
 	
 	private ListenerList<IPropertyChangeListener> listeners = new ListenerList<IPropertyChangeListener>(ListenerList.IDENTITY);
 	
+	@Inject
+	IEventBroker eventBroker;
+	
 	private void updateSession(String property, Session session) {
-		System.out.println("ISessionService firing event " + property + " for session " + session);
+		if (eventBroker != null)
+			eventBroker.post(UIEvents.REQUEST_ENABLEMENT_UPDATE_TOPIC, UIEvents.ALL_ELEMENT_ID);
+
 		if (!listeners.isEmpty()) {
 			PropertyChangeEvent event = new PropertyChangeEvent(this, property, null, session);
 			Object[] array = listeners.getListeners();
@@ -87,6 +96,8 @@ public class SessionService implements ISessionService, IDisposable {
 	@Override
 	public void selectSession(Session session) {
 		current = session;
+		if (eventBroker != null)
+			eventBroker.post(UIEvents.REQUEST_ENABLEMENT_UPDATE_TOPIC, UIEvents.ALL_ELEMENT_ID);
 	}
 
 	@Override
