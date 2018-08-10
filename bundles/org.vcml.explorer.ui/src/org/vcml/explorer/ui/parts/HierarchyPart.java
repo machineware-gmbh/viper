@@ -21,7 +21,6 @@ package org.vcml.explorer.ui.parts;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -41,8 +40,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.e4.ui.di.Focus;
@@ -54,6 +55,7 @@ import org.vcml.session.Command;
 import org.vcml.session.Module;
 import org.vcml.session.Session;
 import org.vcml.session.SessionException;
+import org.vcml.explorer.ui.CommandDialog;
 import org.vcml.explorer.ui.Utils;
 //import org.vcml.vseui.CommandResponseDialog;
 import org.vcml.explorer.ui.services.ISessionService;
@@ -89,7 +91,7 @@ public class HierarchyPart {
 	
 	@Inject
 	private ESelectionService selectionService;
-	
+
 	private TreeViewer viewer;
 	
 	private Module selectedModule;
@@ -212,26 +214,14 @@ public class HierarchyPart {
 	};
 
 	private void executeCommand(Command command) {
-		MessageDialog.openInformation(null, "Execute command " + command.getName(), command.getDesc());
-//	    String[] args = collectArgs(command);
-//		if (args.length != command.getArgc())
-//			return;
-//		
-//		BusyIndicator.showWhile(null, new Runnable() {
-//			@Override
-//			public void run() {
-//				try {
-//					String result = command.execute(args).trim();
-//					if (!result.isEmpty()) {
-//						CommandResponseDialog dialog = new CommandResponseDialog(null, result);
-//						dialog.create();
-//						dialog.open();
-//					}
-//				} catch (SessionException e) {
-//					MessageDialog.openError(null, "Error", e.getMessage());
-//				}
-//			}
-//		});
+		//BusyIndicator.showWhile(null, new Runnable() {
+		//	@Override
+		//	public void run() {
+				Shell parent = Display.getDefault().getActiveShell();
+				CommandDialog dialog = new CommandDialog(parent, selectedModule, command);
+				dialog.open();
+		//	}
+		//});
 	}
 
 	private Menu buildCommandMenu(MenuItem parent, Module module) {
