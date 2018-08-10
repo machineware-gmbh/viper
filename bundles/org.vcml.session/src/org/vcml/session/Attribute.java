@@ -26,6 +26,14 @@ public class Attribute {
 	
 	private RemoteSerialProtocol protocol;
 	
+	private void refresh() throws SessionException {
+		Response resp = protocol.command(RemoteSerialProtocol.GETA, name);
+		String[] val = resp.getValues("value");
+		if (val.length == 0)
+			throw new SessionException("Failed to read attribute " + name);
+		this.value = val[0];
+	}
+	
 	public Attribute(String name, String value) {
 		this.name = name;
 		this.value = value;
@@ -36,11 +44,7 @@ public class Attribute {
 		this.name = name;
 		this.protocol = protocol;
 		
-		Response resp = protocol.command(RemoteSerialProtocol.GETA, name);
-		String[] val = resp.getValues("value");
-		if (val.length == 0)
-			throw new SessionException("Failed to read attribute " + name);
-		this.value = val[0];
+		refresh();
 	}
 	
 	public boolean isEditable() {
@@ -87,8 +91,8 @@ public class Attribute {
 		if (!isEditable() || (newValue == value))
 			return;
 		
-		protocol.command(RemoteSerialProtocol.SETA, getName(), newValue);
-		value = newValue;
+		protocol.command(RemoteSerialProtocol.SETA, name, newValue);
+		refresh();
 	}
 	
 	@Override

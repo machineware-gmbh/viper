@@ -10,7 +10,7 @@
             </children>
             <children xsi:type="advanced:Area" xmi:id="_Gy57cJo3EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.area.middle" containerData="50"/>
             <children xsi:type="basic:PartStack" xmi:id="_HXEYcJo3EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partstack.right" containerData="25">
-              <children xsi:type="basic:Part" xmi:id="_J1054Jo3EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.part.attributes" containerData="25" label="Attributes"/>
+              <children xsi:type="basic:Part" xmi:id="_J1054Jo3EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.part.attributes" containerData="25" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.parts.AttributePart" label="Attributes" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/attribute.gif"/>
             </children>
           </children>
           <children xsi:type="basic:PartSashContainer" xmi:id="_2u6TYJo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partsashcontainer.2" containerData="30" horizontal="true">
