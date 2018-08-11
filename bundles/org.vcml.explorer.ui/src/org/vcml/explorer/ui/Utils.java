@@ -30,15 +30,14 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
-import org.vcml.explorer.ui.parts.SessionPart;
 
 public class Utils {
-	
+
 	public static Image getImage(String name) {
-		Bundle bundle = FrameworkUtil.getBundle(SessionPart.class);
-	    URL url = FileLocator.find(bundle, new Path("icons/" + name), null);
-	    ImageDescriptor image = ImageDescriptor.createFromURL(url);
-	    return image.createImage();
+		Bundle bundle = FrameworkUtil.getBundle(Utils.class);
+		URL url = FileLocator.find(bundle, new Path("icons/" + name), null);
+		ImageDescriptor image = ImageDescriptor.createFromURL(url);
+		return image.createImage();
 	}
 	
 	public static Font getMonoSpaceFont() {
