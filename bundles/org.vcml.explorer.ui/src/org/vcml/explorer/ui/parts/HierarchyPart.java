@@ -23,19 +23,22 @@ import javax.inject.Inject;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.CellLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -139,14 +142,12 @@ public class HierarchyPart {
 		}
 	};
 	
-	private LabelProvider labelProvider = new LabelProvider() {
-		@Override
+	private CellLabelProvider labelProvider = new CellLabelProvider() {
 		public String getText(Object element) {
 			Module module = (Module)element;
 			return module.getBaseName();
 		}
 		
-		@Override
 		public Image getImage(Object element) {
 			Module module = (Module)element;
 			switch (module.getKind()) {
@@ -175,6 +176,24 @@ public class HierarchyPart {
 			default:
 				return IMAGE_GENERIC;
 			}	
+		}
+		
+		@Override
+		public String getToolTipText(Object element) {
+			Module module = (Module)element;
+			return "Name: " + module.getName() + "\nKind: " + module.getKind();
+		}
+		
+		@Override
+		public Font getToolTipFont(Object element) {
+			return Utils.getMonoSpaceFont();
+		}
+
+		@Override
+		public void update(ViewerCell cell) {
+			cell.setText(getText(cell.getElement()));
+			cell.setImage(getImage(cell.getElement()));
+			
 		}
 	};
 
@@ -323,15 +342,14 @@ public class HierarchyPart {
 
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
+						// Nothing to do
 					}
 				});
 			}
 			
 			@Override
 			public void menuHidden(MenuEvent e) {
-				// TODO Auto-generated method stub
-				
+				// Nothing to do
 			}
 		});
         
@@ -343,7 +361,7 @@ public class HierarchyPart {
 		sessionService.addSessionChangeListener(sessionListener);
 		selectionService.addSelectionListener(selectionListener);
 
-		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer = new TreeViewer(parent, SWT.BORDER | SWT.MULTI);
 		viewer.setContentProvider(contentProvider);
 		viewer.setLabelProvider(labelProvider);
 		viewer.setComparator(viewerComparator);
@@ -362,6 +380,7 @@ public class HierarchyPart {
         Tree tree = viewer.getTree();
         tree.setLayoutData(data);
         tree.setMenu(buildContextMenu(tree));
+        ColumnViewerToolTipSupport.enableFor(viewer);
 	}
 	
 	@Focus
