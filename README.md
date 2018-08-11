@@ -3,6 +3,8 @@ The **VI**rtual **P**latform **E**xplore**R** `viper` is a gui program used to i
 control SystemC simulations built with
 [VCML](https://github.com/janweinstock/vcml).
 
+[![Build Status](https://travis-ci.org/janweinstock/viper.svg?branch=master)](https://travis-ci.org/janweinstock/viper)
+
 ----
 ## Build
 In order to build `viper` you need a Java `JDK 8` and Apache `Maven` (version 3+).
