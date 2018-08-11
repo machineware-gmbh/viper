@@ -38,19 +38,21 @@ import org.eclipse.swt.widgets.Text;
 import org.vcml.session.Command;
 import org.vcml.session.Module;
 import org.vcml.session.SessionException;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.GridData;
 
 public class CommandDialog extends Dialog {
 	
 	private Module module;
 	private Command command;
 	private String help;
-	
-	private Text cmdText;
-	private Label cmdStatus;
-	private Text descText;
-	private Text respText;
+
+	private Text commandBoxInput;
+	private Label commandBoxLabel;
+	private Text descriptionBoxText;
+	private Text responseBoxText;
 	private Button execBtn;
-	
+
 	private String buildStatusString(String input) {
 		String[] s = input.split(" ");
 		int argc = s.length - 1;
@@ -62,34 +64,34 @@ public class CommandDialog extends Dialog {
 	
 	private static String buildCommandList(Module module) {
 		String list = "Module " + module.getName() + " supports the following commands:\n";
-	    for (Command c : module.getCommands())
-	    	list += "  " + c.getName() + ": " + c.getDesc() + "\n";
-	    return list;
+		for (Command c : module.getCommands())
+			list += "  " + c.getName() + ": " + c.getDesc() + "\n";
+		return list;
 	}
-	
+
 	private void execute() {
 		try {
-			String args[] = cmdText.getText().split(" ");
+			String args[] = commandBoxInput.getText().split(" ");
 			String resp = command.execute(Arrays.copyOfRange(args, 1, args.length));
-			respText.setText(resp);
+			responseBoxText.setText(resp);
 		} catch (SessionException e) {
-			respText.setText(e.getMessage());
+			responseBoxText.setText(e.getMessage());
 		}
 	}
 
 	private void update() {
-		String[] args = cmdText.getText().split(" ");
+		String[] args = commandBoxInput.getText().split(" ");
 		String name = args[0];
 		command = module.findCommand(name);
 		execBtn.setEnabled(false);
 		if (command == null) {
-			cmdStatus.setText("invalid command '" + cmdText.getText() + "'");
-			descText.setText(help);
-			respText.setText("");
+			commandBoxLabel.setText("invalid command '" + commandBoxInput.getText() + "'");
+			descriptionBoxText.setText(help);
+			responseBoxText.setText("");
 		} else {
-			cmdStatus.setText(buildStatusString(cmdText.getText()));
-			descText.setText(command.getDesc());
-			respText.setText("");
+			commandBoxLabel.setText(buildStatusString(commandBoxInput.getText()));
+			descriptionBoxText.setText(command.getDesc());
+			responseBoxText.setText("");
 			if (args.length >= (command.getArgc() + 1))
 				execBtn.setEnabled(true);
 		}
@@ -104,6 +106,7 @@ public class CommandDialog extends Dialog {
 
 	public CommandDialog(Shell parentShell, Module module, Command command) {
 		super(parentShell);
+		setShellStyle(SWT.BORDER | SWT.CLOSE | SWT.RESIZE);
 		this.module = module;
 		this.command = command;
 		this.help = buildCommandList(module);
@@ -122,31 +125,44 @@ public class CommandDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		Display display = Display.getDefault();
 		Composite container = (Composite)super.createDialogArea(parent);
-		container.setLayout(new FillLayout(SWT.VERTICAL));
+		container.setLayout(new GridLayout());
 		
-		Group cmdGroup = new Group(container, SWT.SHADOW_ETCHED_IN);
-		cmdGroup.setText("Command String");
-		cmdGroup.setLayout(new FillLayout(SWT.VERTICAL));
-		cmdText = new Text(cmdGroup, SWT.SINGLE | SWT.BORDER);
-		cmdText.setFont(Utils.getMonoSpaceFont());
-		cmdText.setText(command.getName());
-		cmdText.addModifyListener(modifyListener);
-		cmdStatus = new Label(cmdGroup, SWT.NONE);
-		cmdStatus.setForeground(display.getSystemColor(SWT.COLOR_RED));
+		Group commandBox = new Group(container, SWT.SHADOW_ETCHED_IN);
+		commandBox.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		commandBox.setText("Command String");
+		FillLayout commandBoxLayout = new FillLayout(SWT.VERTICAL);
+		commandBoxLayout.marginWidth = 5;
+		commandBoxLayout.marginHeight = 5;
+		commandBox.setLayout(commandBoxLayout);
+		commandBoxInput = new Text(commandBox, SWT.SINGLE | SWT.BORDER);
+		commandBoxInput.setFont(Utils.getMonoSpaceFont());
+		commandBoxInput.setText(command.getName());
+		commandBoxInput.setSelection(command.getName().length());
+		commandBoxInput.addModifyListener(modifyListener);
+		commandBoxLabel = new Label(commandBox, SWT.NONE);
+		commandBoxLabel.setForeground(display.getSystemColor(SWT.COLOR_RED));
 
-		Group descGroup = new Group(container, SWT.NONE);
-		descGroup.setText("Command Description");
-		descGroup.setLayout(new FillLayout());
-		descText = new Text(descGroup, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.V_SCROLL);
-		descText.setFont(Utils.getMonoSpaceFont());
-		descText.setBackground(display.getSystemColor(SWT.COLOR_GRAY));
+		Group descriptionBox = new Group(container, SWT.NONE);
+		descriptionBox.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		descriptionBox.setText("Command Description");
+		FillLayout descriptionBoxLayout = new FillLayout();
+		descriptionBoxLayout.marginHeight = 5;
+		descriptionBoxLayout.marginWidth = 5;
+		descriptionBox.setLayout(descriptionBoxLayout);
+		descriptionBoxText = new Text(descriptionBox, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.V_SCROLL);
+		descriptionBoxText.setFont(Utils.getMonoSpaceFont());
+		descriptionBoxText.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 
-		Group respGroup = new Group(container, SWT.NONE);
-		respGroup.setText("Command Response");
-		respGroup.setLayout(new FillLayout());
-		respText = new Text(respGroup, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.V_SCROLL);
-		respText.setFont(Utils.getMonoSpaceFont());
-		respText.setBackground(display.getSystemColor(SWT.COLOR_GRAY));
+		Group responseBox = new Group(container, SWT.NONE);
+		responseBox.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		responseBox.setText("Command Response");
+		FillLayout responseBoxLayout = new FillLayout();
+		responseBoxLayout.marginWidth = 5;
+		responseBoxLayout.marginHeight = 5;
+		responseBox.setLayout(responseBoxLayout);
+		responseBoxText = new Text(responseBox, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.V_SCROLL);
+		responseBoxText.setFont(Utils.getMonoSpaceFont());
+		responseBoxText.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 
 		return container;
 	}
@@ -165,13 +181,15 @@ public class CommandDialog extends Dialog {
 
 	@Override
 	protected void configureShell(Shell newShell) {
+		newShell.setImage(Utils.getImage("chip.png"));
+		newShell.setMinimumSize(new Point(500, 400));
 		super.configureShell(newShell);
 		newShell.setText("Execute module command");
 	}
 
 	@Override
 	protected Point getInitialSize() {
-		return new Point(600, 400);
+		return new Point(738, 588);
 	}
 
 }
