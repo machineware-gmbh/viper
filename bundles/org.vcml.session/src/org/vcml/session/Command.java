@@ -21,29 +21,29 @@ package org.vcml.session;
 import java.util.ArrayList;
 
 public class Command {
-	
+
 	private String name;
-	
+
 	private String desc;
-	
+
 	private int argc;
-	
+
 	private RemoteSerialProtocol protocol;
-	
+
 	private Module parent;
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public String getDesc() {
 		return desc;
 	}
-	
+
 	public int getArgc() {
 		return argc;
 	}
-	
+
 	public Command(RemoteSerialProtocol protocol, Module parent, String desc) {
 		this.protocol = protocol;
 		this.parent = parent;
@@ -53,7 +53,7 @@ public class Command {
 		this.argc = info.length > 1 ? Integer.parseInt(info[1]) : 0;
 		this.desc = info.length > 2 ? info[2] : "no description available";
 	}
-	
+
 	public String execute() throws SessionException {
 		if (argc != 0)
 			throw new SessionException("Not enough arguments");
@@ -61,7 +61,7 @@ public class Command {
 		Response resp = protocol.command(RemoteSerialProtocol.EXEC, parent.getName(), getName());
 		return resp.toString();
 	}
-	
+
 	public String execute(String... args) throws SessionException {
 		if (args.length < argc)
 			throw new SessionException("Not enough arguments");

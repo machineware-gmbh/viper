@@ -57,7 +57,7 @@ public class Response {
 			entries.add(new KeyValuePair(data[0], value));
 		}
 	}
-	
+
 	public String toString() {
 		return response;
 	}

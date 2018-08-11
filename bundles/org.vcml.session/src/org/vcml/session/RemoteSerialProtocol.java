@@ -25,7 +25,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class RemoteSerialProtocol {
-	
+
 	private int calcChecksum(String str) {
 		int result = 0;
 		for (int i = 0; i < str.length(); i++)
@@ -70,7 +70,7 @@ public class RemoteSerialProtocol {
 			throw new SessionException("Failed to contact session", e);
 		}
 	}
-	
+
 	public void send(String message) throws SessionException {
 		try {
 			// Packet format: $<message>#<8bit-checksum>
@@ -89,7 +89,7 @@ public class RemoteSerialProtocol {
 			throw new SessionException("Failed to contact session", e);
 		}
 	}
-	
+
 	public String recv() throws SessionException {
 		try {
 			InputStreamReader ireader = new InputStreamReader(socket.getInputStream());
@@ -100,32 +100,32 @@ public class RemoteSerialProtocol {
 			int ch;
 	
 			while ((ch = breader.read()) != -1) {
-			    if (ch == '$') {
-			    	inside = true;
-			    } else if (ch == '#') {
-			    	inside = false;
-			    	String message = builder.toString();
-			    	
-			    	int check1 = breader.read();
-			    	int check2 = breader.read();
-			    	
-			    	// Verify checksum. This should never fail since the transport layer assures
-			    	// correct transmission.			    	
-			    	boolean match = (calcChecksum(check1, check2) == calcChecksum(message));
-			    	
-			    	String resp = match ? "+" : "-"; 
-			    	socket.getOutputStream().write(resp.getBytes());
-			    	
-			    	if (!match) 
-			    		throw new SessionException("Checksum mismatch");
-			    	return message;
-			    } else if (inside) {
-			    	if (ch == '\\')
-			    		ch = breader.read();
-			    	builder.append((char)ch);
-			    } else {
-			    	// just drop characters until we read '$' again
-			    }
+				if (ch == '$') {
+					inside = true;
+				} else if (ch == '#') {
+					inside = false;
+					String message = builder.toString();
+					
+					int check1 = breader.read();
+					int check2 = breader.read();
+					
+					// Verify checksum. This should never fail since the transport layer assures
+					// correct transmission.			    	
+					boolean match = (calcChecksum(check1, check2) == calcChecksum(message));
+					
+					String resp = match ? "+" : "-"; 
+					socket.getOutputStream().write(resp.getBytes());
+					
+					if (!match) 
+						throw new SessionException("Checksum mismatch");
+					return message;
+				} else if (inside) {
+					if (ch == '\\')
+						ch = breader.read();
+					builder.append((char)ch);
+				} else {
+					// just drop characters until we read '$' again
+				}
 			}
 		} catch (IOException e) {
 			throw new SessionException("Failed to contact session", e);
@@ -134,7 +134,7 @@ public class RemoteSerialProtocol {
 		// Unexpected end of file
 		throw new SessionException("Disconnected");
 	}
-	
+
 	public Response command(String... args) throws SessionException {
 		String command = "";
 		for (String arg : args)
@@ -143,7 +143,7 @@ public class RemoteSerialProtocol {
 		send(command);
 		return new Response(recv());
 	}
-	
+
 	public void close() throws SessionException {
 		try {
 			socket.close();

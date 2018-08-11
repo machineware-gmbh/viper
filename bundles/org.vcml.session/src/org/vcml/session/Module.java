@@ -167,7 +167,7 @@ public class Module {
 		
 		if (found == null)
 			return null;
-        return (names.length == 1) ? found : found.findChild(names[1]);
+		return (names.length == 1) ? found : found.findChild(names[1]);
 	}
 	
 	public Command findCommand(String name) {

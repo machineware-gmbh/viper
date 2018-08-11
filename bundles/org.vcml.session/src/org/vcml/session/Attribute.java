@@ -19,13 +19,13 @@
 package org.vcml.session;
 
 public class Attribute {
-	
+
 	private String name;
-	
+
 	private String value;
-	
+
 	private RemoteSerialProtocol protocol;
-	
+
 	private void refresh() throws SessionException {
 		Response resp = protocol.command(RemoteSerialProtocol.GETA, name);
 		String[] val = resp.getValues("value");
@@ -33,20 +33,20 @@ public class Attribute {
 			throw new SessionException("Failed to read attribute " + name);
 		this.value = val[0];
 	}
-	
+
 	public Attribute(String name, String value) {
 		this.name = name;
 		this.value = value;
 		this.protocol = null;
 	}
-	
+
 	public Attribute(RemoteSerialProtocol protocol, String name) throws SessionException {
 		this.name = name;
 		this.protocol = protocol;
 		
 		refresh();
 	}
-	
+
 	public boolean isEditable() {
 		return protocol != null;
 	}
@@ -54,16 +54,16 @@ public class Attribute {
 	public String getName() {
 		return name;
 	}
-	
+
 	public String getBaseName() {
 		String[] temp = name.split("\\.");
 		return temp[temp.length - 1];
 	}
-	
+
 	public String getValue() {
 		return value;
 	}
-	
+
 	public String getValuePretty() {
 		if (value.isEmpty())
 			return "<empty>";
@@ -72,13 +72,13 @@ public class Attribute {
 			long val = Long.parseLong(value);
 			String base = getBaseName();
 			if (base.contains("addr")   ||
-		        base.contains("size")   ||
-		        base.contains("offset") ||
-		        base.contains("R")      ||
-		        base.contains("NPC")    ||
-		        base.contains("PPC")    ||
-		        base.contains("SR")     ||
-		        base.contains("CID"))
+			    base.contains("size")   ||
+			    base.contains("offset") ||
+			    base.contains("R")      ||
+			    base.contains("NPC")    ||
+			    base.contains("PPC")    ||
+			    base.contains("SR")     ||
+			    base.contains("CID"))
 				return String.format("0x%08x", val);
 			return value;
 		} catch (NumberFormatException e) {
@@ -94,14 +94,14 @@ public class Attribute {
 		protocol.command(RemoteSerialProtocol.SETA, name, newValue);
 		refresh();
 	}
-	
+
 	@Override
 	public boolean equals(Object other) {
 		if (!(other instanceof Attribute))
 			return false;
 		return getName().equals(((Attribute)other).getName());
 	}
-	
+
 	@Override
 	public String toString() {
 		return getName();

@@ -20,15 +20,12 @@ package org.vcml.session;
 
 public class SessionException extends Exception {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 2933293289170743454L;
-	
+
 	public SessionException(String message) {
 		super(message);
 	}
-	
+
 	public SessionException(String message, Exception cause) {
 		super(message, cause);
 	}
