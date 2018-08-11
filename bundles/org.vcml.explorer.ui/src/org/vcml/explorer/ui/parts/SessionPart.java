@@ -25,11 +25,12 @@ import java.util.Iterator;
 
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.Focus;
-
+import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -52,7 +53,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Table;
 
 import org.vcml.explorer.ui.Utils;
 import org.vcml.explorer.ui.services.ISessionService;
@@ -310,30 +310,23 @@ public class SessionPart {
 
 	@PostConstruct
 	public void createComposite(Composite parent) {
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout());
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		viewer = new TableViewer(composite, SWT.BORDER);
 		viewer.setLabelProvider(new LabelProvider());
 		viewer.setContentProvider(contentProvider);
 		viewer.addSelectionChangedListener(selectionListener);
 		viewer.addDoubleClickListener(doubleClickListener);
 
 		TableViewerColumn nameColumn = new TableViewerColumn(viewer, SWT.LEFT);
-        nameColumn.getColumn().setText("Name");
-        nameColumn.getColumn().setWidth(200);
+        nameColumn.getColumn().setText("Available Sessions");
         nameColumn.setLabelProvider(labelProvider);
 
-        GridLayout layout = new GridLayout();
-        layout.makeColumnsEqualWidth = true;
-        parent.setLayout(layout);
-        
-        GridData data = new GridData();
-        data.grabExcessHorizontalSpace = true;
-        data.grabExcessVerticalSpace = true;
-        data.horizontalAlignment = SWT.FILL;
-        data.verticalAlignment = SWT.FILL;
-        
-        Table table = viewer.getTable();
-        table.setLayoutData(data);
-        table.setHeaderVisible(false);
+        TableColumnLayout columnLayout = new TableColumnLayout();
+        columnLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(1, 100, false));
+        composite.setLayout(columnLayout);
         
         Menu menu = new Menu(parent);
         menu.addMenuListener(new MenuListener() {
@@ -344,11 +337,11 @@ public class SessionPart {
 			
 			@Override
 			public void menuHidden(MenuEvent e) {
-				// TODO Auto-generated method stub
+				// Nothing to do
 			}
 		});
         
-        table.setMenu(menu);
+        viewer.getTable().setMenu(menu);
         ColumnViewerToolTipSupport.enableFor(viewer);
         sessionService.addSessionChangeListener(sessionListener);
         refresh();
