@@ -22,54 +22,54 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Response {
-	
-	String response;
-	
-	private class KeyValuePair {
-		public String key;
-		public String val;
-		
-		public KeyValuePair(String key, String val) {
-			this.key = key;
-			this.val = val;
-		}
-	}
-	
-	List<KeyValuePair> entries;
-	
-	public Response(String resp) throws SessionException {
-		this.response = resp;
-		this.entries = new ArrayList<KeyValuePair>();
-		
-		if (response.isEmpty())
-			throw new SessionException("Command not supported");
-		if (response.startsWith("ERROR,"))
-			throw new SessionException(response.substring(6));
-		if (response.startsWith("OK"))
-			response = response.substring(2);
-		if (response.startsWith(","))
-			response = response.substring(1);
-		
-		String[] token = response.split(",");
-		for (String entry : token) {
-			String[] data = entry.split(":", 2);
-			String value = data.length > 1 ? data[1] : "";
-			entries.add(new KeyValuePair(data[0], value));
-		}
-	}
 
-	public String toString() {
-		return response;
-	}
+    String response;
 
-	public String[] getValues(String key) {
-		ArrayList<String> list = new ArrayList<String>();
-		for (KeyValuePair pair : entries) {
-			if (pair.key.equals(key))
-				list.add(pair.val);
-		}
-		
-		return list.toArray(new String[list.size()]);
-	}
+    private class KeyValuePair {
+        public String key;
+        public String val;
+
+        public KeyValuePair(String key, String val) {
+            this.key = key;
+            this.val = val;
+        }
+    }
+
+    List<KeyValuePair> entries;
+
+    public Response(String resp) throws SessionException {
+        this.response = resp;
+        this.entries = new ArrayList<KeyValuePair>();
+
+        if (response.isEmpty())
+            throw new SessionException("Command not supported");
+        if (response.startsWith("ERROR,"))
+            throw new SessionException(response.substring(6));
+        if (response.startsWith("OK"))
+            response = response.substring(2);
+        if (response.startsWith(","))
+            response = response.substring(1);
+
+        String[] token = response.split(",");
+        for (String entry : token) {
+            String[] data = entry.split(":", 2);
+            String value = data.length > 1 ? data[1] : "";
+            entries.add(new KeyValuePair(data[0], value));
+        }
+    }
+
+    public String toString() {
+        return response;
+    }
+
+    public String[] getValues(String key) {
+        ArrayList<String> list = new ArrayList<String>();
+        for (KeyValuePair pair : entries) {
+            if (pair.key.equals(key))
+                list.add(pair.val);
+        }
+
+        return list.toArray(new String[list.size()]);
+    }
 
 }

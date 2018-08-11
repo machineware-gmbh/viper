@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-
-   <extension
-         id="product"
-         point="org.eclipse.core.runtime.products">
-      <product
-            application="org.eclipse.e4.ui.workbench.swt.E4Application"
-            name="org.vcml.explorer">
-         <property
-               name="appName"
-               value="org.vcml.explorer">
-         </property>
-      </product>
-   </extension>
-
+    <extension id="product" point="org.eclipse.core.runtime.products">
+        <product application="org.eclipse.e4.ui.workbench.swt.E4Application" name="org.vcml.explorer">
+            <property name="appName" value="org.vcml.explorer">
+            </property>
+        </product>
+    </extension>
 </plugin>

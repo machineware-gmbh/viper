@@ -27,17 +27,16 @@ import org.osgi.service.component.annotations.Component;
 
 import org.vcml.explorer.ui.services.ISessionService;
 
-@Component(name="SessionServiceContextFunction", service=IContextFunction.class,
-           property="service.context.key=org.vcml.explorer.ui.services.ISessionService")
+@Component(name = "SessionServiceContextFunction", service = IContextFunction.class, property = "service.context.key=org.vcml.explorer.ui.services.ISessionService")
 public class SessionServiceContextFunction extends ContextFunction {
-	@Override
-	public Object compute(IEclipseContext context, String contextKey) {
-		ISessionService sessionService = ContextInjectionFactory.make(SessionService.class, context);
-		
-		MApplication app = context.get(MApplication.class);
-		IEclipseContext appCtx = app.getContext();
-		appCtx.set(ISessionService.class, sessionService);
-		
-		return sessionService;
-	}
+    @Override
+    public Object compute(IEclipseContext context, String contextKey) {
+        ISessionService sessionService = ContextInjectionFactory.make(SessionService.class, context);
+
+        MApplication app = context.get(MApplication.class);
+        IEclipseContext appCtx = app.getContext();
+        appCtx.set(ISessionService.class, sessionService);
+
+        return sessionService;
+    }
 }

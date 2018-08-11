@@ -22,59 +22,59 @@ import java.util.ArrayList;
 
 public class Command {
 
-	private String name;
+    private String name;
 
-	private String desc;
+    private String desc;
 
-	private int argc;
+    private int argc;
 
-	private RemoteSerialProtocol protocol;
+    private RemoteSerialProtocol protocol;
 
-	private Module parent;
+    private Module parent;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getDesc() {
-		return desc;
-	}
+    public String getDesc() {
+        return desc;
+    }
 
-	public int getArgc() {
-		return argc;
-	}
+    public int getArgc() {
+        return argc;
+    }
 
-	public Command(RemoteSerialProtocol protocol, Module parent, String desc) {
-		this.protocol = protocol;
-		this.parent = parent;
-		
-		String[] info = desc.split(":", 3);
-		this.name = info[0];
-		this.argc = info.length > 1 ? Integer.parseInt(info[1]) : 0;
-		this.desc = info.length > 2 ? info[2] : "no description available";
-	}
+    public Command(RemoteSerialProtocol protocol, Module parent, String desc) {
+        this.protocol = protocol;
+        this.parent = parent;
 
-	public String execute() throws SessionException {
-		if (argc != 0)
-			throw new SessionException("Not enough arguments");
-		
-		Response resp = protocol.command(RemoteSerialProtocol.EXEC, parent.getName(), getName());
-		return resp.toString();
-	}
+        String[] info = desc.split(":", 3);
+        this.name = info[0];
+        this.argc = info.length > 1 ? Integer.parseInt(info[1]) : 0;
+        this.desc = info.length > 2 ? info[2] : "no description available";
+    }
 
-	public String execute(String... args) throws SessionException {
-		if (args.length < argc)
-			throw new SessionException("Not enough arguments");
-		
-		ArrayList<String> fullArgs = new ArrayList<String>();
-		fullArgs.add(RemoteSerialProtocol.EXEC);
-		fullArgs.add(parent.getName());
-		fullArgs.add(getName());
-		for (String arg : args)
-			fullArgs.add(arg);
-		
-		Response resp = protocol.command(fullArgs.toArray(new String[fullArgs.size()]));
-		return resp.toString();
-	}
+    public String execute() throws SessionException {
+        if (argc != 0)
+            throw new SessionException("Not enough arguments");
+
+        Response resp = protocol.command(RemoteSerialProtocol.EXEC, parent.getName(), getName());
+        return resp.toString();
+    }
+
+    public String execute(String... args) throws SessionException {
+        if (args.length < argc)
+            throw new SessionException("Not enough arguments");
+
+        ArrayList<String> fullArgs = new ArrayList<String>();
+        fullArgs.add(RemoteSerialProtocol.EXEC);
+        fullArgs.add(parent.getName());
+        fullArgs.add(getName());
+        for (String arg : args)
+            fullArgs.add(arg);
+
+        Response resp = protocol.command(fullArgs.toArray(new String[fullArgs.size()]));
+        return resp.toString();
+    }
 
 }

@@ -27,19 +27,19 @@ import org.vcml.explorer.ui.services.ISessionService;
 import org.vcml.session.Session;
 
 public class StepHandler {
-	@CanExecute
-	public boolean canExecute(ISessionService service) {
-		Session current = service.currentSession();
-		if ((current == null) || !current.isConnected())
-			return false;
-		return !current.isRunning();
-	}
+    @CanExecute
+    public boolean canExecute(ISessionService service) {
+        Session current = service.currentSession();
+        if ((current == null) || !current.isConnected())
+            return false;
+        return !current.isRunning();
+    }
 
-	@Execute
-	public void execute(Shell shell, ISessionService service, IEclipseContext context) {
-		Session session = service.currentSession();
-		System.out.println("step");
-		service.stepSimulation(session);
-		System.out.println("done");
-	}
+    @Execute
+    public void execute(Shell shell, ISessionService service, IEclipseContext context) {
+        Session session = service.currentSession();
+        System.out.println("step");
+        service.stepSimulation(session);
+        System.out.println("done");
+    }
 }

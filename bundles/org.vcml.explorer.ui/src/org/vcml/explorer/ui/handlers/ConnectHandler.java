@@ -24,8 +24,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.vcml.explorer.ui.services.ISessionService;
 
 public class ConnectHandler {
-	@Execute
-	public void execute(Shell shell, ISessionService service, IEclipseContext context) {
-		service.addRemoteSession();
-	}
+    @Execute
+    public void execute(Shell shell, ISessionService service, IEclipseContext context) {
+        service.addRemoteSession();
+    }
 }
