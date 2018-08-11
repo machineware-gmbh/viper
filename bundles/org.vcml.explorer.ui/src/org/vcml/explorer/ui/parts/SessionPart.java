@@ -77,11 +77,14 @@ public class SessionPart {
 
     private IPropertyChangeListener sessionListener = new IPropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent event) {
-            String property = event.getProperty();
-            if (property.equals(ISessionService.PROP_UPDATED))
-                viewer.update(event.getNewValue(), null);
-            else
-                refresh();
+            switch (event.getProperty()) {
+            case ISessionService.PROP_ADDED:
+            case ISessionService.PROP_REMOVED:
+            case ISessionService.PROP_UPDATED:
+                viewer.refresh();
+            default:
+                break;
+            }
         }
     };
 
@@ -307,6 +310,14 @@ public class SessionPart {
         });
     }
 
+    public SessionPart() {
+        // Nothing to do
+    }
+
+    void dispose() {
+        sessionService.removeSessionChangeListener(sessionListener);
+    }
+
     @PostConstruct
     public void createComposite(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
@@ -340,21 +351,16 @@ public class SessionPart {
             }
         });
 
+        viewer.setInput(sessionService);
         viewer.getTable().setMenu(menu);
         ColumnViewerToolTipSupport.enableFor(viewer);
+
         sessionService.addSessionChangeListener(sessionListener);
-        refresh();
     }
 
     @Focus
     public void setFocus() {
-        refresh();
         viewer.getTable().setFocus();
-    }
-
-    public void refresh() {
-        viewer.setInput(sessionService);
-        viewer.refresh();
     }
 
 }

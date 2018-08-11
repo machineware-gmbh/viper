@@ -25,11 +25,13 @@ import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.e4.ui.workbench.modeling.ISelectionListener;
+import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -37,8 +39,6 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.vcml.explorer.ui.Utils;
@@ -63,8 +63,9 @@ public class AttributePart {
         @Override
         public void propertyChange(PropertyChangeEvent event) {
             String property = event.getProperty();
-            if (property.equals(ISessionService.PROP_UPDATED) || property.equals(ISessionService.PROP_REMOVED)) {
-                refresh(null);
+            if (property.equals(ISessionService.PROP_UPDATED) || property.equals(ISessionService.PROP_REMOVED)
+                    || property.equals(ISessionService.PROP_SELECT)) {
+                viewer.setInput(null);
             }
         }
     };
@@ -73,7 +74,7 @@ public class AttributePart {
         @Override
         public void selectionChanged(MPart part, Object selection) {
             if (selection instanceof Module)
-                refresh((Module) selection);
+                viewer.setInput(selection);
         }
     };
 
@@ -120,13 +121,6 @@ public class AttributePart {
         }
     };
 
-    private void refresh(Module module) {
-        viewer.setInput(module);
-        attrColumn.getColumn().pack();
-        valueColumn.getColumn().pack();
-        viewer.refresh();
-    }
-
     public AttributePart() {
 
     }
@@ -141,14 +135,16 @@ public class AttributePart {
         sessionService.addSessionChangeListener(sessionListener);
         selectionService.addSelectionListener(selectionListener);
 
-        viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+        Composite composite = new Composite(parent, SWT.NONE);
+
+        viewer = new TableViewer(composite, SWT.BORDER);
         viewer.setContentProvider(contentProvider);
 
-        attrColumn = new TableViewerColumn(viewer, SWT.LEAD);
+        attrColumn = new TableViewerColumn(viewer, SWT.NONE);
         attrColumn.getColumn().setText("Attribute");
         attrColumn.setLabelProvider(columnNameProvider);
 
-        valueColumn = new TableViewerColumn(viewer, SWT.LEAD);
+        valueColumn = new TableViewerColumn(viewer, SWT.NONE);
         valueColumn.getColumn().setText("Value");
         valueColumn.setLabelProvider(columnValueProvider);
         valueColumn.setEditingSupport(new EditingSupport(viewer) {
@@ -180,24 +176,16 @@ public class AttributePart {
             }
         });
 
-        GridData data = new GridData();
-        data.grabExcessHorizontalSpace = true;
-        data.grabExcessVerticalSpace = true;
-        data.horizontalAlignment = SWT.FILL;
-        data.verticalAlignment = SWT.FILL;
-
-        GridLayout layout = new GridLayout();
-        // layout.m
-        parent.setLayout(layout);
+        TableColumnLayout columnLayout = new TableColumnLayout();
+        columnLayout.setColumnData(attrColumn.getColumn(), new ColumnWeightData(1, 100, false));
+        columnLayout.setColumnData(valueColumn.getColumn(), new ColumnWeightData(1, 100, false));
+        composite.setLayout(columnLayout);
 
         Table table = viewer.getTable();
-        table.setLayoutData(data);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
 
         ColumnViewerToolTipSupport.enableFor(viewer);
-        parent.pack();
-        viewer.refresh();
     }
 
     @Focus
