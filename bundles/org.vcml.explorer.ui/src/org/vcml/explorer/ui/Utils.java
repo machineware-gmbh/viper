@@ -33,19 +33,19 @@ import org.osgi.framework.FrameworkUtil;
 
 public class Utils {
 
-	public static Image getImage(String name) {
-		Bundle bundle = FrameworkUtil.getBundle(Utils.class);
-		URL url = FileLocator.find(bundle, new Path("icons/" + name), null);
-		ImageDescriptor image = ImageDescriptor.createFromURL(url);
-		return image.createImage();
-	}
-	
-	public static Font getMonoSpaceFont() {
-		return JFaceResources.getFont(JFaceResources.TEXT_FONT);
-	}
-	
-	public static Color getSystemColor(int color) {
-		return Display.getCurrent().getSystemColor(color);
-	}
+    public static Image getImage(String name) {
+        Bundle bundle = FrameworkUtil.getBundle(Utils.class);
+        URL url = FileLocator.find(bundle, new Path("icons/" + name), null);
+        ImageDescriptor image = ImageDescriptor.createFromURL(url);
+        return image.createImage();
+    }
+
+    public static Font getMonoSpaceFont() {
+        return JFaceResources.getFont(JFaceResources.TEXT_FONT);
+    }
+
+    public static Color getSystemColor(int color) {
+        return Display.getCurrent().getSystemColor(color);
+    }
 
 }
