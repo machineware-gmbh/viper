@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.Path;
 
 public class Session {
 	
-	public final static String ANNOUNCE_DIR = "/tmp";
+	public final static String ANNOUNCE_DIR = System.getProperty("java.io.tmpdir");
 	
 	private String uri = "";
 	
@@ -114,21 +114,21 @@ public class Session {
 		this.uri = uri;
 
 		String[] info = uri.split(":");
-        if (info.length >= 2) {
-        	host = info[0];
-        	port = Integer.parseInt(info[1]);
-        	if (info.length > 2)
-        		user = info[2];
-        	if (info.length > 3) {
-        		exec = info[3];
-        		
-        		Path path = new Path(exec);
-        		name = path.segment(path.segmentCount() - 1);
-        	}
-        }
-        
-        if (host.isEmpty() || port == 0)
-        	throw new SessionException("invalid URI: " + uri);
+		if (info.length >= 2) {
+			host = info[0];
+			port = Integer.parseInt(info[1]);
+			if (info.length > 2)
+				user = info[2];
+			if (info.length > 3) {
+				exec = info[3];
+				
+				Path path = new Path(exec);
+				name = path.segment(path.segmentCount() - 1);
+			}
+		}
+		
+		if (host.isEmpty() || port == 0)
+			throw new SessionException("invalid URI: " + uri);
 	}
 	
 	public void connect() throws SessionException {
@@ -206,31 +206,31 @@ public class Session {
 	public static List<Session> getAvailableSessions() {
 		List<Session> avail = new ArrayList<Session>();
 		
-        File directory = new File(ANNOUNCE_DIR);
-        File[] files = directory.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return Pattern.matches("vcml_session_[0-9]+", name);
-            }
-        });
-
-        for (File it : files) {
-            try {
-                Scanner scanner = new Scanner(it);
-                try {
-                    String uri = scanner.nextLine();
-                    Session session = new Session(uri);
-                    if (!avail.contains(session))
-                    	avail.add(session);
-                } catch (SessionException ex) {
-                	System.err.println(ex.getMessage());
-                } finally {
-                    scanner.close();
-                }
-            } catch (FileNotFoundException e) {
-            	/* nothing to do */
-            }
-        }
-        
-        return avail;
+		File directory = new File(ANNOUNCE_DIR);
+		File[] files = directory.listFiles(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return Pattern.matches("vcml_session_[0-9]+", name);
+			}
+		});
+		
+		for (File it : files) {
+			try {
+				Scanner scanner = new Scanner(it);
+				try {
+					String uri = scanner.nextLine();
+					Session session = new Session(uri);
+					if (!avail.contains(session))
+						avail.add(session);
+				} catch (SessionException ex) {
+					System.err.println(ex.getMessage());
+				} finally {
+					scanner.close();
+				}
+			} catch (FileNotFoundException e) {
+				/* nothing to do */
+			}
+		}
+		
+		return avail;
 	}
 }
