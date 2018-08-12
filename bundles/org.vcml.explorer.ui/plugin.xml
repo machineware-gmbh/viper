@@ -5,6 +5,14 @@
         <product application="org.eclipse.e4.ui.workbench.swt.E4Application" name="org.vcml.explorer">
             <property name="appName" value="org.vcml.explorer">
             </property>
+            <property
+                  name="lifeCycleURI"
+                  value="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.LifeCycle">
+            </property>
+            <property
+                  name="applicationCSS"
+                  value="platform:/plugin/org.vcml.explorer.ui/css/default.css">
+            </property>
         </product>
     </extension>
 </plugin>
