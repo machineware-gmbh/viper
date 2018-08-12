@@ -16,7 +16,7 @@
  *                                                                            *
  ******************************************************************************/
 
-package org.vcml.explorer.ui;
+package org.vcml.explorer.ui.dialogs;
 
 import java.util.Arrays;
 
@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.vcml.explorer.ui.Utils;
 import org.vcml.session.Command;
 import org.vcml.session.Module;
 import org.vcml.session.SessionException;
@@ -184,12 +185,12 @@ public class CommandDialog extends Dialog {
         newShell.setImage(Utils.getImage("chip.png"));
         newShell.setMinimumSize(new Point(500, 400));
         super.configureShell(newShell);
-        newShell.setText("Execute module command");
+        newShell.setText("Execute module command on " + module.getName());
     }
 
     @Override
     protected Point getInitialSize() {
-        return new Point(738, 588);
+        return new Point(600, 500);
     }
 
 }

@@ -28,12 +28,9 @@ import javax.inject.Inject;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.UIEvents;
-import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.window.Window;
 import org.eclipse.ui.services.IDisposable;
 
 import org.vcml.session.Module;
@@ -81,6 +78,7 @@ public class SessionService implements ISessionService, IDisposable {
     }
 
     public SessionService() {
+        System.out.println("session service created");
         refreshSessions();
     }
 
@@ -234,33 +232,15 @@ public class SessionService implements ISessionService, IDisposable {
     }
 
     @Override
-    public void addRemoteSession(String URI) {
+    public void addRemoteSession(String URI, boolean connect) {
         try {
             Session session = new Session(URI);
             addSession(session);
+            if (connect)
+                connectSession(session);
         } catch (SessionException e) {
             MessageDialog.openError(null, "Session management", e.getMessage());
         }
-    }
-
-    @Override
-    public void addRemoteSession() {
-        final String TITLE = "Add session...";
-        final String INPUT = "<host>:<port>[:<user>:<name>]";
-        final String QUERY = "Specify session URI, e.g.\n\t" + INPUT;
-
-        InputDialog dialog = new InputDialog(null, TITLE, QUERY, "", new IInputValidator() {
-            @Override
-            public String isValid(final String s) {
-                String[] parts = s.split(":");
-                if (parts.length < 2)
-                    return "Invalid input";
-                return null;
-            }
-        });
-
-        if (dialog.open() == Window.OK)
-            addRemoteSession(dialog.getValue());
     }
 
 }

@@ -58,8 +58,8 @@ import org.vcml.session.Command;
 import org.vcml.session.Module;
 import org.vcml.session.Session;
 import org.vcml.session.SessionException;
-import org.vcml.explorer.ui.CommandDialog;
 import org.vcml.explorer.ui.Utils;
+import org.vcml.explorer.ui.dialogs.CommandDialog;
 //import org.vcml.vseui.CommandResponseDialog;
 import org.vcml.explorer.ui.services.ISessionService;
 
@@ -305,6 +305,10 @@ public class HierarchyPart {
                 MenuItem[] items = menu.getItems();
                 for (int i = 0; i < items.length; i++)
                     items[i].dispose();
+
+                // ToDo rework hierarchy context menu
+                if (selectedModule == null)
+                    return;
 
                 TreeItem selectedItem = null;
                 if (tree.getSelection().length > 0)

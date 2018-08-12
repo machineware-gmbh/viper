@@ -61,12 +61,7 @@ public interface ISessionService {
      * 
      * @param URI Specifies session location as a string value.
      */
-    public void addRemoteSession(String URI);
-
-    /**
-     * Adds a remote session via a dialog
-     */
-    public void addRemoteSession();
+    public void addRemoteSession(String URI, boolean connect);
 
     /**
      * Checks for new sessions.

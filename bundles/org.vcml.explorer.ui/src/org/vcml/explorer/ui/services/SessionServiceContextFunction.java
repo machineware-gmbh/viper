@@ -31,6 +31,7 @@ import org.vcml.explorer.ui.services.ISessionService;
 public class SessionServiceContextFunction extends ContextFunction {
     @Override
     public Object compute(IEclipseContext context, String contextKey) {
+        System.out.println("session service context function");
         ISessionService sessionService = ContextInjectionFactory.make(SessionService.class, context);
 
         MApplication app = context.get(MApplication.class);

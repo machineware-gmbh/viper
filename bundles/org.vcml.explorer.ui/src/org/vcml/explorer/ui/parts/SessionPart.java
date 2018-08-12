@@ -23,7 +23,6 @@ import javax.inject.Inject;
 
 import java.util.Iterator;
 
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -41,7 +40,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
-
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
@@ -53,8 +52,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-
 import org.vcml.explorer.ui.Utils;
+import org.vcml.explorer.ui.dialogs.ConnectDialog;
 import org.vcml.explorer.ui.services.ISessionService;
 import org.vcml.session.Session;
 
@@ -69,9 +68,6 @@ public class SessionPart {
 
     @Inject
     private ISessionService sessionService;
-
-    @Inject
-    IEventBroker eventBroker;
 
     private TableViewer viewer;
 
@@ -300,7 +296,10 @@ public class SessionPart {
         addItem.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                sessionService.addRemoteSession();
+                ConnectDialog dialog = new ConnectDialog(parent.getShell());
+                if (dialog.open() == Window.OK) {
+                    sessionService.addRemoteSession(dialog.getURI(), dialog.connectImmediately());
+                }
             }
 
             @Override
