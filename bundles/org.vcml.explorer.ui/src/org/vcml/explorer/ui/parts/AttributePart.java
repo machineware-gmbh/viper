@@ -27,10 +27,14 @@ import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.e4.ui.workbench.modeling.ISelectionListener;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
-
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -46,7 +50,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
-
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.vcml.explorer.ui.Resources;
 import org.vcml.explorer.ui.services.ISessionService;
 import org.vcml.session.Attribute;
@@ -61,6 +66,7 @@ public class AttributePart {
     @Inject
     private ESelectionService selectionService;
 
+    private Text filter;
     private TableViewer viewer;
     private TableViewerColumn attrColumn;
     private TableViewerColumn valueColumn;
@@ -98,6 +104,29 @@ public class AttributePart {
             if (inputElement instanceof Module)
                 return ((Module) inputElement).getAttributes();
             return null;
+        }
+    };
+
+    private ViewerFilter viewerFilter = new ViewerFilter() {
+        @Override
+        public boolean select(Viewer viewer, Object parentElement, Object element) {
+            String match = ".*" + filter.getText() + ".*";
+            Attribute attr = (Attribute) element;
+            if (attr.getName().matches(match) || attr.getValuePretty().matches(match))
+                return true;
+            return false;
+        }
+    };
+
+    private KeyListener keyListener = new KeyListener() {
+        @Override
+        public void keyReleased(KeyEvent e) {
+            viewer.refresh();
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            // Nothing to do
         }
     };
 
@@ -146,10 +175,18 @@ public class AttributePart {
 
     @PostConstruct
     public void createComposite(Composite parent) {
+        parent.setLayout(new GridLayout());
+        filter = new Text(parent, SWT.BORDER | SWT.SEARCH);
+        filter.setMessage("search");
+        filter.addKeyListener(keyListener);
+        filter.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+
         Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         viewer = new TableViewer(composite, SWT.BORDER);
         viewer.setContentProvider(contentProvider);
+        viewer.addFilter(viewerFilter);
         viewer.addSelectionChangedListener(viewerSelectionListener);
 
         attrColumn = new TableViewerColumn(viewer, SWT.NONE);
