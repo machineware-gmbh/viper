@@ -43,11 +43,14 @@
     </children>
     <mainMenu xmi:id="_6wlLicgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.main.menu">
       <children xsi:type="menu:Menu" xmi:id="_6wlLisgZEeSyMNYR5xypkQ" elementId="file" label="File">
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_cSCAUJsEEeiKHfwWwPWdxA" elementId="org.vcml.explorer.ui.handledmenuitem.connect" label="Connect..." iconURI="platform:/plugin/org.vcml.explorer.ui/icons/add.gif" command="_K4BAgJsEEeiKHfwWwPWdxA"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_cSCAUJsEEeiKHfwWwPWdxA" elementId="org.vcml.explorer.ui.handledmenuitem.connect" label="New Remote Session..." iconURI="platform:/plugin/org.vcml.explorer.ui/icons/new.png" command="_hUHzgJ8dEeisGejvoUuV6Q"/>
         <children xsi:type="menu:MenuSeparator" xmi:id="_ewXrAJsEEeiKHfwWwPWdxA" elementId="org.vcml.explorer.ui.menuseparator.0"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_6wlLjcgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.handleditem.quit" label="Quit" command="_6wlLfMgZEeSyMNYR5xypkQ"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_6wlLjcgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.handleditem.exit" label="Exit" command="_6wlLfMgZEeSyMNYR5xypkQ"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_AW4mMJvXEeiPnquvxDS4KQ" elementId="org.vcml.explorer.ui.menu.simulation" label="Simulation">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_MJXhcJ8nEei1Z-Fg8AuGDQ" elementId="org.vcml.explorer.ui.handledmenuitem.connect" label="Connect to Session" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/initiator.png" command="_K4BAgJsEEeiKHfwWwPWdxA"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_QB6gUJ8nEei1Z-Fg8AuGDQ" elementId="org.vcml.explorer.ui.handledmenuitem.disconnect" label="Disconnect from Session" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/target.png" command="_sNny4JvLEeiPnquvxDS4KQ"/>
+        <children xsi:type="menu:MenuSeparator" xmi:id="_TdkH0J8nEei1Z-Fg8AuGDQ" elementId="org.vcml.explorer.ui.menuseparator.1"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_LjkhEJvXEeiPnquvxDS4KQ" elementId="org.vcml.explorer.ui.handledmenuitem.runsimulation" label="Run Simulation" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/resume.gif" command="_BkCzUJvLEeiPnquvxDS4KQ"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_QasoEJvXEeiPnquvxDS4KQ" elementId="org.vcml.explorer.ui.handledmenuitem.stopsimulation" label="Stop Simulation" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/stop.gif" command="_EmzZsJvLEeiPnquvxDS4KQ"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_UGLbUJvXEeiPnquvxDS4KQ" elementId="org.vcml.explorer.ui.handledmenuitem.quitsimulation" label="Quit Simulation" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/terminate.gif" command="_IsYvAJvLEeiPnquvxDS4KQ"/>
