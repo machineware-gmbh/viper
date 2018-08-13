@@ -19,7 +19,7 @@
             </children>
             <children xsi:type="advanced:Area" xmi:id="_Gy57cJo3EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.area.middle" containerData="50"/>
             <children xsi:type="basic:PartStack" xmi:id="_HXEYcJo3EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partstack.right" containerData="25" selectedElement="_J1054Jo3EeiPmt14w3Wkkg">
-              <children xsi:type="basic:Part" xmi:id="_J1054Jo3EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.part.attributes" containerData="25" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.parts.AttributePart" label="Attributes" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/attribute.gif"/>
+              <children xsi:type="basic:Part" xmi:id="_J1054Jo3EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.part.attributes" containerData="25" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.parts.AttributePart" label="Attributes" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/attribute.gif" closeable="true"/>
             </children>
           </children>
           <children xsi:type="basic:PartSashContainer" xmi:id="_2u6TYJo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partsashcontainer.2" containerData="30" horizontal="true">
@@ -40,7 +40,7 @@
               </children>
             </children>
             <children xsi:type="basic:PartStack" xmi:id="_7pRUkJo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partstack.bottomright" containerData="50" selectedElement="_-s1MMJo2EeiPmt14w3Wkkg">
-              <children xsi:type="basic:Part" xmi:id="_-s1MMJo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.part.console" label="Console"/>
+              <children xsi:type="basic:Part" xmi:id="_-s1MMJo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.part.console" label="Console" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/consoles.png" closeable="true"/>
             </children>
           </children>
         </children>
@@ -52,6 +52,20 @@
         <children xsi:type="menu:MenuSeparator" xmi:id="_ewXrAJsEEeiKHfwWwPWdxA" elementId="org.vcml.explorer.ui.menuseparator.0"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_6wlLjcgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.handleditem.exit" label="Exit" command="_6wlLfMgZEeSyMNYR5xypkQ"/>
       </children>
+      <children xsi:type="menu:Menu" xmi:id="_-tHzEJvWEeiPnquvxDS4KQ" elementId="org.vcml.explorer.ui.menu.view" label="View">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_KpHJcJ9EEeih4YFmF9N0OA" elementId="org.vcml.explorer.ui.handledmenuitem.showSessions" label="Sessions" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/session_alt.gif" command="_BJks4J9EEeih4YFmF9N0OA">
+          <parameters xmi:id="_bItIYJ9EEeih4YFmF9N0OA" elementId="org.vcml.explorer.ui.handledmenuitem.showSessions.parameter1" name="org.vcml.explorer.ui.command.show.parameter1" value="org.vcml.explorer.ui.part.sessions"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_LBJO8J9EEeih4YFmF9N0OA" elementId="org.vcml.explorer.ui.handledmenuitem.showHierarchy" label="Hierarchy" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/hierarchy.gif" command="_BJks4J9EEeih4YFmF9N0OA">
+          <parameters xmi:id="_ct9O8J9EEeih4YFmF9N0OA" elementId="org.vcml.explorer.ui.handledmenuitem.showHierarchy.parameter1" name="org.vcml.explorer.ui.command.show.parameter1" value="org.vcml.explorer.ui.part.hierarchy"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_LZKtYJ9EEeih4YFmF9N0OA" elementId="org.vcml.explorer.ui.handledmenuitem.showAttributes" label="Attributes" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/attribute.gif" command="_BJks4J9EEeih4YFmF9N0OA">
+          <parameters xmi:id="_d8s6AJ9EEeih4YFmF9N0OA" elementId="org.vcml.explorer.ui.handledmenuitem.showAttributes.parameter1" name="org.vcml.explorer.ui.command.show.parameter1" value="org.vcml.explorer.ui.part.attributes"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_Lsxl4J9EEeih4YFmF9N0OA" elementId="org.vcml.explorer.ui.handledmenuitem.showConsoles" label="Consoles" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/consoles.png" command="_BJks4J9EEeih4YFmF9N0OA">
+          <parameters xmi:id="_fSUCEJ9EEeih4YFmF9N0OA" elementId="org.vcml.explorer.ui.handledmenuitem.showConsoles.parameter1" name="org.vcml.explorer.ui.command.show.parameter1" value="org.vcml.explorer.ui.part.consoles"/>
+        </children>
+      </children>
       <children xsi:type="menu:Menu" xmi:id="_AW4mMJvXEeiPnquvxDS4KQ" elementId="org.vcml.explorer.ui.menu.simulation" label="Simulation">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_MJXhcJ8nEei1Z-Fg8AuGDQ" elementId="org.vcml.explorer.ui.handledmenuitem.connect" label="Connect to Session" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/initiator.png" command="_K4BAgJsEEeiKHfwWwPWdxA"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_QB6gUJ8nEei1Z-Fg8AuGDQ" elementId="org.vcml.explorer.ui.handledmenuitem.disconnect" label="Disconnect from Session" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/target.png" command="_sNny4JvLEeiPnquvxDS4KQ"/>
@@ -61,7 +75,6 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_UGLbUJvXEeiPnquvxDS4KQ" elementId="org.vcml.explorer.ui.handledmenuitem.quitsimulation" label="Quit Simulation" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/terminate.gif" command="_IsYvAJvLEeiPnquvxDS4KQ"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_YE-MIJvXEeiPnquvxDS4KQ" elementId="org.vcml.explorer.ui.handledmenuitem.stepsimulation" label="Step Simulation" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/step.gif" command="_-5i78JvKEeiPnquvxDS4KQ"/>
       </children>
-      <children xsi:type="menu:Menu" xmi:id="_-tHzEJvWEeiPnquvxDS4KQ" elementId="org.vcml.explorer.ui.menu.window" label="Window"/>
       <children xsi:type="menu:Menu" xmi:id="_6wlLjsgZEeSyMNYR5xypkQ" elementId="help" label="Help">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_6wlLj8gZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.handleditem.about" label="About" command="_6wlLhsgZEeSyMNYR5xypkQ"/>
       </children>
@@ -92,6 +105,7 @@
   <handlers xmi:id="_Ph7qgJvLEeiPnquvxDS4KQ" elementId="org.vcml.explorer.ui.handler.stop" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.handlers.StopHandler" command="_EmzZsJvLEeiPnquvxDS4KQ"/>
   <handlers xmi:id="_gMyeQJvLEeiPnquvxDS4KQ" elementId="org.vcml.explorer.ui.handler.quit" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.handlers.QuitHandler" command="_IsYvAJvLEeiPnquvxDS4KQ"/>
   <handlers xmi:id="_9AGuEJvKEeiPnquvxDS4KQ" elementId="org.vcml.explorer.ui.handler.step" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.handlers.StepHandler" command="_-5i78JvKEeiPnquvxDS4KQ"/>
+  <handlers xmi:id="_4AsnYJ9EEeih4YFmF9N0OA" elementId="org.vcml.explorer.ui.handler.show" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.handlers.ShowHandler" command="_BJks4J9EEeih4YFmF9N0OA"/>
   <bindingTables xmi:id="_6wlLfsgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.bindingtable" bindingContext="_6wlLecgZEeSyMNYR5xypkQ">
     <bindings xmi:id="_6wlLf8gZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.keybinding.m1q" keySequence="M1+Q" command="_6wlLfMgZEeSyMNYR5xypkQ"/>
     <bindings xmi:id="_6wlLgsgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.keybinding.m1o" keySequence="M1+O"/>
@@ -114,6 +128,9 @@
   <commands xmi:id="_UNgwUJ8iEei1Z-Fg8AuGDQ" elementId="org.vcml.explorer.ui.command.expandAll" commandName="Expand All"/>
   <commands xmi:id="_WGHQsJ8iEei1Z-Fg8AuGDQ" elementId="org.vcml.explorer.ui.command.collapseAll" commandName="Collapse All"/>
   <commands xmi:id="_9r6M0J87Eeih4YFmF9N0OA" elementId="org.vcml.explorer.ui.command.refresh" commandName="Refresh"/>
+  <commands xmi:id="_BJks4J9EEeih4YFmF9N0OA" elementId="org.vcml.explorer.ui.command.show" commandName="Show">
+    <parameters xmi:id="_C7wcMJ9EEeih4YFmF9N0OA" elementId="org.vcml.explorer.ui.command.show.parameter1" name="View" optional="false"/>
+  </commands>
   <addons xmi:id="_6wlLcsgZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_6wlLc8gZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_6wlLdMgZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
