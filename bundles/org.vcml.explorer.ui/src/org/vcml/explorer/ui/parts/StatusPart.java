@@ -169,7 +169,7 @@ public class StatusPart {
         selectionLabel.setImage(Resources.getImage("icons/attribute.gif"));
         selectionLabel.setToolTipText("Currently Selected Object");
 
-        updateSessionStatus();
+        updateStatus();
 
         selectionService.addSelectionListener(selectionListener);
         sessionService.addSessionChangeListener(sessionListener);
