@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.vcml.explorer.ui.Utils;
+import org.vcml.explorer.ui.Resources;
 import org.vcml.session.Command;
 import org.vcml.session.Module;
 import org.vcml.session.SessionException;
@@ -136,7 +136,7 @@ public class CommandDialog extends Dialog {
         commandBoxLayout.marginHeight = 5;
         commandBox.setLayout(commandBoxLayout);
         commandBoxInput = new Text(commandBox, SWT.SINGLE | SWT.BORDER);
-        commandBoxInput.setFont(Utils.getMonoSpaceFont());
+        commandBoxInput.setFont(Resources.getMonoSpaceFont());
         commandBoxInput.setText(command.getName());
         commandBoxInput.setSelection(command.getName().length());
         commandBoxInput.addModifyListener(modifyListener);
@@ -151,7 +151,7 @@ public class CommandDialog extends Dialog {
         descriptionBoxLayout.marginWidth = 5;
         descriptionBox.setLayout(descriptionBoxLayout);
         descriptionBoxText = new Text(descriptionBox, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.V_SCROLL);
-        descriptionBoxText.setFont(Utils.getMonoSpaceFont());
+        descriptionBoxText.setFont(Resources.getMonoSpaceFont());
         descriptionBoxText.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 
         Group responseBox = new Group(container, SWT.NONE);
@@ -162,7 +162,7 @@ public class CommandDialog extends Dialog {
         responseBoxLayout.marginHeight = 5;
         responseBox.setLayout(responseBoxLayout);
         responseBoxText = new Text(responseBox, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.V_SCROLL);
-        responseBoxText.setFont(Utils.getMonoSpaceFont());
+        responseBoxText.setFont(Resources.getMonoSpaceFont());
         responseBoxText.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 
         return container;
@@ -182,7 +182,7 @@ public class CommandDialog extends Dialog {
 
     @Override
     protected void configureShell(Shell newShell) {
-        newShell.setImage(Utils.getImage("chip.png"));
+        newShell.setImage(Resources.getImage("icons/chip.png"));
         newShell.setMinimumSize(new Point(500, 400));
         super.configureShell(newShell);
         newShell.setText("Execute module command on " + module.getName());

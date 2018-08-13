@@ -25,6 +25,12 @@ import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.e4.ui.workbench.modeling.ISelectionListener;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
+
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -33,15 +39,15 @@ import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
-import org.vcml.explorer.ui.Utils;
+
+import org.vcml.explorer.ui.Resources;
 import org.vcml.explorer.ui.services.ISessionService;
 import org.vcml.session.Attribute;
 import org.vcml.session.Module;
@@ -78,6 +84,14 @@ public class AttributePart {
         }
     };
 
+    private ISelectionChangedListener viewerSelectionListener = new ISelectionChangedListener() {
+        @Override
+        public void selectionChanged(SelectionChangedEvent event) {
+            IStructuredSelection selection = viewer.getStructuredSelection();
+            selectionService.setSelection(selection.getFirstElement());
+        }
+    };
+
     private IStructuredContentProvider contentProvider = new IStructuredContentProvider() {
         @Override
         public Object[] getElements(Object inputElement) {
@@ -95,7 +109,7 @@ public class AttributePart {
 
         @Override
         public Font getFont(Object element) {
-            return Utils.getMonoSpaceFont(); // JFaceResources.getFont?
+            return Resources.getMonoSpaceFont();
         }
 
         @Override
@@ -112,7 +126,7 @@ public class AttributePart {
 
         @Override
         public Font getFont(Object element) {
-            return Utils.getMonoSpaceFont(); // JFaceResources.getFont?
+            return Resources.getMonoSpaceFont();
         }
 
         @Override
@@ -132,13 +146,11 @@ public class AttributePart {
 
     @PostConstruct
     public void createComposite(Composite parent) {
-        sessionService.addSessionChangeListener(sessionListener);
-        selectionService.addSelectionListener(selectionListener);
-
         Composite composite = new Composite(parent, SWT.NONE);
 
         viewer = new TableViewer(composite, SWT.BORDER);
         viewer.setContentProvider(contentProvider);
+        viewer.addSelectionChangedListener(viewerSelectionListener);
 
         attrColumn = new TableViewerColumn(viewer, SWT.NONE);
         attrColumn.getColumn().setText("Attribute");
@@ -186,6 +198,9 @@ public class AttributePart {
         table.setLinesVisible(true);
 
         ColumnViewerToolTipSupport.enableFor(viewer);
+
+        sessionService.addSessionChangeListener(sessionListener);
+        selectionService.addSelectionListener(selectionListener);
     }
 
     @Focus

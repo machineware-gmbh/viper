@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.vcml.explorer.ui.Utils;
+import org.vcml.explorer.ui.Resources;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Spinner;
 
@@ -107,7 +107,7 @@ public class ConnectDialog extends TitleAreaDialog {
         super.create();
         setTitle("Connect to simulator on remote host");
         setMessage(MSG_NONAME, IMessageProvider.INFORMATION);
-        setTitleImage(Utils.getImage("add.gif"));
+        setTitleImage(Resources.getImage("icons/add.gif"));
     }
 
     public String getURI() {

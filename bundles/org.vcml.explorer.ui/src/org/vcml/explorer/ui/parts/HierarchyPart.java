@@ -21,18 +21,11 @@ package org.vcml.explorer.ui.parts;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.CellLabelProvider;
-import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
+import org.eclipse.e4.ui.workbench.modeling.ISelectionListener;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
@@ -49,45 +42,30 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.e4.ui.di.Focus;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
-import org.eclipse.e4.ui.workbench.modeling.ISelectionListener;
+
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.CellLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 import org.vcml.session.Command;
 import org.vcml.session.Module;
 import org.vcml.session.Session;
 import org.vcml.session.SessionException;
-import org.vcml.explorer.ui.Utils;
+
+import org.vcml.explorer.ui.Resources;
 import org.vcml.explorer.ui.dialogs.CommandDialog;
-//import org.vcml.vseui.CommandResponseDialog;
 import org.vcml.explorer.ui.services.ISessionService;
 
 public class HierarchyPart {
-
-    private final Image IMAGE_GENERIC = Utils.getImage("chip.png");
-    private final Image IMAGE_SC_OBJECT = Utils.getImage("chip.png");
-    private final Image IMAGE_SC_MODULE = Utils.getImage("chip.png");
-    private final Image IMAGE_SC_SIGNAL = Utils.getImage("signal.png");
-    private final Image IMAGE_SC_PORT = Utils.getImage("out.png");
-    private final Image IMAGE_SC_EXPORT = Utils.getImage("in.png");
-    private final Image IMAGE_SC_OUT = Utils.getImage("out.png");
-    private final Image IMAGE_SC_IN = Utils.getImage("in.png");
-    private final Image IMAGE_SC_METHOD_PROCESS = Utils.getImage("method.gif");
-    private final Image IMAGE_SC_THREAD_PROCESS = Utils.getImage("thread.gif");
-    private final Image IMAGE_VCL_IN_PORT = Utils.getImage("in.png");
-    private final Image IMAGE_VCL_OUT_PORT = Utils.getImage("out.png");
-    private final Image IMAGE_VCL_MASTER_SOCKET = Utils.getImage("initiator.png");
-    private final Image IMAGE_VCL_SLAVE_SOCKET = Utils.getImage("target.png");
-    private final Image IMAGE_VCML_COMPONENT = Utils.getImage("chip.png");
-    private final Image IMAGE_VCL_PROCESSOR = Utils.getImage("chip.png");
-    private final Image IMAGE_VCL_BUS = Utils.getImage("bus.gif");
-    private final Image IMAGE_VCL_ROM = Utils.getImage("chip.png");
-    private final Image IMAGE_VCL_RAM = Utils.getImage("chip.png");
-    private final Image IMAGE_VCL_PERIPHERAL = Utils.getImage("chip.png");
-    private final Image IMAGE_VCL_UART = Utils.getImage("chip.png");
-    private final Image IMAGE_VCL_ETHERNET = Utils.getImage("chip.png");
-    private final Image IMAGE_VCL_XBAR = Utils.getImage("chip.png");
 
     @Inject
     private ISessionService sessionService;
@@ -102,23 +80,16 @@ public class HierarchyPart {
     private ITreeContentProvider contentProvider = new ITreeContentProvider() {
         @Override
         public boolean hasChildren(Object element) {
-            if (!(element instanceof Module))
-                return false;
             return ((Module) element).getChildren().length > 0;
         }
 
         @Override
         public Object getParent(Object element) {
-            if (!(element instanceof Module))
-                return false;
             return ((Module) element).getParent();
         }
 
         @Override
         public Object[] getElements(Object inputElement) {
-            if (!(inputElement instanceof Session))
-                return new Object[0];
-
             Session session = (Session) inputElement;
             if (!session.isConnected())
                 return new Object[0];
@@ -136,8 +107,6 @@ public class HierarchyPart {
 
         @Override
         public Object[] getChildren(Object parentElement) {
-            if (!(parentElement instanceof Module))
-                return new Object[0];
             return ((Module) parentElement).getChildren();
         }
     };
@@ -149,55 +118,7 @@ public class HierarchyPart {
         }
 
         public Image getImage(Object element) {
-            Module module = (Module) element;
-            switch (module.getKind()) {
-            case Module.KIND_SC_OBJECT:
-                return IMAGE_SC_OBJECT;
-            case Module.KIND_SC_MODULE:
-                return IMAGE_SC_MODULE;
-            case Module.KIND_SC_SIGNAL:
-                return IMAGE_SC_SIGNAL;
-            case Module.KIND_SC_PORT:
-                return IMAGE_SC_PORT;
-            case Module.KIND_SC_EXPORT:
-                return IMAGE_SC_EXPORT;
-            case Module.KIND_SC_OUT:
-                return IMAGE_SC_OUT;
-            case Module.KIND_SC_IN:
-                return IMAGE_SC_IN;
-            case Module.KIND_SC_METHOD_PROCESS:
-                return IMAGE_SC_METHOD_PROCESS;
-            case Module.KIND_SC_THREAD_PROCESS:
-                return IMAGE_SC_THREAD_PROCESS;
-            case Module.KIND_VCML_IN_PORT:
-                return IMAGE_VCL_IN_PORT;
-            case Module.KIND_VCML_OUT_PORT:
-                return IMAGE_VCL_OUT_PORT;
-            case Module.KIND_VCML_MASTER_SOCKET:
-                return IMAGE_VCL_MASTER_SOCKET;
-            case Module.KIND_VCML_SLAVE_SOCKET:
-                return IMAGE_VCL_SLAVE_SOCKET;
-            case Module.KIND_VCML_COMPONENT:
-                return IMAGE_VCML_COMPONENT;
-            case Module.KIND_VCML_PROCESSOR:
-                return IMAGE_VCL_PROCESSOR;
-            case Module.KIND_VCML_BUS:
-                return IMAGE_VCL_BUS;
-            case Module.KIND_VCML_ROM:
-                return IMAGE_VCL_ROM;
-            case Module.KIND_VCML_RAM:
-                return IMAGE_VCL_RAM;
-            case Module.KIND_VCML_XBAR:
-                return IMAGE_VCL_XBAR;
-            case Module.KIND_VCML_PERIPHERAL:
-                return IMAGE_VCL_PERIPHERAL;
-            case Module.KIND_VCML_UART:
-                return IMAGE_VCL_UART;
-            case Module.KIND_VCML_ETHERNET:
-                return IMAGE_VCL_ETHERNET;
-            default:
-                return IMAGE_GENERIC;
-            }
+            return Resources.getImageFor(element);
         }
 
         @Override
@@ -208,7 +129,7 @@ public class HierarchyPart {
 
         @Override
         public Font getToolTipFont(Object element) {
-            return Utils.getMonoSpaceFont();
+            return Resources.getMonoSpaceFont();
         }
 
         @Override
@@ -232,7 +153,6 @@ public class HierarchyPart {
     private IPropertyChangeListener sessionListener = new IPropertyChangeListener() {
         @Override
         public void propertyChange(PropertyChangeEvent event) {
-            // String property = event.getProperty();
             Session session = (Session) event.getNewValue();
             refresh(session);
         }
@@ -246,7 +166,7 @@ public class HierarchyPart {
         }
     };
 
-    private ISelectionChangedListener selectionChangedListener = new ISelectionChangedListener() {
+    private ISelectionChangedListener viewerSelectionListener = new ISelectionChangedListener() {
         @Override
         public void selectionChanged(SelectionChangedEvent event) {
             IStructuredSelection selection = viewer.getStructuredSelection();
@@ -383,14 +303,11 @@ public class HierarchyPart {
 
     @PostConstruct
     public void createComposite(Composite parent) {
-        sessionService.addSessionChangeListener(sessionListener);
-        selectionService.addSelectionListener(selectionListener);
-
         viewer = new TreeViewer(parent, SWT.BORDER | SWT.MULTI);
         viewer.setContentProvider(contentProvider);
         viewer.setLabelProvider(labelProvider);
         viewer.setComparator(viewerComparator);
-        viewer.addSelectionChangedListener(selectionChangedListener);
+        viewer.addSelectionChangedListener(viewerSelectionListener);
 
         GridLayout layout = new GridLayout();
         layout.makeColumnsEqualWidth = true;
@@ -406,6 +323,9 @@ public class HierarchyPart {
         tree.setLayoutData(data);
         tree.setMenu(buildContextMenu(tree));
         ColumnViewerToolTipSupport.enableFor(viewer);
+
+        sessionService.addSessionChangeListener(sessionListener);
+        selectionService.addSelectionListener(selectionListener);
     }
 
     @Focus

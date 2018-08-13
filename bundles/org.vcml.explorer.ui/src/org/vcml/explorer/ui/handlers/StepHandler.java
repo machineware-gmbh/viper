@@ -38,8 +38,6 @@ public class StepHandler {
     @Execute
     public void execute(Shell shell, ISessionService service, IEclipseContext context) {
         Session session = service.currentSession();
-        System.out.println("step");
         service.stepSimulation(session);
-        System.out.println("done");
     }
 }

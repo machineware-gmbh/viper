@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import java.util.Iterator;
 
 import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -52,22 +53,25 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.vcml.explorer.ui.Utils;
+import org.vcml.explorer.ui.Resources;
 import org.vcml.explorer.ui.dialogs.ConnectDialog;
 import org.vcml.explorer.ui.services.ISessionService;
 import org.vcml.session.Session;
 
 public class SessionPart {
 
-    private final Image CONNECTED = Utils.getImage("session_alt.gif");
-    private final Image DISCONNECTED = Utils.getImage("session.gif");
-    private final Image IMAGE_RUN = Utils.getImage("run.gif");
-    private final Image IMAGE_STOP = Utils.getImage("stop.gif");
-    private final Image IMAGE_STEP = Utils.getImage("step.gif");
-    private final Image IMAGE_KILL = Utils.getImage("terminate.gif");
+    private final Image CONNECTED = Resources.getImage("icons/session_alt.gif");
+    private final Image DISCONNECTED = Resources.getImage("icons/session.gif");
+    private final Image IMAGE_RUN = Resources.getImage("icons/run.gif");
+    private final Image IMAGE_STOP = Resources.getImage("icons/stop.gif");
+    private final Image IMAGE_STEP = Resources.getImage("icons/step.gif");
+    private final Image IMAGE_KILL = Resources.getImage("icons/terminate.gif");
 
     @Inject
     private ISessionService sessionService;
+
+    @Inject
+    private ESelectionService selectionService;
 
     private TableViewer viewer;
 
@@ -96,19 +100,12 @@ public class SessionPart {
     private ISelectionChangedListener selectionListener = new ISelectionChangedListener() {
         @Override
         public void selectionChanged(SelectionChangedEvent event) {
-            ISelection selection = event.getSelection();
-            if ((selection == null) || (selection.isEmpty()) || !(selection instanceof IStructuredSelection)) {
+            Object selection = viewer.getStructuredSelection().getFirstElement();
+            selectionService.setSelection(selection);
+            if (selection instanceof Session)
+                sessionService.selectSession((Session) selection);
+            else
                 sessionService.selectSession(null);
-                return;
-            }
-
-            IStructuredSelection structured = (IStructuredSelection) selection;
-            Iterator<?> it = structured.iterator();
-            while (it.hasNext()) {
-                Object selected = it.next();
-                if (selected instanceof Session)
-                    sessionService.selectSession((Session) selected);
-            }
         }
     };
 
