@@ -7,11 +7,13 @@
           <children xsi:type="basic:PartSashContainer" xmi:id="_2EHp8Jo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partsashcontainer.1" containerData="70" horizontal="true">
             <children xsi:type="basic:PartStack" xmi:id="_CnqqEJo3EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partstack.left" containerData="25" selectedElement="_H7mo4Jo3EeiPmt14w3Wkkg">
               <children xsi:type="basic:Part" xmi:id="_H7mo4Jo3EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.part.hierarchy" containerData="25" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.parts.HierarchyPart" label="Hierarchy" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/hierarchy.gif" closeable="true">
+                <handlers xmi:id="_JJYgQJ89Eeih4YFmF9N0OA" elementId="org.vcml.explorer.ui.handler.hierarchy.refresh" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.handlers.RefreshHierarchyHandler" command="_9r6M0J87Eeih4YFmF9N0OA"/>
                 <handlers xmi:id="_jxZU8J8iEei1Z-Fg8AuGDQ" elementId="org.vcml.explorer.ui.handler.hierarchy.expandAll" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.handlers.HierarchyExpandAllHandler" command="_UNgwUJ8iEei1Z-Fg8AuGDQ"/>
                 <handlers xmi:id="_n3aIEJ8iEei1Z-Fg8AuGDQ" elementId="org.vcml.explorer.ui.handler.hierarchy.collapseAll" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.handlers.HierarchyCollapseAllHandler" command="_WGHQsJ8iEei1Z-Fg8AuGDQ"/>
                 <toolbar xmi:id="_ZjR7IJ8iEei1Z-Fg8AuGDQ" elementId="org.vcml.explorer.ui.toolbar.1">
                   <children xsi:type="menu:HandledToolItem" xmi:id="_aPgH8J8iEei1Z-Fg8AuGDQ" elementId="org.vcml.explorer.ui.handledtoolitem.hierarchy.expandAll" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/expandall.png" tooltip="Expand All" command="_UNgwUJ8iEei1Z-Fg8AuGDQ"/>
                   <children xsi:type="menu:HandledToolItem" xmi:id="_al7q8J8iEei1Z-Fg8AuGDQ" elementId="org.vcml.explorer.ui.handledtoolitem.hierarchy.collapseAll" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/collapseall.png" tooltip="Collapse All" command="_WGHQsJ8iEei1Z-Fg8AuGDQ"/>
+                  <children xsi:type="menu:HandledToolItem" xmi:id="_G2uWkJ88Eeih4YFmF9N0OA" elementId="org.vcml.explorer.ui.handledtoolitem.hierarchy.refresh" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/refresh_alt.gif" tooltip="Refresh Hierarchy" command="_9r6M0J87Eeih4YFmF9N0OA"/>
                 </toolbar>
               </children>
             </children>
@@ -23,14 +25,17 @@
           <children xsi:type="basic:PartSashContainer" xmi:id="_2u6TYJo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partsashcontainer.2" containerData="30" horizontal="true">
             <children xsi:type="basic:PartStack" xmi:id="_55cVsJo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partstack.bottomleft" containerData="50" selectedElement="_8bUckJo2EeiPmt14w3Wkkg">
               <children xsi:type="basic:Part" xmi:id="_8bUckJo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.part.sessions" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.parts.SessionPart" label="Sessions" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/sessions.gif" closeable="true">
+                <handlers xmi:id="_-zecYJ88Eeih4YFmF9N0OA" elementId="org.vcml.explorer.ui.handler.sessions.refresh" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.handlers.RefreshSessionsHandler" command="_9r6M0J87Eeih4YFmF9N0OA"/>
                 <toolbar xmi:id="_GV5UUJ7iEeioftTCeKqEPQ" elementId="org.vcml.explorer.ui.toolbar.0">
-                  <children xsi:type="menu:HandledToolItem" xmi:id="_s2zOUJ7iEeioftTCeKqEPQ" elementId="org.vcml.explorer.ui.handledtoolitem.session.connect" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/initiator.png" tooltip="Connect to Session" command="_K4BAgJsEEeiKHfwWwPWdxA"/>
-                  <children xsi:type="menu:HandledToolItem" xmi:id="_1KlpcJ7iEeioftTCeKqEPQ" elementId="org.vcml.explorer.ui.handledtoolitem.session.disconnect" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/target.png" tooltip="Disconnect from Session" command="_sNny4JvLEeiPnquvxDS4KQ"/>
-                  <children xsi:type="menu:ToolBarSeparator" xmi:id="_6_53AJ7iEeioftTCeKqEPQ" elementId="org.vcml.explorer.ui.toolbarseparator.session.separator"/>
-                  <children xsi:type="menu:HandledToolItem" xmi:id="_nvGUsJ7iEeioftTCeKqEPQ" elementId="org.vcml.explorer.ui.handledtoolitem.session.run" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/resume.gif" tooltip="Run Simulation" command="_BkCzUJvLEeiPnquvxDS4KQ"/>
-                  <children xsi:type="menu:HandledToolItem" xmi:id="_i0JdoJ7iEeioftTCeKqEPQ" elementId="org.vcml.explorer.ui.handledtoolitem.session.stop" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/stop.gif" tooltip="Stop Simulation" command="_EmzZsJvLEeiPnquvxDS4KQ"/>
-                  <children xsi:type="menu:HandledToolItem" xmi:id="_cWEm8J7iEeioftTCeKqEPQ" elementId="org.vcml.explorer.ui.handledtoolitem.session.quit" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/terminate.gif" tooltip="Quit Simulation" command="_IsYvAJvLEeiPnquvxDS4KQ"/>
-                  <children xsi:type="menu:HandledToolItem" xmi:id="_HQeGMJ7iEeioftTCeKqEPQ" elementId="org.vcml.explorer.ui.handledtoolitem.session.step" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/step.gif" tooltip="Step Simulation" command="_-5i78JvKEeiPnquvxDS4KQ"/>
+                  <children xsi:type="menu:HandledToolItem" xmi:id="_s2zOUJ7iEeioftTCeKqEPQ" elementId="org.vcml.explorer.ui.handledtoolitem.sessions.connect" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/initiator.png" tooltip="Connect to Session" command="_K4BAgJsEEeiKHfwWwPWdxA"/>
+                  <children xsi:type="menu:HandledToolItem" xmi:id="_1KlpcJ7iEeioftTCeKqEPQ" elementId="org.vcml.explorer.ui.handledtoolitem.sessions.disconnect" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/target.png" tooltip="Disconnect from Session" command="_sNny4JvLEeiPnquvxDS4KQ"/>
+                  <children xsi:type="menu:ToolBarSeparator" xmi:id="_6_53AJ7iEeioftTCeKqEPQ" elementId="org.vcml.explorer.ui.toolbarseparator.sessions.separator"/>
+                  <children xsi:type="menu:HandledToolItem" xmi:id="_nvGUsJ7iEeioftTCeKqEPQ" elementId="org.vcml.explorer.ui.handledtoolitem.sessions.run" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/resume.gif" tooltip="Run Simulation" command="_BkCzUJvLEeiPnquvxDS4KQ"/>
+                  <children xsi:type="menu:HandledToolItem" xmi:id="_i0JdoJ7iEeioftTCeKqEPQ" elementId="org.vcml.explorer.ui.handledtoolitem.sessions.stop" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/stop.gif" tooltip="Stop Simulation" command="_EmzZsJvLEeiPnquvxDS4KQ"/>
+                  <children xsi:type="menu:HandledToolItem" xmi:id="_cWEm8J7iEeioftTCeKqEPQ" elementId="org.vcml.explorer.ui.handledtoolitem.sessions.quit" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/terminate.gif" tooltip="Quit Simulation" command="_IsYvAJvLEeiPnquvxDS4KQ"/>
+                  <children xsi:type="menu:HandledToolItem" xmi:id="_HQeGMJ7iEeioftTCeKqEPQ" elementId="org.vcml.explorer.ui.handledtoolitem.sessions.step" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/step.gif" tooltip="Step Simulation" command="_-5i78JvKEeiPnquvxDS4KQ"/>
+                  <children xsi:type="menu:ToolBarSeparator" xmi:id="__FeV4J89Eeih4YFmF9N0OA" elementId="org.vcml.explorer.ui.toolbarseparator.sessions.separator2"/>
+                  <children xsi:type="menu:HandledToolItem" xmi:id="_RplcMJ88Eeih4YFmF9N0OA" elementId="org.vcml.explorer.ui.handledtoolitem.sessions.refresh" label="Refresh Sessions" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/refresh_alt.gif" command="_9r6M0J87Eeih4YFmF9N0OA"/>
                 </toolbar>
               </children>
             </children>
@@ -108,6 +113,7 @@
   <commands xmi:id="_-5i78JvKEeiPnquvxDS4KQ" elementId="org.vcml.explorer.ui.command.step" commandName="Step" description=""/>
   <commands xmi:id="_UNgwUJ8iEei1Z-Fg8AuGDQ" elementId="org.vcml.explorer.ui.command.expandAll" commandName="Expand All"/>
   <commands xmi:id="_WGHQsJ8iEei1Z-Fg8AuGDQ" elementId="org.vcml.explorer.ui.command.collapseAll" commandName="Collapse All"/>
+  <commands xmi:id="_9r6M0J87Eeih4YFmF9N0OA" elementId="org.vcml.explorer.ui.command.refresh" commandName="Refresh"/>
   <addons xmi:id="_6wlLcsgZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_6wlLc8gZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_6wlLdMgZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>

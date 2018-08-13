@@ -112,6 +112,8 @@ public class Session {
     }
 
     private void updateTime() throws SessionException {
+        simTime = Double.NaN;
+        deltaCycle = -1;
         Response timeResp = protocol.command(RemoteSerialProtocol.TIME);
         simTime = Double.parseDouble(timeResp.toString());
         Response dcycResp = protocol.command(RemoteSerialProtocol.DCYC);
@@ -154,6 +156,11 @@ public class Session {
         hierarchy = null;
         protocol.close();
         protocol = null;
+    }
+
+    public void refresh() throws SessionException {
+        hierarchy = null; // forces recreation during next call to getTopLevelObjects
+        updateTime();
     }
 
     public Module[] getTopLevelObjects() throws SessionException {
