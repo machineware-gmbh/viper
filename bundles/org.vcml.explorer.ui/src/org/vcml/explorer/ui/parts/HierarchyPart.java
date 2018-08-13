@@ -154,7 +154,7 @@ public class HierarchyPart {
         @Override
         public void propertyChange(PropertyChangeEvent event) {
             Session session = (Session) event.getNewValue();
-            refresh(session);
+            viewer.setInput(session);
         }
     };
 
@@ -333,9 +333,12 @@ public class HierarchyPart {
         viewer.getTree().setFocus();
     }
 
-    private void refresh(Session session) {
-        // if (session != null)
-        viewer.setInput(session);
+    public void collapseAll() {
+        viewer.collapseAll();
+    }
+
+    public void expandAll() {
+        viewer.expandAll();
     }
 
     public void dispose() {

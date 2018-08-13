@@ -18,24 +18,17 @@
 
 package org.vcml.explorer.ui.handlers;
 
-import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
+import org.vcml.explorer.ui.dialogs.ConnectDialog;
 import org.vcml.explorer.ui.services.ISessionService;
-import org.vcml.session.Session;
 
-public class ConnectHandler {
-    @CanExecute
-    public boolean canExecute(ISessionService service) {
-        Session current = service.currentSession();
-        if ((current == null) || current.isConnected())
-            return false;
-        return true;
-    }
-
+public class NewHandler {
     @Execute
     public void execute(Shell shell, ISessionService service) {
-        Session session = service.currentSession();
-        service.connectSession(session);
+        ConnectDialog dialog = new ConnectDialog(shell);
+        if (dialog.open() == Window.OK)
+            service.addRemoteSession(dialog.getURI(), dialog.connectImmediately());
     }
 }

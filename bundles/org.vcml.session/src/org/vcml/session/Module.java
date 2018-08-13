@@ -32,6 +32,8 @@ public class Module {
     public static final String KIND_SC_IN = "sc_in";
     public static final String KIND_SC_METHOD_PROCESS = "sc_method_process";
     public static final String KIND_SC_THREAD_PROCESS = "sc_thread_process";
+    public static final String KIND_TLM_INITIATOR_SOCKET = "tlm_initiator_socket";
+    public static final String KIND_TLM_TARGET_SOCKET = "tlm_target_socket";
 
     public static final String KIND_VCML_IN_PORT = "vcml::in_port";
     public static final String KIND_VCML_OUT_PORT = "vcml::out_port";

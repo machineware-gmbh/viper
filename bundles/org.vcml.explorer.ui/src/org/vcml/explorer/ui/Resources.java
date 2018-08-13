@@ -95,6 +95,10 @@ public class Resources {
             return getImage("icons/method.gif");
         case Module.KIND_SC_THREAD_PROCESS:
             return getImage("icons/thread.gif");
+        case Module.KIND_TLM_INITIATOR_SOCKET:
+            return getImage("icons/initiator.png");
+        case Module.KIND_TLM_TARGET_SOCKET:
+            return getImage("icons/target.png");
         case Module.KIND_VCML_IN_PORT:
             return getImage("icons/in.png");
         case Module.KIND_VCML_OUT_PORT:

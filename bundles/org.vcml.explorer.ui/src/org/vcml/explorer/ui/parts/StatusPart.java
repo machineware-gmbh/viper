@@ -143,7 +143,7 @@ public class StatusPart {
         sessionLabel.setLeftMargin(10);
         sessionLabel.setRightMargin(20);
         sessionLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        sessionLabel.setToolTipText("Active session");
+        sessionLabel.setToolTipText("Active Session");
 
         timeLabel = new CLabel(composite, SWT.LEFT | SWT.BORDER);
         timeLabel.setFont(Resources.getMonoSpaceFont());
@@ -151,7 +151,7 @@ public class StatusPart {
         timeLabel.setRightMargin(20);
         timeLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         timeLabel.setImage(Resources.getImage("icons/clock.png"));
-        timeLabel.setToolTipText("Current SystemC simulation time");
+        timeLabel.setToolTipText("Current SystemC Simulation Time");
 
         cycleLabel = new CLabel(composite, SWT.LEFT | SWT.BORDER);
         cycleLabel.setFont(Resources.getMonoSpaceFont());
@@ -159,7 +159,7 @@ public class StatusPart {
         cycleLabel.setRightMargin(20);
         cycleLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         cycleLabel.setImage(Resources.getImage("icons/refresh_alt.gif"));
-        cycleLabel.setToolTipText("Current SystemC delta cycle");
+        cycleLabel.setToolTipText("Current SystemC Delta Cycle");
 
         selectionLabel = new CLabel(composite, SWT.LEFT | SWT.BORDER);
         selectionLabel.setFont(Resources.getMonoSpaceFont());
@@ -167,7 +167,7 @@ public class StatusPart {
         selectionLabel.setRightMargin(20);
         selectionLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         selectionLabel.setImage(Resources.getImage("icons/attribute.gif"));
-        selectionLabel.setToolTipText("Currently selected object");
+        selectionLabel.setToolTipText("Currently Selected Object");
 
         updateSessionStatus();
 

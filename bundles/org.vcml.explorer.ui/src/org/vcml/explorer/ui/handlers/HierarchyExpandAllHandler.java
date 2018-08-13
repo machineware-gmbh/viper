@@ -18,24 +18,29 @@
 
 package org.vcml.explorer.ui.handlers;
 
+import java.util.List;
+
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.swt.widgets.Shell;
-import org.vcml.explorer.ui.services.ISessionService;
-import org.vcml.session.Session;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.vcml.explorer.ui.parts.HierarchyPart;
 
-public class ConnectHandler {
+public class HierarchyExpandAllHandler {
+    private static final String PART_ID = "org.vcml.explorer.ui.part.hierarchy";
+
     @CanExecute
-    public boolean canExecute(ISessionService service) {
-        Session current = service.currentSession();
-        if ((current == null) || current.isConnected())
-            return false;
-        return true;
+    public boolean canExecute(MApplication application, EModelService service) {
+        List<MPart> parts = service.findElements(application, PART_ID, MPart.class, null);
+        return !parts.isEmpty();
     }
 
     @Execute
-    public void execute(Shell shell, ISessionService service) {
-        Session session = service.currentSession();
-        service.connectSession(session);
+    public void execute(MApplication application, EModelService service) {
+        List<MPart> parts = service.findElements(application, PART_ID, MPart.class, null);
+        HierarchyPart part = (HierarchyPart) parts.get(0).getObject();
+        part.expandAll();
     }
+
 }
