@@ -19,9 +19,6 @@ import org.eclipse.swt.widgets.Spinner;
 
 public class ConnectDialog extends TitleAreaDialog {
 
-    public static final String MSG_NONAME = "Please enter a name for the simulation";
-    public static final String MSG_NOHOST = "Please enter a simulation host";
-
     private String sessionURI;
     private boolean connect;
 
@@ -39,16 +36,7 @@ public class ConnectDialog extends TitleAreaDialog {
     };
 
     private void checkInput() {
-        okButton.setEnabled(false);
-        setMessage("");
-
-        if (nameText.getText().isEmpty()) {
-            setMessage(MSG_NONAME, IMessageProvider.INFORMATION);
-        } else if (hostText.getText().isEmpty()) {
-            setMessage(MSG_NOHOST, IMessageProvider.INFORMATION);
-        } else {
-            okButton.setEnabled(true);
-        }
+        okButton.setEnabled(!nameText.getText().isEmpty() && !hostText.getText().isEmpty());
     }
 
     @Override
@@ -105,9 +93,9 @@ public class ConnectDialog extends TitleAreaDialog {
     @Override
     public void create() {
         super.create();
-        setTitle("Connect to simulator on remote host");
-        setMessage(MSG_NONAME, IMessageProvider.INFORMATION);
-        setTitleImage(Resources.getImage("icons/add.gif"));
+        setTitle("Connect to simulation session on remote host");
+        setMessage("Please enter the connection information", IMessageProvider.INFORMATION);
+        setTitleImage(Resources.getImage("icons/new2x.png"));
     }
 
     public String getURI() {

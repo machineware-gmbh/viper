@@ -60,7 +60,7 @@
     </mainMenu>
     <trimBars xmi:id="_6wlLlcgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.trimbar.top">
       <children xsi:type="menu:ToolBar" xmi:id="_6wlLlsgZEeSyMNYR5xypkQ" elementId="org.eclipse.ui.main.toolbar">
-        <children xsi:type="menu:HandledToolItem" xmi:id="_uMSmcJsEEeiKHfwWwPWdxA" elementId="org.vcml.explorer.ui.handledtoolitem.new" label="" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/new.png" tooltip="New Remote Session..." command="_K4BAgJsEEeiKHfwWwPWdxA"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_uMSmcJsEEeiKHfwWwPWdxA" elementId="org.vcml.explorer.ui.handledtoolitem.new" label="" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/new.png" tooltip="New Remote Session..." command="_hUHzgJ8dEeisGejvoUuV6Q"/>
         <children xsi:type="menu:HandledToolItem" xmi:id="_8zXW4J8dEeisGejvoUuV6Q" elementId="org.vcml.explorer.ui.handledtoolitem.connect" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/initiator.png" tooltip="Connect to Session" command="_K4BAgJsEEeiKHfwWwPWdxA"/>
         <children xsi:type="menu:HandledToolItem" xmi:id="_envc8JvUEeiPnquvxDS4KQ" elementId="org.vcml.explorer.ui.handledtoolitem.disconnect" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/target.png" tooltip="Disconnect from Session" command="_sNny4JvLEeiPnquvxDS4KQ"/>
       </children>
