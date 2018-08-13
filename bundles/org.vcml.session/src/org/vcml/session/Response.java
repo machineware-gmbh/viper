@@ -23,6 +23,8 @@ import java.util.List;
 
 public class Response {
 
+    String command;
+
     String response;
 
     private class KeyValuePair {
@@ -37,14 +39,15 @@ public class Response {
 
     List<KeyValuePair> entries;
 
-    public Response(String resp) throws SessionException {
+    public Response(String cmd, String resp) throws SessionException {
+        this.command = cmd;
         this.response = resp;
         this.entries = new ArrayList<KeyValuePair>();
 
         if (response.isEmpty())
-            throw new SessionException("Command not supported");
+            throw new SessionException("Command '" + command + "' not supported");
         if (response.startsWith("ERROR,"))
-            throw new SessionException(response.substring(6));
+            throw new SessionException("Command '" + command + "' returned error: " + response.substring(6));
         if (response.startsWith("OK"))
             response = response.substring(2);
         if (response.startsWith(","))

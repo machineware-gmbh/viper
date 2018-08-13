@@ -50,6 +50,8 @@ public class Session {
 
     private double simTime = 0.0;
 
+    private int deltaCycle = -1;
+
     private boolean running = false;
 
     public String getURI() {
@@ -80,6 +82,10 @@ public class Session {
         return simTime;
     }
 
+    public int getDeltaCycle() {
+        return deltaCycle;
+    }
+
     public boolean isConnected() {
         return protocol != null;
     }
@@ -106,8 +112,10 @@ public class Session {
     }
 
     private void updateTime() throws SessionException {
-        Response r = protocol.command(RemoteSerialProtocol.TIME);
-        simTime = Double.parseDouble(r.toString());
+        Response timeResp = protocol.command(RemoteSerialProtocol.TIME);
+        simTime = Double.parseDouble(timeResp.toString());
+        Response dcycResp = protocol.command(RemoteSerialProtocol.DCYC);
+        deltaCycle = Integer.parseInt(dcycResp.toString());
     }
 
     public Session(String uri) throws SessionException {

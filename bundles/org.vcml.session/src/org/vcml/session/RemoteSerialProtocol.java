@@ -57,6 +57,7 @@ public class RemoteSerialProtocol {
     public static final String INFO = "i"; /* retrieve info string */
     public static final String EXEC = "e"; /* execute command on module */
     public static final String TIME = "t"; /* read current time */
+    public static final String DCYC = "d"; /* read current delta cycle */
     public static final String RDGQ = "q"; /* read global quantum */
     public static final String WRGQ = "Q"; /* write global quantum */
     public static final String GETA = "a"; /* read attribute */
@@ -145,7 +146,7 @@ public class RemoteSerialProtocol {
             command += arg + ",";
 
         send(command);
-        return new Response(recv());
+        return new Response(command, recv());
     }
 
     public void close() throws SessionException {
