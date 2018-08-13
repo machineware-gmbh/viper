@@ -27,7 +27,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.vcml.explorer.ui.parts.HierarchyPart;
 
-public class HierarchyExpandAllHandler {
+public class CollapseAllHierarchyHandler {
     private static final String PART_ID = "org.vcml.explorer.ui.part.hierarchy";
 
     @CanExecute
@@ -40,7 +40,7 @@ public class HierarchyExpandAllHandler {
     public void execute(MApplication application, EModelService service) {
         List<MPart> parts = service.findElements(application, PART_ID, MPart.class, null);
         HierarchyPart part = (HierarchyPart) parts.get(0).getObject();
-        part.expandAll();
+        part.collapseAll();
     }
 
 }
