@@ -16,7 +16,7 @@
  *                                                                            *
  ******************************************************************************/
 
-package org.evcml.explorer.ui.terminal;
+package org.vcml.explorer.ui.terminal;
 
 import java.io.IOException;
 

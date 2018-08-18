@@ -16,21 +16,21 @@
  *                                                                            *
  ******************************************************************************/
 
-package org.evcml.explorer.ui.terminal;
+package org.vcml.explorer.ui.terminal;
 
 import java.io.IOException;
 import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
 
 public class TerminalViewer extends Composite implements KeyListener {
 
-    private Text text;
+    private StyledText text;
 
     private TerminalBuffer current;
 
@@ -41,24 +41,24 @@ public class TerminalViewer extends Composite implements KeyListener {
             return;
 
         text.setText(buffer.getBuffer());
-        text.setSelection(buffer.getCursor());
+        int cursor = buffer.getCursor();
 
         // Adjust cursor for newlines being two bytes on Windows (CR+LF, 0xd+0xa)
-        if (text.getText().indexOf('\r') != -1 && buffer.getCursor() > 0) {
+        if (text.getText().indexOf('\r') != -1 && cursor > 0) {
             String beforeCursor = buffer.getBuffer().substring(0, buffer.getCursor());
-            int numCR = 0;
             for (char c : beforeCursor.toCharArray())
                 if (c == '\n')
-                    numCR++;
-            text.setSelection(buffer.getCursor() + numCR);
+                    cursor++;
         }
+
+        text.setSelection(cursor);
     }
 
     public TerminalViewer(Composite parent) {
         super(parent, SWT.NONE);
         setLayout(new FillLayout());
 
-        text = new Text(this, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.V_SCROLL);
+        text = new StyledText(this, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
         text.addKeyListener(this);
         text.setText("");
         text.setData("org.eclipse.e4.ui.css.id", "TerminalViewer");

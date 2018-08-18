@@ -16,38 +16,45 @@
  *                                                                            *
  ******************************************************************************/
 
-package org.evcml.explorer.ui.terminal;
+package org.vcml.explorer.ui.terminal;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.Socket;
 
-public class NetTerminal extends Terminal {
+public abstract class Terminal {
 
-    private Socket socket;
+    private String name;
 
-    private InputStream rx;
+    private boolean echo;
 
-    private OutputStream tx;
-
-    public NetTerminal(String name, String host, int port) throws IOException {
-        super(name, false);
-        socket = new Socket(host, port);
-        rx = socket.getInputStream();
-        tx = socket.getOutputStream();
+    public String getName() {
+        return name;
     }
 
-    public NetTerminal(String host, int port) throws IOException {
-        this(host + ":" + port, host, port);
+    public boolean isEcho() {
+        return echo;
     }
 
-    public InputStream getRx() {
-        return rx;
+    public void setEcho(boolean set) {
+        echo = set;
     }
 
-    public OutputStream getTx() {
-        return tx;
+    public Terminal(String name, boolean echo) {
+        this.name = name;
+        this.echo = echo;
+    }
+
+    public Terminal(String name) {
+        this(name, false);
+    }
+
+    public abstract InputStream getRx();
+
+    public abstract OutputStream getTx();
+
+    @Override
+    public String toString() {
+        return name;
     }
 
 }

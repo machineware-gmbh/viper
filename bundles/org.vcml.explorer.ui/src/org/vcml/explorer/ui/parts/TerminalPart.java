@@ -33,9 +33,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.evcml.explorer.ui.terminal.CommandTerminal;
-import org.evcml.explorer.ui.terminal.Terminal;
-import org.evcml.explorer.ui.terminal.TerminalViewer;
+import org.vcml.explorer.ui.terminal.CommandTerminal;
+import org.vcml.explorer.ui.terminal.Terminal;
+import org.vcml.explorer.ui.terminal.TerminalViewer;
 
 public class TerminalPart {
 
@@ -57,6 +57,7 @@ public class TerminalPart {
         public void selectionChanged(SelectionChangedEvent event) {
             Terminal term = (Terminal) event.getStructuredSelection().getFirstElement();
             terminalViewer.setTerminal(term);
+            terminalViewer.setFocus();
         }
     };
 

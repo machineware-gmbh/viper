@@ -16,45 +16,58 @@
  *                                                                            *
  ******************************************************************************/
 
-package org.evcml.explorer.ui.terminal;
+package org.vcml.explorer.ui.terminal;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.io.PrintStream;
 
-public abstract class Terminal {
+public abstract class IOTerminal extends Terminal {
 
-    private String name;
+    private PipedInputStream rx;
 
-    private boolean echo;
+    private PipedOutputStream tx;
 
-    public String getName() {
-        return name;
+    protected PrintStream out;
+
+    protected InputStream in;
+
+    @Override
+    public InputStream getRx() {
+        return rx;
     }
 
-    public boolean isEcho() {
-        return echo;
+    @Override
+    public OutputStream getTx() {
+        return tx;
     }
 
-    public void setEcho(boolean set) {
-        echo = set;
+    public IOTerminal(String name, boolean echo) throws IOException {
+        super(name, echo);
+
+        rx = new PipedInputStream();
+        out = new PrintStream(new PipedOutputStream(rx));
+
+        tx = new PipedOutputStream();
+        in = new PipedInputStream(tx);
+
+        new Thread() {
+            public void run() {
+                loop();
+            }
+        }.start();
     }
 
-    public Terminal(String name, boolean echo) {
-        this.name = name;
-        this.echo = echo;
-    }
-
-    public Terminal(String name) {
+    public IOTerminal(String name) throws IOException {
         this(name, false);
     }
 
-    public abstract InputStream getRx();
-
-    public abstract OutputStream getTx();
-
-    @Override
-    public String toString() {
-        return name;
-    }
+    /**
+     * Implement this and then use a loop to read from 'in' and write to 'out'
+     */
+    public abstract void loop();
 
 }

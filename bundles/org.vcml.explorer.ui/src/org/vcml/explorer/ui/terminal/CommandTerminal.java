@@ -16,17 +16,13 @@
  *                                                                            *
  ******************************************************************************/
 
-package org.evcml.explorer.ui.terminal;
+package org.vcml.explorer.ui.terminal;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-/**
- * @author Jan
- *
- */
 public class CommandTerminal extends IOTerminal {
 
     public static final String DEFAULT_PROMPT = "> ";
@@ -130,6 +126,8 @@ public class CommandTerminal extends IOTerminal {
     private void exec(String command) {
         String[] argv = command.split(" ");
         if (argv.length == 0)
+            return;
+        if (argv[0].isEmpty())
             return;
 
         Consumer<String[]> consumer = commands.get(argv[0]);
