@@ -40,7 +40,7 @@
               </children>
             </children>
             <children xsi:type="basic:PartStack" xmi:id="_7pRUkJo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partstack.bottomright" containerData="50" selectedElement="_-s1MMJo2EeiPmt14w3Wkkg">
-              <children xsi:type="basic:Part" xmi:id="_-s1MMJo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.part.console" label="Console" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/consoles.png" closeable="true"/>
+              <children xsi:type="basic:Part" xmi:id="_-s1MMJo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.part.console" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.parts.TerminalPart" label="Terminals" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/consoles.png" closeable="true"/>
             </children>
           </children>
         </children>
