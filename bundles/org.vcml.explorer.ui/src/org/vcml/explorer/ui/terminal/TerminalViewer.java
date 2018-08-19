@@ -34,14 +34,17 @@ public class TerminalViewer extends Composite implements KeyListener {
 
     private TerminalBuffer current;
 
-    private HashMap<String, TerminalBuffer> buffers;
+    private HashMap<Terminal, TerminalBuffer> buffers;
 
     void refreshBuffer(TerminalBuffer buffer) {
         if ((buffer == null) || (buffer != current))
             return;
 
-        text.setText(buffer.getBuffer());
-        int cursor = buffer.getCursor();
+        int cursor;
+        synchronized (buffer) {
+            text.setText(buffer.getBuffer());
+            cursor = buffer.getCursor();
+        }
 
         // Adjust cursor for newlines being two bytes on Windows (CR+LF, 0xd+0xa)
         if (text.getText().indexOf('\r') != -1 && cursor > 0) {
@@ -75,15 +78,22 @@ public class TerminalViewer extends Composite implements KeyListener {
             return;
         }
 
-        TerminalBuffer buffer = buffers.get(terminal.getName());
+        TerminalBuffer buffer = buffers.get(terminal);
         if (buffer == null) {
             buffer = new TerminalBuffer(this, terminal);
-            buffers.put(terminal.getName(), buffer);
+            buffers.put(terminal, buffer);
         }
 
         current = buffer;
         refreshBuffer(buffer);
 
+    }
+
+    public void clearBuffer(Terminal terminal) {
+        if (terminal == current.getTerminal())
+            setTerminal(null);
+
+        buffers.remove(terminal);
     }
 
     @Override
@@ -93,17 +103,28 @@ public class TerminalViewer extends Composite implements KeyListener {
 
         try {
             switch (event.character) {
+            case 0:
+                break;
+
+            case SWT.BS:
+                current.transmit(SWT.BS);
+                break;
+
             case SWT.CR:
-                current.transmit('\n');
+                current.transmit(SWT.LF);
                 break;
 
             default:
-                current.transmit(event.character);
+                if (Character.isISOControl(event.character))
+                    System.out.println("dropping control character 0x" + Integer.toHexString(event.character));
+                else
+                    current.transmit(event.character);
                 break;
             }
+
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            text.setText(text.getText() + "\n" + e.getMessage() + "\n");
+            text.setSelection(text.getText().length());
         }
     }
 

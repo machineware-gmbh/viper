@@ -51,32 +51,6 @@ public class CommandTerminal extends IOTerminal {
         super(name, echo);
 
         commands = new HashMap<>();
-
-        // for testing
-        addCommand("echo", (String[] args) -> {
-            for (int i = 1; i < args.length; i++)
-                out.print(args[i] + " ");
-            out.println();
-        });
-
-        addCommand("pwd", (String[] args) -> {
-            out.println("/proc/interrupts");
-        });
-
-        addCommand("kill", (String[] args) -> {
-            if (args.length != 2) {
-                out.println("insufficient arguments: kill [command]");
-                return;
-            }
-
-            if (!commands.containsKey(args[1])) {
-                out.println("command not found: '" + args[1] + "'");
-                return;
-            }
-
-            removeCommand(args[1]);
-            out.println("OK");
-        });
     }
 
     public CommandTerminal(String name) throws IOException {
@@ -94,8 +68,10 @@ public class CommandTerminal extends IOTerminal {
             while ((input = in.read()) != -1) {
                 switch (input) {
                 case '\n':
-                    out.write('\n');
-                    out.flush();
+                    if (!isEcho()) {
+                        out.write('\n');
+                        out.flush();
+                    }
                     exec(command);
                     command = "";
                     out.print(prompt);
@@ -105,8 +81,10 @@ public class CommandTerminal extends IOTerminal {
                 case '\b':
                     if (command.length() > 0) {
                         command = command.substring(0, command.length() - 1);
-                        out.write('\b');
-                        out.flush();
+                        if (!isEcho()) {
+                            out.write('\b');
+                            out.flush();
+                        }
                     }
                     break;
 

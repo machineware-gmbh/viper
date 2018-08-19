@@ -19,23 +19,35 @@
 package org.vcml.explorer.ui.parts;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.vcml.explorer.ui.terminal.CommandTerminal;
+import org.vcml.explorer.ui.services.ISessionService;
+import org.vcml.explorer.ui.terminal.SessionTerminal;
 import org.vcml.explorer.ui.terminal.Terminal;
 import org.vcml.explorer.ui.terminal.TerminalViewer;
+import org.vcml.session.Session;
+import org.vcml.session.SessionException;
 
 public class TerminalPart {
 
@@ -43,7 +55,44 @@ public class TerminalPart {
 
     private TerminalViewer terminalViewer;
 
-    private Terminal[] terminals;
+    private List<Terminal> terminals;
+
+    @Inject
+    private ISessionService sessionService;
+
+    private Terminal findTerminalForSession(Session session) {
+        for (Terminal terminal : terminals)
+            if (terminal instanceof SessionTerminal)
+                if (((SessionTerminal) terminal).getSession() == session)
+                    return terminal;
+        return null;
+    }
+
+    private void selectTerminalForSession(Session session) {
+        Terminal terminal = findTerminalForSession(session);
+        if (terminal == null) {
+            try {
+                terminal = new SessionTerminal(session, sessionService);
+                terminals.add(terminal);
+                comboViewer.refresh();
+            } catch (IOException | SessionException e) {
+                System.out.println("unable to create session terminal: " + e.getMessage());
+                return;
+            }
+        }
+
+        comboViewer.setSelection(new StructuredSelection(terminal), true);
+    }
+
+    private void removeTerminalOfSession(Session session) {
+        Terminal terminal = findTerminalForSession(session);
+        if (terminal == null)
+            return;
+
+        terminalViewer.clearBuffer(terminal);
+        terminals.remove(terminal);
+        comboViewer.refresh();
+    }
 
     private LabelProvider labelProvider = new LabelProvider() {
         @Override
@@ -61,13 +110,21 @@ public class TerminalPart {
         }
     };
 
+    private IPropertyChangeListener sessionListener = new IPropertyChangeListener() {
+        @Override
+        public void propertyChange(PropertyChangeEvent event) {
+            if (event.getProperty().equals(ISessionService.PROP_UPDATED)) {
+                Session session = (Session) event.getNewValue();
+                if (session.isConnected())
+                    selectTerminalForSession(session);
+                else
+                    removeTerminalOfSession(session);
+            }
+        }
+    };
+
     @PostConstruct
     public void createComposite(Composite parent, IEventBroker broker, IEclipseContext ctx) throws IOException {
-        terminals = new Terminal[3];
-        terminals[0] = new CommandTerminal("terminal 1");
-        terminals[1] = new CommandTerminal("terminal 2");
-        terminals[2] = new CommandTerminal("terminal 3");
-
         parent.setLayout(new GridLayout());
 
         comboViewer = new ComboViewer(parent, SWT.DROP_DOWN);
@@ -80,5 +137,25 @@ public class TerminalPart {
         terminalViewer = new TerminalViewer(parent);
         terminalViewer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
+        sessionService.addSessionChangeListener(sessionListener);
+
     }
+
+    @Inject
+    public void selectionUpdated(@Optional @Named(IServiceConstants.ACTIVE_SELECTION) Session session) {
+        if (session != null) {
+            Terminal term = findTerminalForSession(session);
+            if (term != null)
+                comboViewer.setSelection(new StructuredSelection(term));
+        }
+    }
+
+    public TerminalPart() {
+        terminals = new ArrayList<>();
+    }
+
+    public void dispose() {
+        sessionService.removeSessionChangeListener(sessionListener);
+    }
+
 }

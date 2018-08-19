@@ -20,24 +20,26 @@ package org.vcml.explorer.ui.terminal;
 
 import java.io.IOException;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.progress.UIJob;
 
 public class TerminalBuffer {
 
     public static final String MSG_IO_ERROR = "I/O Error";
 
-    public static final String TOPIC_CONSOLE_UPDATE = "VCML/CONSOLE/UPDATE";
-
-    private Terminal console;
+    private Terminal terminal;
 
     private String buffer;
 
     private int cursor;
 
-    private Runnable update;
+    private UIJob update;
 
-    public Terminal getConsole() {
-        return console;
+    public Terminal getTerminal() {
+        return terminal;
     }
 
     public String getBuffer() {
@@ -49,63 +51,68 @@ public class TerminalBuffer {
     }
 
     public TerminalBuffer(TerminalViewer viewer, Terminal console) {
-        this.console = console;
+        this.terminal = console;
         this.buffer = "";
         this.cursor = 0;
-        this.update = new Runnable() {
+        this.update = new UIJob(Display.getDefault(), "uiUpdate_" + console.getName()) {
             @Override
-            public void run() {
+            public IStatus runInUIThread(IProgressMonitor monitor) {
                 viewer.refreshBuffer(TerminalBuffer.this);
+                return Status.OK_STATUS;
             }
         };
 
         new Thread("ioThread_" + console.getName()) {
             public void run() {
-                receive();
+                ioThread();
             }
         }.start();
     }
 
     public void transmit(int character) throws IOException {
-        console.getTx().write(character);
-        console.getTx().flush();
+        terminal.getTx().write(character);
+        terminal.getTx().flush();
 
-        if (getConsole().isEcho()) {
-            buffer += (char) character;
-            Display.getDefault().syncExec(update);
-        }
+        if (getTerminal().isEcho())
+            receive(character);
     }
 
-    public void receive() {
+    public void receive(int character) {
+        switch (character) {
+        case -1:
+            buffer += MSG_IO_ERROR;
+            cursor += MSG_IO_ERROR.length();
+            break;
+
+        case '\b':
+            if (!buffer.isEmpty()) {
+                buffer = buffer.substring(0, buffer.length() - 1);
+                cursor--;
+            }
+            break;
+
+        default:
+            buffer += (char) character;
+            cursor++;
+        }
+
+        update.schedule();
+    }
+
+    public void ioThread() {
         try {
             while (true) {
-                int input = console.getRx().read();
-                switch (input) {
-                case -1:
-                    buffer += MSG_IO_ERROR;
-                    cursor += MSG_IO_ERROR.length();
-                    break;
-
-                case '\r':
-                    break;
-
-                case '\b':
-                    if (!buffer.isEmpty()) {
-                        buffer = buffer.substring(0, buffer.length() - 1);
-                        cursor--;
-                    }
-                    break;
-
-                default:
-                    buffer += (char) input;
-                    cursor++;
+                int input = terminal.getRx().read();
+                synchronized (this) {
+                    receive(input);
                 }
-
-                Display.getDefault().syncExec(update);
+                if (input == -1)
+                    return;
             }
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
+
 }
