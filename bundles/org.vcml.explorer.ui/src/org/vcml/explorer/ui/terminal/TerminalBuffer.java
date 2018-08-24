@@ -50,6 +50,11 @@ public class TerminalBuffer {
         return cursor;
     }
 
+    public void clear() {
+        buffer = "";
+        cursor = 0;
+    }
+
     public TerminalBuffer(TerminalViewer viewer, Terminal console) {
         this.terminal = console;
         this.buffer = "";

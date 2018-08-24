@@ -89,7 +89,7 @@ public class TerminalPart {
         if (terminal == null)
             return;
 
-        terminalViewer.clearBuffer(terminal);
+        terminalViewer.removeBuffer(terminal);
         terminals.remove(terminal);
         comboViewer.refresh();
     }
@@ -158,4 +158,18 @@ public class TerminalPart {
         sessionService.removeSessionChangeListener(sessionListener);
     }
 
+    public Terminal activeTerminal() {
+        if (comboViewer.getStructuredSelection() == null)
+            return null;
+        return (Terminal) comboViewer.getStructuredSelection().getFirstElement();
+    }
+
+    public void clearTerminal(Terminal term) {
+        terminalViewer.clearBuffer(term);
+    }
+
+    public void toggleWordWrap() {
+        boolean wrap = terminalViewer.getWordWrap();
+        terminalViewer.setWordWrap(!wrap);
+    }
 }

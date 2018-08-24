@@ -89,11 +89,19 @@ public class TerminalViewer extends Composite implements KeyListener {
 
     }
 
-    public void clearBuffer(Terminal terminal) {
+    public void removeBuffer(Terminal terminal) {
         if (terminal == current.getTerminal())
             setTerminal(null);
 
         buffers.remove(terminal);
+    }
+
+    public void clearBuffer(Terminal terminal) {
+        TerminalBuffer buffer = buffers.get(terminal);
+        if (buffer != null) {
+            buffer.clear();
+            refreshBuffer(buffer);
+        }
     }
 
     @Override
@@ -131,6 +139,14 @@ public class TerminalViewer extends Composite implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
         //
+    }
+
+    public boolean getWordWrap() {
+        return text.getWordWrap();
+    }
+
+    public void setWordWrap(boolean wrap) {
+        text.setWordWrap(wrap);
     }
 
 }

@@ -40,7 +40,14 @@
               </children>
             </children>
             <children xsi:type="basic:PartStack" xmi:id="_7pRUkJo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partstack.bottomright" containerData="50" selectedElement="_-s1MMJo2EeiPmt14w3Wkkg">
-              <children xsi:type="basic:Part" xmi:id="_-s1MMJo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.part.console" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.parts.TerminalPart" label="Terminals" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/consoles.png" closeable="true"/>
+              <children xsi:type="basic:Part" xmi:id="_-s1MMJo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.part.terminals" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.parts.TerminalPart" label="Terminals" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/consoles.png" closeable="true">
+                <handlers xmi:id="_cewPQKedEeikqvU9WbjxSw" elementId="org.vcml.explorer.ui.handler.terminals.clearTerminal" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.handlers.TerminalClearHandler" command="_TejPgKecEeikqvU9WbjxSw"/>
+                <handlers xmi:id="__h5B4KedEeikqvU9WbjxSw" elementId="org.vcml.explorer.ui.handler.terminals.wordWrap" contributionURI="bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.handlers.TerminalWordWrapHandler" command="_XDJXoKecEeikqvU9WbjxSw"/>
+                <toolbar xmi:id="_HlOREKecEeikqvU9WbjxSw" elementId="org.vcml.explorer.ui.toolbar.2">
+                  <children xsi:type="menu:HandledToolItem" xmi:id="_MwGagKecEeikqvU9WbjxSw" elementId="org.vcml.explorer.ui.handledtoolitem.terminals.clearconsole" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/clear_co.png" tooltip="Clear Console" command="_TejPgKecEeikqvU9WbjxSw"/>
+                  <children xsi:type="menu:HandledToolItem" xmi:id="_x3TWoKecEeikqvU9WbjxSw" elementId="org.vcml.explorer.ui.handledtoolitem.terminals.wordwrap" iconURI="platform:/plugin/org.vcml.explorer.ui/icons/wordwrap.png" tooltip="Word Wrap" selected="true" type="Check" command="_XDJXoKecEeikqvU9WbjxSw"/>
+                </toolbar>
+              </children>
             </children>
           </children>
         </children>
@@ -131,6 +138,8 @@
   <commands xmi:id="_BJks4J9EEeih4YFmF9N0OA" elementId="org.vcml.explorer.ui.command.show" commandName="Show">
     <parameters xmi:id="_C7wcMJ9EEeih4YFmF9N0OA" elementId="org.vcml.explorer.ui.command.show.parameter1" name="View" optional="false"/>
   </commands>
+  <commands xmi:id="_TejPgKecEeikqvU9WbjxSw" elementId="org.vcml.explorer.ui.command.clearTerminal" commandName="Clear Terminal"/>
+  <commands xmi:id="_XDJXoKecEeikqvU9WbjxSw" elementId="org.vcml.explorer.ui.command.wordWrap" commandName="Word Wrap"/>
   <addons xmi:id="_6wlLcsgZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_6wlLc8gZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_6wlLdMgZEeSyMNYR5xypkQ" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
