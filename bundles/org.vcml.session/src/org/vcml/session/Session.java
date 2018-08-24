@@ -52,6 +52,10 @@ public class Session {
 
     private int deltaCycle = -1;
 
+    private String syscVersion = "<unknown>";
+
+    private String vcmlVersion = "<unknown>";
+
     private boolean running = false;
 
     public String getURI() {
@@ -86,6 +90,14 @@ public class Session {
         return deltaCycle;
     }
 
+    public String getSystemCVersion() {
+        return syscVersion;
+    }
+
+    public String getVCMLVersion() {
+        return vcmlVersion;
+    }
+
     public boolean isConnected() {
         return protocol != null;
     }
@@ -109,6 +121,15 @@ public class Session {
 
         Session session = (Session) other;
         return uri.equals(session.getURI());
+    }
+
+    private void updateVersion() throws SessionException {
+        Response resp = protocol.command(RemoteSerialProtocol.VERS);
+
+        String respSyscVersion[] = resp.getValues("sysc");
+        syscVersion = respSyscVersion.length > 0 ? respSyscVersion[0] : "unknown";
+        String respVcmlVersion[] = resp.getValues("vcml");
+        vcmlVersion = respVcmlVersion.length > 0 ? respVcmlVersion[0] : "unknown";
     }
 
     private void updateTime() throws SessionException {
@@ -146,6 +167,8 @@ public class Session {
             return;
 
         protocol = new RemoteSerialProtocol(host, port);
+
+        updateVersion();
         updateTime();
     }
 

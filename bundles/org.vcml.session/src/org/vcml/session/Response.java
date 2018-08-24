@@ -23,9 +23,11 @@ import java.util.List;
 
 public class Response {
 
-    String command;
+    private String command;
 
-    String response;
+    private String response;
+
+    private List<KeyValuePair> entries;
 
     private class KeyValuePair {
         public String key;
@@ -36,8 +38,6 @@ public class Response {
             this.val = val;
         }
     }
-
-    List<KeyValuePair> entries;
 
     public Response(String cmd, String resp) throws SessionException {
         this.command = cmd;

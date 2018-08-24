@@ -31,6 +31,7 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.services.IDisposable;
 
 import org.vcml.session.Module;
@@ -204,8 +205,12 @@ public class SessionService implements ISessionService, IDisposable {
         if (session.isConnected())
             disconnectSession(session);
         removeSession(session);
-        System.err.println(e.getMessage());
-        MessageDialog.openError(null, "Session management", e.getMessage());
+        String message = e.getMessage();
+        Throwable cause = e.getCause();
+        if (cause != null)
+            message += ": " + cause.getMessage();
+        System.err.println(message);
+        MessageDialog.openError(Display.getDefault().getActiveShell(), "Session Error", message);
     }
 
     @Override

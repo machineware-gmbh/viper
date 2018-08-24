@@ -63,6 +63,7 @@ public class RemoteSerialProtocol {
     public static final String GETA = "a"; /* read attribute */
     public static final String SETA = "A"; /* write attribute */
     public static final String QUIT = "x"; /* quit session */
+    public static final String VERS = "v"; /* version information */
 
     public void send_char(int val) throws SessionException {
         try {
