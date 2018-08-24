@@ -24,6 +24,7 @@ import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.vcml.explorer.ui.parts.TerminalPart;
 
@@ -40,10 +41,13 @@ public class TerminalWordWrapHandler {
     }
 
     @Execute
-    public void execute(MApplication application, EModelService service) {
+    public void execute(MApplication application, EModelService service, MHandledItem handledItem) {
         List<MPart> parts = service.findElements(application, PART_ID, MPart.class, null);
         TerminalPart part = (TerminalPart) parts.get(0).getObject();
-        part.toggleWordWrap();
+
+        boolean wrap = part.getWordWrap();
+        part.setWordWrap(!wrap);
+        handledItem.setSelected(!wrap);
     }
 
 }

@@ -168,8 +168,11 @@ public class TerminalPart {
         terminalViewer.clearBuffer(term);
     }
 
-    public void toggleWordWrap() {
-        boolean wrap = terminalViewer.getWordWrap();
-        terminalViewer.setWordWrap(!wrap);
+    public boolean getWordWrap() {
+        return terminalViewer.getWordWrap();
+    }
+
+    public void setWordWrap(boolean wrap) {
+        terminalViewer.setWordWrap(wrap);
     }
 }
