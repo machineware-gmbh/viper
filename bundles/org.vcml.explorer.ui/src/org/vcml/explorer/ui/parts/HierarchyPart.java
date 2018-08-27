@@ -21,6 +21,9 @@ package org.vcml.explorer.ui.parts;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
@@ -65,6 +68,7 @@ import org.vcml.explorer.ui.Resources;
 import org.vcml.explorer.ui.dialogs.CommandDialog;
 import org.vcml.explorer.ui.services.ISessionService;
 
+@SuppressWarnings("restriction")
 public class HierarchyPart {
 
     @Inject
@@ -72,6 +76,12 @@ public class HierarchyPart {
 
     @Inject
     private ESelectionService selectionService;
+
+    @Inject
+    private ECommandService commandService;
+
+    @Inject
+    private EHandlerService handlerService;
 
     private TreeViewer viewer;
 
@@ -196,6 +206,7 @@ public class HierarchyPart {
             MenuItem item = new MenuItem(menu, SWT.NONE);
             item.setText(command.getName());
             item.setData(command);
+            item.setImage(Resources.getImage("icons/consoles.png"));
             item.setToolTipText(command.getDesc());
             item.addSelectionListener(new SelectionListener() {
                 @Override
@@ -237,14 +248,16 @@ public class HierarchyPart {
                 boolean active = selectedItem != null && selectedModule != null;
 
                 MenuItem nameItem = new MenuItem(menu, SWT.NONE);
-                nameItem.setEnabled(active);
+                nameItem.setEnabled(false);
                 nameItem.setText(active ? selectedModule.getName() : "None Selected");
+                nameItem.setImage(Resources.getImageFor(selectedModule));
 
                 new MenuItem(menu, SWT.SEPARATOR);
 
                 MenuItem cmdsItem = new MenuItem(menu, SWT.CASCADE);
                 cmdsItem.setEnabled(false);
                 cmdsItem.setText("Execute...");
+                cmdsItem.setImage(Resources.getImage("icons/consoles.png"));
                 if (active && selectedModule.getCommands().length > 2) {
                     cmdsItem.setEnabled(true);
                     cmdsItem.setMenu(buildCommandMenu(cmdsItem, selectedModule));
@@ -256,6 +269,7 @@ public class HierarchyPart {
                 showChildren.setEnabled(active && !selectedItem.getExpanded());
                 showChildren.setText("Show Children");
                 showChildren.setData(selectedItem);
+                showChildren.setImage(Resources.getImage("icons/expand.gif"));
                 showChildren.setEnabled(selectedModule.getChildren().length > 0);
                 showChildren.addSelectionListener(new SelectionListener() {
                     @Override
@@ -276,6 +290,7 @@ public class HierarchyPart {
                 hideChildren.setEnabled(active && selectedItem.getExpanded());
                 hideChildren.setText("Hide Children");
                 hideChildren.setData(selectedItem);
+                hideChildren.setImage(Resources.getImage("icons/collapse.gif"));
                 hideChildren.addSelectionListener(new SelectionListener() {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
@@ -283,6 +298,27 @@ public class HierarchyPart {
                         TreeItem item = (TreeItem) source.getData();
                         item.setExpanded(false);
                         tree.update();
+                    }
+
+                    @Override
+                    public void widgetDefaultSelected(SelectionEvent e) {
+                        // Nothing to do
+                    }
+                });
+
+                new MenuItem(menu, SWT.SEPARATOR);
+
+                MenuItem inspectItem = new MenuItem(menu, SWT.NONE);
+                inspectItem.setEnabled(true);
+                inspectItem.setText("Inspect");
+                inspectItem.setData(selectedItem);
+                inspectItem.setImage(Resources.getImage("icons/inspect.gif"));
+                inspectItem.addSelectionListener(new SelectionListener() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        ParameterizedCommand inspect = commandService
+                                .createCommand("org.vcml.explorer.ui.command.inspect", null);
+                        handlerService.executeHandler(inspect);
                     }
 
                     @Override

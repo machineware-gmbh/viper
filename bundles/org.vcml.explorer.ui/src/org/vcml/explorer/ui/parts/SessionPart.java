@@ -60,13 +60,6 @@ import org.vcml.session.Session;
 
 public class SessionPart {
 
-    private final Image CONNECTED = Resources.getImage("icons/session_alt.gif");
-    private final Image DISCONNECTED = Resources.getImage("icons/session.gif");
-    private final Image IMAGE_RUN = Resources.getImage("icons/run.gif");
-    private final Image IMAGE_STOP = Resources.getImage("icons/stop.gif");
-    private final Image IMAGE_STEP = Resources.getImage("icons/step.gif");
-    private final Image IMAGE_KILL = Resources.getImage("icons/terminate.gif");
-
     @Inject
     private ISessionService sessionService;
 
@@ -102,10 +95,6 @@ public class SessionPart {
         public void selectionChanged(SelectionChangedEvent event) {
             Object selection = viewer.getStructuredSelection().getFirstElement();
             selectionService.setSelection(selection);
-            if (selection instanceof Session)
-                sessionService.selectSession((Session) selection);
-            else
-                sessionService.selectSession(null);
         }
     };
 
@@ -146,8 +135,7 @@ public class SessionPart {
 
         @Override
         public Image getImage(Object element) {
-            Session session = (Session) element;
-            return session.isConnected() ? CONNECTED : DISCONNECTED;
+            return Resources.getImageFor(element);
         }
 
         @Override
@@ -157,154 +145,154 @@ public class SessionPart {
         }
     };
 
-    private void constructMenu(Menu parent) {
-        MenuItem[] items = parent.getItems();
-        for (int i = 0; i < items.length; i++)
-            items[i].dispose();
-
-        Session current = sessionService.currentSession();
-
-        MenuItem connectItem = new MenuItem(parent, SWT.NONE);
-        connectItem.setText("Connect");
-        connectItem.setEnabled(current != null && !current.isConnected());
-        connectItem.addSelectionListener(new SelectionListener() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                sessionService.connectSession(current);
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
-                // Nothing to do
-            }
-        });
-
-        MenuItem disconnectItem = new MenuItem(parent, SWT.NONE);
-        disconnectItem.setText("Disconnect");
-        disconnectItem.setEnabled(current != null && current.isConnected());
-        disconnectItem.addSelectionListener(new SelectionListener() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                sessionService.disconnectSession(current);
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
-                // Nothing to do
-            }
-        });
-
-        new MenuItem(parent, SWT.SEPARATOR);
-
-        MenuItem runItem = new MenuItem(parent, SWT.NONE);
-        runItem.setText("Run Simulation");
-        runItem.setImage(IMAGE_RUN);
-        runItem.setEnabled(current != null && !current.isRunning());
-        runItem.setData(current);
-        runItem.addSelectionListener(new SelectionListener() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                MenuItem source = (MenuItem) e.getSource();
-                Session session = (Session) source.getData();
-                sessionService.startSimulation(session);
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
-                // Nothing to do
-            }
-        });
-
-        MenuItem stopItem = new MenuItem(parent, SWT.NONE);
-        stopItem.setText("Stop Simulation");
-        stopItem.setImage(IMAGE_STOP);
-        stopItem.setEnabled(current != null && current.isRunning());
-        stopItem.setData(current);
-        stopItem.addSelectionListener(new SelectionListener() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                MenuItem source = (MenuItem) e.getSource();
-                Session session = (Session) source.getData();
-                sessionService.stopSimulation(session);
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
-                // Nothing to do
-            }
-        });
-
-        MenuItem stepItem = new MenuItem(parent, SWT.NONE);
-        stepItem.setText("Step Simulation");
-        stepItem.setImage(IMAGE_STEP);
-        stepItem.setEnabled(current != null && !current.isRunning());
-        stepItem.setData(current);
-        stepItem.addSelectionListener(new SelectionListener() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                MenuItem source = (MenuItem) e.getSource();
-                Session session = (Session) source.getData();
-                sessionService.stepSimulation(session);
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
-                // Nothing to do
-            }
-        });
-
-        MenuItem killItem = new MenuItem(parent, SWT.CASCADE);
-        killItem.setText("Kill Simulation");
-        killItem.setImage(IMAGE_KILL);
-        killItem.setEnabled(current != null);
-        killItem.setData(current);
-        killItem.addSelectionListener(new SelectionListener() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                MenuItem source = (MenuItem) e.getSource();
-                Session session = (Session) source.getData();
-                sessionService.disconnectSession(session);
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
-                // Nothing to do
-            }
-        });
-
-        new MenuItem(parent, SWT.SEPARATOR);
-
-        MenuItem refreshItem = new MenuItem(parent, SWT.NONE);
-        refreshItem.setText("Refresh Servers");
-        refreshItem.addSelectionListener(new SelectionListener() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                sessionService.refreshSessions();
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
-                // Nothing to do
-            }
-        });
-
-        MenuItem addItem = new MenuItem(parent, SWT.NONE);
-        addItem.setText("Add Server");
-        addItem.addSelectionListener(new SelectionListener() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                ConnectDialog dialog = new ConnectDialog(parent.getShell());
-                if (dialog.open() == Window.OK) {
-                    sessionService.addRemoteSession(dialog.getURI(), dialog.connectImmediately());
-                }
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
-                // Nothing to do
-            }
-        });
-    }
+//    private void constructMenu(Menu parent) {
+//        MenuItem[] items = parent.getItems();
+//        for (int i = 0; i < items.length; i++)
+//            items[i].dispose();
+//
+//        Session current = sessionService.currentSession();
+//
+//        MenuItem connectItem = new MenuItem(parent, SWT.NONE);
+//        connectItem.setText("Connect");
+//        connectItem.setEnabled(current != null && !current.isConnected());
+//        connectItem.addSelectionListener(new SelectionListener() {
+//            @Override
+//            public void widgetSelected(SelectionEvent e) {
+//                sessionService.connectSession(current);
+//            }
+//
+//            @Override
+//            public void widgetDefaultSelected(SelectionEvent e) {
+//                // Nothing to do
+//            }
+//        });
+//
+//        MenuItem disconnectItem = new MenuItem(parent, SWT.NONE);
+//        disconnectItem.setText("Disconnect");
+//        disconnectItem.setEnabled(current != null && current.isConnected());
+//        disconnectItem.addSelectionListener(new SelectionListener() {
+//            @Override
+//            public void widgetSelected(SelectionEvent e) {
+//                sessionService.disconnectSession(current);
+//            }
+//
+//            @Override
+//            public void widgetDefaultSelected(SelectionEvent e) {
+//                // Nothing to do
+//            }
+//        });
+//
+//        new MenuItem(parent, SWT.SEPARATOR);
+//
+//        MenuItem runItem = new MenuItem(parent, SWT.NONE);
+//        runItem.setText("Run Simulation");
+//        runItem.setImage(IMAGE_RUN);
+//        runItem.setEnabled(current != null && !current.isRunning());
+//        runItem.setData(current);
+//        runItem.addSelectionListener(new SelectionListener() {
+//            @Override
+//            public void widgetSelected(SelectionEvent e) {
+//                MenuItem source = (MenuItem) e.getSource();
+//                Session session = (Session) source.getData();
+//                sessionService.startSimulation(session);
+//            }
+//
+//            @Override
+//            public void widgetDefaultSelected(SelectionEvent e) {
+//                // Nothing to do
+//            }
+//        });
+//
+//        MenuItem stopItem = new MenuItem(parent, SWT.NONE);
+//        stopItem.setText("Stop Simulation");
+//        stopItem.setImage(IMAGE_STOP);
+//        stopItem.setEnabled(current != null && current.isRunning());
+//        stopItem.setData(current);
+//        stopItem.addSelectionListener(new SelectionListener() {
+//            @Override
+//            public void widgetSelected(SelectionEvent e) {
+//                MenuItem source = (MenuItem) e.getSource();
+//                Session session = (Session) source.getData();
+//                sessionService.stopSimulation(session);
+//            }
+//
+//            @Override
+//            public void widgetDefaultSelected(SelectionEvent e) {
+//                // Nothing to do
+//            }
+//        });
+//
+//        MenuItem stepItem = new MenuItem(parent, SWT.NONE);
+//        stepItem.setText("Step Simulation");
+//        stepItem.setImage(IMAGE_STEP);
+//        stepItem.setEnabled(current != null && !current.isRunning());
+//        stepItem.setData(current);
+//        stepItem.addSelectionListener(new SelectionListener() {
+//            @Override
+//            public void widgetSelected(SelectionEvent e) {
+//                MenuItem source = (MenuItem) e.getSource();
+//                Session session = (Session) source.getData();
+//                sessionService.stepSimulation(session);
+//            }
+//
+//            @Override
+//            public void widgetDefaultSelected(SelectionEvent e) {
+//                // Nothing to do
+//            }
+//        });
+//
+//        MenuItem killItem = new MenuItem(parent, SWT.CASCADE);
+//        killItem.setText("Kill Simulation");
+//        killItem.setImage(IMAGE_KILL);
+//        killItem.setEnabled(current != null);
+//        killItem.setData(current);
+//        killItem.addSelectionListener(new SelectionListener() {
+//            @Override
+//            public void widgetSelected(SelectionEvent e) {
+//                MenuItem source = (MenuItem) e.getSource();
+//                Session session = (Session) source.getData();
+//                sessionService.disconnectSession(session);
+//            }
+//
+//            @Override
+//            public void widgetDefaultSelected(SelectionEvent e) {
+//                // Nothing to do
+//            }
+//        });
+//
+//        new MenuItem(parent, SWT.SEPARATOR);
+//
+//        MenuItem refreshItem = new MenuItem(parent, SWT.NONE);
+//        refreshItem.setText("Refresh Servers");
+//        refreshItem.addSelectionListener(new SelectionListener() {
+//            @Override
+//            public void widgetSelected(SelectionEvent e) {
+//                sessionService.refreshSessions();
+//            }
+//
+//            @Override
+//            public void widgetDefaultSelected(SelectionEvent e) {
+//                // Nothing to do
+//            }
+//        });
+//
+//        MenuItem addItem = new MenuItem(parent, SWT.NONE);
+//        addItem.setText("Add Server");
+//        addItem.addSelectionListener(new SelectionListener() {
+//            @Override
+//            public void widgetSelected(SelectionEvent e) {
+//                ConnectDialog dialog = new ConnectDialog(parent.getShell());
+//                if (dialog.open() == Window.OK) {
+//                    sessionService.addRemoteSession(dialog.getURI(), dialog.connectImmediately());
+//                }
+//            }
+//
+//            @Override
+//            public void widgetDefaultSelected(SelectionEvent e) {
+//                // Nothing to do
+//            }
+//        });
+//    }
 
     public SessionPart() {
         // Nothing to do
@@ -334,21 +322,21 @@ public class SessionPart {
         columnLayout.setColumnData(nameColumn.getColumn(), new ColumnWeightData(1, 100, false));
         composite.setLayout(columnLayout);
 
-        Menu menu = new Menu(parent);
-        menu.addMenuListener(new MenuListener() {
-            @Override
-            public void menuShown(MenuEvent e) {
-                constructMenu(menu);
-            }
-
-            @Override
-            public void menuHidden(MenuEvent e) {
-                // Nothing to do
-            }
-        });
+//        Menu menu = new Menu(parent);
+//        menu.addMenuListener(new MenuListener() {
+//            @Override
+//            public void menuShown(MenuEvent e) {
+//                constructMenu(menu);
+//            }
+//
+//            @Override
+//            public void menuHidden(MenuEvent e) {
+//                // Nothing to do
+//            }
+//        });
 
         viewer.setInput(sessionService);
-        viewer.getTable().setMenu(menu);
+//        viewer.getTable().setMenu(menu);
         ColumnViewerToolTipSupport.enableFor(viewer);
 
         sessionService.addSessionChangeListener(sessionListener);

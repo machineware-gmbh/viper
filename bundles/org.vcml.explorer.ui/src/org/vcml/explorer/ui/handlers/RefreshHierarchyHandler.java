@@ -33,8 +33,6 @@ public class RefreshHierarchyHandler {
     @Execute
     public void execute(ISessionService service) throws SessionException {
         Session current = service.currentSession();
-        service.selectSession(null);
-        current.refresh();
-        service.selectSession(current);
+        service.refreshSession(current);
     }
 }

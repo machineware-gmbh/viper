@@ -24,9 +24,12 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -51,8 +54,10 @@ public class SessionService implements ISessionService, IDisposable {
     IEventBroker eventBroker;
 
     private void updateSession(String property, Session session) {
-        if (eventBroker != null)
+        if (eventBroker != null) {
             eventBroker.post(UIEvents.REQUEST_ENABLEMENT_UPDATE_TOPIC, UIEvents.ALL_ELEMENT_ID);
+            eventBroker.post(ISessionService.SESSION_TOPIC, session);
+        }
 
         if (!listeners.isEmpty()) {
             PropertyChangeEvent event = new PropertyChangeEvent(this, property, null, session);
@@ -75,6 +80,8 @@ public class SessionService implements ISessionService, IDisposable {
             return;
 
         sessions.remove(session);
+        if (session == current)
+            current = null;
         updateSession(PROP_REMOVED, session);
     }
 
@@ -94,14 +101,16 @@ public class SessionService implements ISessionService, IDisposable {
     }
 
     @Override
-    public void selectSession(Session session) {
-        if (session == current)
-            return;
+    public void refreshSession(Session session) {
+        try {
+            if (session == null || !session.isConnected() || session.isRunning())
+                return;
 
-        current = session;
-        if (eventBroker != null)
-            eventBroker.post(UIEvents.REQUEST_ENABLEMENT_UPDATE_TOPIC, UIEvents.ALL_ELEMENT_ID);
-        updateSession(PROP_SELECT, current);
+            session.refresh();
+            updateSession(PROP_UPDATED, session);
+        } catch (SessionException e) {
+            reportSessionError(session, e);
+        }
     }
 
     @Override
@@ -110,7 +119,6 @@ public class SessionService implements ISessionService, IDisposable {
             if (session.isConnected())
                 return;
             session.connect();
-            selectSession(session);
             updateSession(PROP_UPDATED, session);
         } catch (SessionException e) {
             reportSessionError(session, e);
@@ -122,6 +130,8 @@ public class SessionService implements ISessionService, IDisposable {
         try {
             if (session == null)
                 return;
+            if (session.isRunning())
+                stopSimulation(session);
             session.disconnect();
             updateSession(PROP_UPDATED, session);
         } catch (SessionException e) {
@@ -246,6 +256,15 @@ public class SessionService implements ISessionService, IDisposable {
         } catch (SessionException e) {
             MessageDialog.openError(null, "Session management", e.getMessage());
         }
+    }
+
+    @Inject
+    public void selectionChanged(@Optional @Named(IServiceConstants.ACTIVE_SELECTION) Session session) {
+        if (session == null)
+            return;
+
+        current = session;
+        updateSession(PROP_SELECT, current);
     }
 
 }

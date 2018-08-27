@@ -48,6 +48,16 @@ public interface ISessionService {
      */
     public static final String PROP_SELECT = "selected";
 
+    public static final String SESSION_TOPIC = "org/vcml/session";
+
+    public static final String SESSION_ADDED_TOPIC = SESSION_TOPIC + "/added";
+
+    public static final String SESSION_REMOVED_TOPIC = SESSION_TOPIC + "/removed";
+
+    public static final String SESSION_UPDATED_TOPIC = SESSION_TOPIC + "/updated";
+
+    public static final String SESSION_SELECTED_TOPIC = SESSION_TOPIC + "/selected";
+
     /**
      * The collection of sessions we are currently connected to.
      * 
@@ -69,17 +79,17 @@ public interface ISessionService {
     public void refreshSessions();
 
     /**
+     * Refreshes the specified session.
+     */
+    public void refreshSession(Session session);
+
+    /**
      * Returns the currently connected session or <code>null</code> if not
      * connected.
      * 
      * @return currently connected session or <code>null</code>.
      */
     public Session currentSession();
-
-    /**
-     * Selects the <code>session</code> as the current session.
-     */
-    public void selectSession(Session session);
 
     /**
      * Creates and connects to a new session.
