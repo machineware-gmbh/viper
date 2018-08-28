@@ -18,13 +18,18 @@
 
 package org.vcml.explorer.ui.handlers;
 
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.swt.widgets.Shell;
 import org.vcml.explorer.ui.services.ISessionService;
 import org.vcml.session.Session;
 
+@SuppressWarnings("restriction")
 public class ConnectHandler {
+
     @CanExecute
     public boolean canExecute(ISessionService service) {
         Session current = service.currentSession();
@@ -34,8 +39,13 @@ public class ConnectHandler {
     }
 
     @Execute
-    public void execute(Shell shell, ISessionService service) {
+    public void execute(Shell shell, ISessionService service, ECommandService commandService,
+            EHandlerService handlerService) {
         Session session = service.currentSession();
         service.connectSession(session);
+        if (session.isConnected()) {
+            ParameterizedCommand inspect = commandService.createCommand("org.vcml.explorer.ui.command.inspect", null);
+            handlerService.executeHandler(inspect);
+        }
     }
 }

@@ -21,6 +21,9 @@ package org.vcml.explorer.ui.parts;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -51,6 +54,7 @@ import org.vcml.explorer.ui.services.ISessionService;
 
 import org.vcml.session.Session;
 
+@SuppressWarnings("restriction")
 public class SessionPart {
 
     public static final String MENU_ID = "org.vcml.explorer.ui.popupmenu.sessions";
@@ -63,6 +67,12 @@ public class SessionPart {
 
     @Inject
     private EMenuService menuService;
+
+    @Inject
+    private ECommandService commandService;
+
+    @Inject
+    private EHandlerService handlerService;
 
     private TableViewer viewer;
 
@@ -87,10 +97,9 @@ public class SessionPart {
             Object selection = selectionService.getSelection();
             if (selection instanceof Session) {
                 Session session = (Session) selection;
-                if (session.isConnected())
-                    sessionService.disconnectSession(session);
-                else
-                    sessionService.connectSession(session);
+                String commandId = "org.vcml.explorer.ui.command." + (session.isConnected() ? "disconnect" : "connect");
+                ParameterizedCommand command = commandService.createCommand(commandId, null);
+                handlerService.executeHandler(command);
             }
         }
     };

@@ -18,11 +18,10 @@
 
 package org.vcml.explorer.ui.handlers;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.swt.widgets.Shell;
-
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.vcml.explorer.ui.services.ISessionService;
 import org.vcml.session.Session;
 
@@ -36,8 +35,12 @@ public class QuitHandler {
     }
 
     @Execute
-    public void execute(Shell shell, ISessionService service, IEclipseContext context) {
+    public void execute(ISessionService service, EPartService partService) {
         Session session = service.currentSession();
         service.quitSimulation(session);
+
+        MPart part = partService.findPart(session.toString());
+        if (part != null)
+            partService.hidePart(part);
     }
 }

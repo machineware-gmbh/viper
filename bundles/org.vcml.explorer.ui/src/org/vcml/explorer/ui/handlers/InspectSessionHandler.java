@@ -38,6 +38,8 @@ public class InspectSessionHandler {
 
     public static final String PART_URI = "bundleclass://org.vcml.explorer.ui/org.vcml.explorer.ui.parts.SystemCPart";
 
+    public static final String ICON_URI = "platform:/plugin/org.vcml.explorer.ui/icons/session_alt.gif";
+
     @CanExecute
     public boolean canExecute(ESelectionService selectionService) {
         Object selection = selectionService.getSelection();
@@ -49,16 +51,17 @@ public class InspectSessionHandler {
     @Execute
     public void execute(EPartService partService, EModelService modelService, ESelectionService selectionService,
             MApplication application) {
-        Object selection = selectionService.getSelection();
+        Session selection = (Session) selectionService.getSelection();
         String selectionId = selection.toString();
 
         MPart part = partService.findPart(selectionId);
         if (part == null) {
             part = MBasicFactory.INSTANCE.createPart();
-            part.setLabel("SystemC");
+            part.setLabel(selection.getName());
             part.setContributionURI(PART_URI);
             part.setCloseable(true);
             part.setElementId(selectionId);
+            part.setIconURI(ICON_URI);
         }
 
         List<MPartStack> stacks = modelService.findElements(application, STACK_ID, MPartStack.class, null);
