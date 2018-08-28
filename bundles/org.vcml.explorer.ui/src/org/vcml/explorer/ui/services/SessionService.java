@@ -55,8 +55,8 @@ public class SessionService implements ISessionService, IDisposable {
 
     private void updateSession(String property, Session session) {
         if (eventBroker != null) {
-            eventBroker.post(UIEvents.REQUEST_ENABLEMENT_UPDATE_TOPIC, UIEvents.ALL_ELEMENT_ID);
             eventBroker.post(ISessionService.SESSION_TOPIC, session);
+            eventBroker.post(UIEvents.REQUEST_ENABLEMENT_UPDATE_TOPIC, UIEvents.ALL_ELEMENT_ID);
         }
 
         if (!listeners.isEmpty()) {

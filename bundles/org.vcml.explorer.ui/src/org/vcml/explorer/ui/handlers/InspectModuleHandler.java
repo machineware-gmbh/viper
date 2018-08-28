@@ -18,9 +18,7 @@
 
 package org.vcml.explorer.ui.handlers;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
@@ -32,7 +30,7 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
-import org.vcml.explorer.ui.parts.SystemCPart;
+import org.vcml.explorer.ui.services.IInspectionService;
 import org.vcml.explorer.ui.services.ISessionService;
 import org.vcml.session.Module;
 
@@ -42,40 +40,26 @@ public class InspectModuleHandler {
 
     static final String BUNDLE_URI = "bundleclass://org.vcml.explorer.ui";
 
-    private Map<String, String> parts = new HashMap<String, String>();
-
-    public void registerPartContribution(String kind, Class<?> clazz) {
-        String uri = BUNDLE_URI + "/" + clazz.getName();
-        parts.put(kind, uri);
-    }
-
-    public InspectModuleHandler() {
-        registerPartContribution(Module.KIND_VCML_BUS, SystemCPart.class);
-        registerPartContribution(Module.KIND_VCML_UART, SystemCPart.class);
-        registerPartContribution(Module.KIND_VCML_PROCESSOR, SystemCPart.class);
-    }
-
     @CanExecute
-    public boolean canExecute(ESelectionService selectionService) {
+    public boolean canExecute(ESelectionService selectionService, IInspectionService inspectionService) {
         Object selection = selectionService.getSelection();
         if (!(selection instanceof Module))
             return false;
-        Module module = (Module) selection;
-        String uri = parts.get(module.getKind());
-        return uri != null;
+        return inspectionService.isInspectable((Module) selection);
     }
 
     @Execute
     public void execute(EPartService partService, EModelService modelService, ESelectionService selectionService,
-            MApplication application, ISessionService sessionService) {
+            MApplication application, ISessionService sessionService, IInspectionService inspectionService) {
         Module selection = (Module) selectionService.getSelection();
         String selectionId = sessionService.currentSession() + "/" + selection.getName();
 
         MPart part = partService.findPart(selectionId);
         if (part == null) {
             part = MBasicFactory.INSTANCE.createPart();
-            part.setLabel("SystemC");
-            part.setContributionURI(parts.get(selection.getKind()));
+            part.setLabel(selection.getName());
+            part.setTooltip(selectionId);
+            part.setContributionURI(inspectionService.lookupPartContributionURI(selection));
             part.setCloseable(true);
             part.setElementId(selectionId);
         }

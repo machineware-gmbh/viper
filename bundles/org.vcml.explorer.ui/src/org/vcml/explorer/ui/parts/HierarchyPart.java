@@ -66,6 +66,7 @@ import org.vcml.session.SessionException;
 
 import org.vcml.explorer.ui.Resources;
 import org.vcml.explorer.ui.dialogs.CommandDialog;
+import org.vcml.explorer.ui.services.IInspectionService;
 import org.vcml.explorer.ui.services.ISessionService;
 
 @SuppressWarnings("restriction")
@@ -73,6 +74,9 @@ public class HierarchyPart {
 
     @Inject
     private ISessionService sessionService;
+
+    @Inject
+    private IInspectionService inspectionService;
 
     @Inject
     private ESelectionService selectionService;
@@ -309,7 +313,7 @@ public class HierarchyPart {
                 new MenuItem(menu, SWT.SEPARATOR);
 
                 MenuItem inspectItem = new MenuItem(menu, SWT.NONE);
-                inspectItem.setEnabled(true);
+                inspectItem.setEnabled(inspectionService.isInspectable(selectedModule));
                 inspectItem.setText("Inspect");
                 inspectItem.setData(selectedItem);
                 inspectItem.setImage(Resources.getImage("icons/inspect.gif"));
