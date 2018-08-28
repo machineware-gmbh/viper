@@ -42,11 +42,10 @@ public class Module {
     public static final String KIND_VCML_COMPONENT = "vcml::component";
     public static final String KIND_VCML_PROCESSOR = "vcml::processor";
     public static final String KIND_VCML_BUS = "vcml::bus";
-    public static final String KIND_VCML_ROM = "vcml::rom";
-    public static final String KIND_VCML_RAM = "vcml::ram";
+    public static final String KIND_VCML_MEMORY = "vcml::memory";
     public static final String KIND_VCML_XBAR = "vcml::xbar";
     public static final String KIND_VCML_PERIPHERAL = "vcml::peripheral";
-    public static final String KIND_VCML_UART = "vcml::uart";
+    public static final String KIND_VCML_UART8250 = "vcml::uart8250";
     public static final String KIND_VCML_ETHERNET = "vcl::ethernet";
 
     private RemoteSerialProtocol protocol;
