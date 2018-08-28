@@ -97,7 +97,7 @@ public class CommandTerminal extends IOTerminal {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(getName() + ": command thread terminating (" + e.getMessage() + ")");
         }
     }
 

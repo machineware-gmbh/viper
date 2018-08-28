@@ -54,7 +54,7 @@ public abstract class IOTerminal extends Terminal {
         tx = new PipedOutputStream();
         in = new PipedInputStream(tx);
 
-        new Thread() {
+        new Thread("cmdThread_" + name) {
             public void run() {
                 loop();
             }

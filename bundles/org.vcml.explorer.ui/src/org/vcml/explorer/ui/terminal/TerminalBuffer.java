@@ -55,11 +55,11 @@ public class TerminalBuffer {
         cursor = 0;
     }
 
-    public TerminalBuffer(TerminalViewer viewer, Terminal console) {
-        this.terminal = console;
+    public TerminalBuffer(TerminalViewer viewer, Terminal terminal) {
+        this.terminal = terminal;
         this.buffer = "";
         this.cursor = 0;
-        this.update = new UIJob(Display.getDefault(), "uiUpdate_" + console.getName()) {
+        this.update = new UIJob(Display.getDefault(), "uiUpdate_" + terminal.getName()) {
             @Override
             public IStatus runInUIThread(IProgressMonitor monitor) {
                 viewer.refreshBuffer(TerminalBuffer.this);
@@ -67,7 +67,7 @@ public class TerminalBuffer {
             }
         };
 
-        new Thread("ioThread_" + console.getName()) {
+        new Thread("ioThread_" + terminal.getName()) {
             public void run() {
                 ioThread();
             }
@@ -115,8 +115,7 @@ public class TerminalBuffer {
                     return;
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            System.out.println(terminal.getName() + ": I/O thread terminating (" + e.getMessage() + ")");
         }
     }
 

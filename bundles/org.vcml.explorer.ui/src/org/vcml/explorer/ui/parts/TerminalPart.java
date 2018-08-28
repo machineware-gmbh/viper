@@ -91,6 +91,8 @@ public class TerminalPart {
 
         terminalViewer.removeBuffer(terminal);
         terminals.remove(terminal);
+        terminal.close();
+
         comboViewer.refresh();
     }
 

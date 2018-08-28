@@ -18,6 +18,7 @@
 
 package org.vcml.explorer.ui.terminal;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -51,6 +52,16 @@ public abstract class Terminal {
     public abstract InputStream getRx();
 
     public abstract OutputStream getTx();
+
+    public void close() {
+        try {
+            getRx().close();
+            getTx().close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println(name + ": failed to close terminal rx/tx (" + e.getMessage() + ")");
+        }
+    }
 
     @Override
     public String toString() {
