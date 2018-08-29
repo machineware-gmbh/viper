@@ -39,8 +39,9 @@ public class QuitHandler {
         Session session = service.currentSession();
         service.quitSimulation(session);
 
-        MPart part = partService.findPart(session.toString());
-        if (part != null)
-            partService.hidePart(part);
+        for (MPart part : partService.getParts()) {
+            if (part.getElementId().startsWith(session.toString()))
+                partService.hidePart(part);
+        }
     }
 }

@@ -50,6 +50,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -185,6 +187,15 @@ public class HierarchyPart {
         public void selectionChanged(SelectionChangedEvent event) {
             IStructuredSelection selection = viewer.getStructuredSelection();
             selectionService.setSelection(selection.getFirstElement());
+        }
+    };
+    
+    private IDoubleClickListener doubleClickListener = new IDoubleClickListener() {
+        @Override
+        public void doubleClick(DoubleClickEvent event) {
+            ParameterizedCommand inspect = commandService
+                    .createCommand("org.vcml.explorer.ui.command.inspect", null);
+            handlerService.executeHandler(inspect);
         }
     };
 
@@ -348,6 +359,7 @@ public class HierarchyPart {
         viewer.setLabelProvider(labelProvider);
         viewer.setComparator(viewerComparator);
         viewer.addSelectionChangedListener(viewerSelectionListener);
+        viewer.addDoubleClickListener(doubleClickListener);
 
         GridLayout layout = new GridLayout();
         layout.makeColumnsEqualWidth = true;

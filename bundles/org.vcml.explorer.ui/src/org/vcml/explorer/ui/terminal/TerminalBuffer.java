@@ -19,6 +19,8 @@
 package org.vcml.explorer.ui.terminal;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -30,11 +32,17 @@ public class TerminalBuffer {
 
     public static final String MSG_IO_ERROR = "I/O Error";
 
+    public static final Pattern ESCREGEX = Pattern.compile("\\[\\?*(\\d+)*(;\\d+)*[a-zA-Z]");
+
     private Terminal terminal;
 
-    private String buffer;
+    private String buffer = "";
 
-    private int cursor;
+    private int cursor = 0;
+
+    private boolean readingEscapeCode = false;
+
+    private String escapeCode = "";
 
     private UIJob update;
 
@@ -55,14 +63,40 @@ public class TerminalBuffer {
         cursor = 0;
     }
 
+    private void readEscapeCode(int character) {
+        escapeCode += (char) character;
+        Matcher m = ESCREGEX.matcher(escapeCode);
+        if (m.matches()) {
+            handleEscapeCode(escapeCode);
+            escapeCode = "";
+            readingEscapeCode = false;
+            return;
+        } else if (escapeCode.length() > 10) {
+            System.err.println(terminal.getName() + ": giving up reading escape code '" + escapeCode + "'");
+            escapeCode = "";
+            readingEscapeCode = false;
+        }
+    }
+
+    private void handleEscapeCode(String code) {
+        if (code.equals("[J")) {
+            buffer = buffer.substring(0, cursor);
+        } else if (code.equals("[H")) {
+            cursor = 0;
+        } else if (code.endsWith("m")) {
+            // ignore color for now
+        } else {
+            System.out.println(terminal.getName() + ": got unknown escape code '" + code + "'");
+        }
+    }
+
     public TerminalBuffer(TerminalViewer viewer, Terminal terminal) {
         this.terminal = terminal;
-        this.buffer = "";
-        this.cursor = 0;
         this.update = new UIJob(Display.getDefault(), "uiUpdate_" + terminal.getName()) {
             @Override
             public IStatus runInUIThread(IProgressMonitor monitor) {
-                viewer.refreshBuffer(TerminalBuffer.this);
+                if (!viewer.isDisposed())
+                    viewer.refreshBuffer(TerminalBuffer.this);
                 return Status.OK_STATUS;
             }
         };
@@ -83,6 +117,11 @@ public class TerminalBuffer {
     }
 
     public void receive(int character) {
+        if (readingEscapeCode) {
+            readEscapeCode(character);
+            return;
+        }
+
         switch (character) {
         case -1:
             buffer += MSG_IO_ERROR;
@@ -95,6 +134,13 @@ public class TerminalBuffer {
                 cursor--;
             }
             break;
+
+        case 0x1b: // escape
+            readingEscapeCode = true;
+            return; // wait with update until we read the entire code
+
+        case 0x07: // bell
+            return;
 
         default:
             buffer += (char) character;

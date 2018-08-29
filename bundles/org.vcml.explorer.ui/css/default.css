@@ -2,3 +2,15 @@
     font-family: "Courier New";
     background-color: white;
 }
+
+#UartViewer:enabled {
+    font-family: "Courier New";
+    color: white;
+    background-color: black;
+}
+
+#UartViewer:disabled {
+    font-family: "Courier New";
+    color: black;
+    background-color: gray;
+}

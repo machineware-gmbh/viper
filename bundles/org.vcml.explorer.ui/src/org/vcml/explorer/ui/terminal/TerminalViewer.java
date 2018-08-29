@@ -114,6 +114,14 @@ public class TerminalViewer extends Composite implements KeyListener {
             case 0:
                 break;
 
+            case 0x3: // ctrl+c
+                current.transmit(0x3);
+                break;
+
+            case SWT.ESC:
+                current.transmit(SWT.ESC);
+                break;
+
             case SWT.BS:
                 current.transmit(SWT.BS);
                 break;
@@ -141,12 +149,7 @@ public class TerminalViewer extends Composite implements KeyListener {
         //
     }
 
-    public boolean getWordWrap() {
-        return text.getWordWrap();
+    public StyledText getText() {
+        return text;
     }
-
-    public void setWordWrap(boolean wrap) {
-        text.setWordWrap(wrap);
-    }
-
 }

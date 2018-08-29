@@ -38,7 +38,9 @@ public class InspectModuleHandler {
 
     public static final String STACK_ID = "org.vcml.explorer.ui.partstack.middle";
 
-    static final String BUNDLE_URI = "bundleclass://org.vcml.explorer.ui";
+    public static final String BUNDLE_URI = "bundleclass://org.vcml.explorer.ui";
+
+    public static final String ICON_URI = "platform:/plugin/org.vcml.explorer.ui/icons/chip.png";
 
     @CanExecute
     public boolean canExecute(ESelectionService selectionService, IInspectionService inspectionService) {
@@ -60,6 +62,7 @@ public class InspectModuleHandler {
             part.setLabel(selection.getName());
             part.setTooltip(selectionId);
             part.setContributionURI(inspectionService.lookupPartContributionURI(selection));
+            part.setIconURI(ICON_URI);
             part.setCloseable(true);
             part.setElementId(selectionId);
         }

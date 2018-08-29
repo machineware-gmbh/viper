@@ -171,10 +171,10 @@ public class TerminalPart {
     }
 
     public boolean getWordWrap() {
-        return terminalViewer.getWordWrap();
+        return terminalViewer.getText().getWordWrap();
     }
 
     public void setWordWrap(boolean wrap) {
-        terminalViewer.setWordWrap(wrap);
+        terminalViewer.getText().setWordWrap(wrap);
     }
 }
