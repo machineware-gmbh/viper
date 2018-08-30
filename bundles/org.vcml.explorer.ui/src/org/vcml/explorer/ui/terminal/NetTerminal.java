@@ -21,9 +21,12 @@ package org.vcml.explorer.ui.terminal;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class NetTerminal extends Terminal {
+
+    public static final int TIMEOUT_MS = 1000;
 
     private Socket socket;
 
@@ -33,7 +36,8 @@ public class NetTerminal extends Terminal {
 
     public NetTerminal(String name, String host, int port) throws IOException {
         super(name, false);
-        socket = new Socket(host, port);
+        socket = new Socket();
+        socket.connect(new InetSocketAddress(host, port), TIMEOUT_MS);
         rx = socket.getInputStream();
         tx = socket.getOutputStream();
     }
