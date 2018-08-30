@@ -212,15 +212,20 @@ public class SessionService implements ISessionService, IDisposable {
 
     @Override
     public void reportSessionError(Session session, SessionException e) {
-        if (session.isConnected())
-            disconnectSession(session);
-        removeSession(session);
-        String message = e.getMessage();
-        Throwable cause = e.getCause();
-        if (cause != null)
-            message += ": " + cause.getMessage();
-        System.err.println(message);
-        MessageDialog.openError(Display.getDefault().getActiveShell(), "Session Error", message);
+        try {
+            if (session.isConnected())
+                session.disconnect();
+        } catch (SessionException ex) {
+            // session already erroneous
+        } finally {
+            removeSession(session);
+            String message = e.getMessage();
+            Throwable cause = e.getCause();
+            if (cause != null)
+                message += ": " + cause.getMessage();
+            System.err.println(message);
+            MessageDialog.openError(Display.getDefault().getActiveShell(), "Session Error", message);
+        }
     }
 
     @Override
