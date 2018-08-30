@@ -48,7 +48,7 @@ public class TerminalViewer extends Composite implements KeyListener {
 
         // Adjust cursor for newlines being two bytes on Windows (CR+LF, 0xd+0xa)
         if (text.getText().indexOf('\r') != -1 && cursor > 0) {
-            String beforeCursor = buffer.getBuffer().substring(0, buffer.getCursor());
+            String beforeCursor = buffer.getBuffer().substring(0, cursor);
             for (char c : beforeCursor.toCharArray())
                 if (c == '\n')
                     cursor++;
