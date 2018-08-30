@@ -18,19 +18,22 @@
 
 package org.vcml.explorer.ui.parts;
 
+import java.io.IOException;
+
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Caret;
 import org.eclipse.swt.widgets.Composite;
 import org.vcml.explorer.ui.services.ISessionService;
 import org.vcml.explorer.ui.terminal.NetTerminal;
-import org.vcml.explorer.ui.terminal.Terminal;
 import org.vcml.explorer.ui.terminal.TerminalViewer;
 import org.vcml.session.Attribute;
 import org.vcml.session.Module;
@@ -38,13 +41,13 @@ import org.vcml.session.Session;
 
 public class UartPart {
 
-    private Session session;
+    private Session session = null;
 
-    private Module uart;
+    private Module uart = null;
 
-    private Terminal terminal;
+    private NetTerminal terminal = null;
 
-    private TerminalViewer viewer;
+    private TerminalViewer viewer = null;
 
     private int getPort() {
         for (Module child : uart.getChildren())
@@ -61,27 +64,42 @@ public class UartPart {
     }
 
     @PostConstruct
-    public void createComposite(Composite parent, ISessionService sessionService, ESelectionService selectionService)
-            throws Exception {
+    public void createComposite(Composite parent, ISessionService sessionService, ESelectionService selectionService) {
         session = sessionService.currentSession();
         uart = (Module) selectionService.getSelection();
 
-        String name = uart.getName();
-        String host = session.getHost();
-        int port = getPort();
-        if (port == -1)
-            throw new Exception("failed to lookup port for UART connection");
-        terminal = new NetTerminal(name, host, port);
-
         viewer = new TerminalViewer(parent);
-        viewer.setTerminal(terminal);
         viewer.getText().setData("org.eclipse.e4.ui.css.id", "UartViewer");
 
         Caret caret = new Caret(viewer.getText(), SWT.NONE);
         caret.setBounds(0, 0, 8, viewer.getText().getLineHeight());
         viewer.getText().setCaret(caret);
 
+        String name = uart.getName();
+        String host = session.getHost();
+        int port = getPort();
+
+        if (port < 0) {
+            MessageDialog.openError(parent.getShell(), uart.getName(),
+                    "Unable to find a port for the TCP connection. Did you add a TCP backend?");
+            return;
+        }
+
+        try {
+            terminal = new NetTerminal(name, host, port);
+            viewer.setTerminal(terminal);
+        } catch (IOException e) {
+            MessageDialog.openError(parent.getShell(), uart.getName(),
+                    "Cannot connect to " + uart.getName() + ": " + e.getMessage());
+        }
+
         update();
+    }
+
+    @PreDestroy
+    public void preDestroy() {
+        if (terminal != null)
+            terminal.close();
     }
 
     @Focus
