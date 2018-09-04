@@ -193,10 +193,8 @@ public class SessionService implements ISessionService {
     @Override
     public Module findModule(Session session, String name) {
         try {
-            if (session == null)
+            if (session == null || !session.isConnected() || session.isRunning())
                 return null;
-            if (!session.isConnected())
-                connectSession(session);
             return session.findObject(name);
         } catch (SessionException e) {
             reportSessionError(session, e);
