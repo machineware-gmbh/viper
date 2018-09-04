@@ -20,8 +20,6 @@ package org.vcml.explorer.ui.services;
 
 import java.util.Collection;
 
-import org.eclipse.jface.util.IPropertyChangeListener;
-
 import org.vcml.session.Module;
 import org.vcml.session.Session;
 import org.vcml.session.SessionException;
@@ -29,34 +27,40 @@ import org.vcml.session.SessionException;
 public interface ISessionService {
 
     /**
-     * Fired when a new session is discovered
+     * Base topic to receive all session related event broadcasts
      */
-    public static final String PROP_ADDED = "added";
+    public static final String TOPIC_SESSION_BASE = "org/vcml/session";
 
     /**
-     * Fired when a session is no longer available
+     * Broadcasted whenever a new session has been added or found
      */
-    public static final String PROP_REMOVED = "removed";
+    public static final String TOPIC_SESSION_ADDED = TOPIC_SESSION_BASE + "/added";
 
     /**
-     * Fired when the state of a session is updated
+     * Broadcasted whenever a session has been removed (e.g. terminated)
      */
-    public static final String PROP_UPDATED = "updated";
+    public static final String TOPIC_SESSION_REMOVED = TOPIC_SESSION_BASE + "/removed";
 
     /**
-     * Fired when current session has changed
+     * Broadcasted whenever the state of a session changes (e.g. connected ->
+     * disconnected or running -> stopped).
      */
-    public static final String PROP_SELECT = "selected";
+    public static final String TOPIC_SESSION_UPDATED = TOPIC_SESSION_BASE + "/updated";
 
-    public static final String SESSION_TOPIC = "org/vcml/session";
+    /**
+     * Broadcasted whenever a new session has been selected as active session.
+     */
+    public static final String TOPIC_SESSION_SELECTED = TOPIC_SESSION_BASE + "/selected";
 
-    public static final String SESSION_ADDED_TOPIC = SESSION_TOPIC + "/added";
+    /**
+     * Topic to receive all session related event broadcasts
+     */
+    public static final String TOPIC_SESSION_ANY = TOPIC_SESSION_BASE + "/*";
 
-    public static final String SESSION_REMOVED_TOPIC = SESSION_TOPIC + "/removed";
-
-    public static final String SESSION_UPDATED_TOPIC = SESSION_TOPIC + "/updated";
-
-    public static final String SESSION_SELECTED_TOPIC = SESSION_TOPIC + "/selected";
+    /**
+     * Currently active (i.e. selected) session
+     */
+    public static final String ACTIVE_SESSION = "org.vcml.session.active";
 
     /**
      * The collection of sessions we are currently connected to.
@@ -89,7 +93,14 @@ public interface ISessionService {
      * 
      * @return currently connected session or <code>null</code>.
      */
-    public Session currentSession();
+    public Session getSession();
+
+    /**
+     * Sets the currently active session
+     * 
+     * @param session session to set active
+     */
+    public void setSession(Session session);
 
     /**
      * Creates and connects to a new session.
@@ -133,28 +144,5 @@ public interface ISessionService {
      * @param e       Description of the error
      */
     public void reportSessionError(Session session, SessionException e);
-
-    /**
-     * Listen for changes to sessions managed by this service.
-     * <p>
-     * Note: this services cleans up listeners when it is disposed.
-     * </p>
-     * 
-     * @param listener the property change listener. Has no effect if an identical
-     *                 listener is already registered. Must not be <code>null</code>
-     * @see #PROP_ADDED
-     * @see #PROP_REMOVED
-     * @see #PROP_UPDATED
-     * @see ISessionService#removeSessionChangeListener(IPropertyChangeListener)
-     */
-    public void addSessionChangeListener(IPropertyChangeListener listener);
-
-    /**
-     * Remove the change listener.
-     * 
-     * @param listener the property change listener. Has no effect if it is not
-     *                 already registered. Must not be <code>null</code>.
-     */
-    public void removeSessionChangeListener(IPropertyChangeListener listener);
 
 }

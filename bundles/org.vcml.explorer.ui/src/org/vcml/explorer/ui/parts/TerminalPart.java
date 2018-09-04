@@ -30,8 +30,6 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -42,6 +40,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+
 import org.vcml.explorer.ui.services.ISessionService;
 import org.vcml.explorer.ui.terminal.SessionTerminal;
 import org.vcml.explorer.ui.terminal.Terminal;
@@ -112,19 +111,6 @@ public class TerminalPart {
         }
     };
 
-    private IPropertyChangeListener sessionListener = new IPropertyChangeListener() {
-        @Override
-        public void propertyChange(PropertyChangeEvent event) {
-            if (event.getProperty().equals(ISessionService.PROP_UPDATED)) {
-                Session session = (Session) event.getNewValue();
-                if (session.isConnected())
-                    selectTerminalForSession(session);
-                else
-                    removeTerminalOfSession(session);
-            }
-        }
-    };
-
     @PostConstruct
     public void createComposite(Composite parent, IEventBroker broker, IEclipseContext ctx) throws IOException {
         parent.setLayout(new GridLayout());
@@ -138,13 +124,10 @@ public class TerminalPart {
 
         terminalViewer = new TerminalViewer(parent);
         terminalViewer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-        sessionService.addSessionChangeListener(sessionListener);
-
     }
 
     @Inject
-    public void selectionUpdated(@Optional @Named(IServiceConstants.ACTIVE_SELECTION) Session session) {
+    public void selectionChanged(@Optional @Named(IServiceConstants.ACTIVE_SELECTION) Session session) {
         if (session != null) {
             Terminal term = findTerminalForSession(session);
             if (term != null)
@@ -152,12 +135,18 @@ public class TerminalPart {
         }
     }
 
-    public TerminalPart() {
-        terminals = new ArrayList<>();
+    @Inject
+    public void sessionChanged(@Optional @Named(ISessionService.ACTIVE_SESSION) Session session) {
+        if (session != null) {
+            if (session.isConnected())
+                selectTerminalForSession(session);
+            else
+                removeTerminalOfSession(session);
+        }
     }
 
-    public void dispose() {
-        sessionService.removeSessionChangeListener(sessionListener);
+    public TerminalPart() {
+        terminals = new ArrayList<>();
     }
 
     public Terminal activeTerminal() {

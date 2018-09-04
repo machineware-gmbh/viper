@@ -29,7 +29,7 @@ import org.vcml.session.Session;
 public class StopHandler {
     @CanExecute
     public boolean canExecute(ISessionService service) {
-        Session current = service.currentSession();
+        Session current = service.getSession();
         if ((current == null) || !current.isConnected())
             return false;
         return current.isRunning();
@@ -37,7 +37,7 @@ public class StopHandler {
 
     @Execute
     public void execute(Shell shell, ISessionService service, IEclipseContext context) {
-        Session session = service.currentSession();
+        Session session = service.getSession();
         service.stopSimulation(session);
     }
 }

@@ -19,17 +19,18 @@ package org.vcml.explorer.ui.parts;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Named;
 
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
-import org.eclipse.e4.ui.workbench.modeling.ISelectionListener;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+
 import org.vcml.explorer.ui.Resources;
 import org.vcml.explorer.ui.services.ISessionService;
 import org.vcml.session.Attribute;
@@ -39,39 +40,23 @@ import org.vcml.session.Session;
 public class StatusPart {
 
     private Composite composite;
+
     private CLabel sessionLabel;
+
     private CLabel timeLabel;
+
     private CLabel cycleLabel;
+
     private CLabel selectionLabel;
 
     @Inject
     private ESelectionService selectionService;
 
-    private ISelectionListener selectionListener = new ISelectionListener() {
-        @Override
-        public void selectionChanged(MPart part, Object selection) {
-            updateStatus();
-        }
-    };
-
     @Inject
     private ISessionService sessionService;
 
-    private IPropertyChangeListener sessionListener = new IPropertyChangeListener() {
-        @Override
-        public void propertyChange(PropertyChangeEvent event) {
-            switch (event.getProperty()) {
-            case ISessionService.PROP_UPDATED:
-            case ISessionService.PROP_SELECT:
-                updateStatus();
-            default:
-                break;
-            }
-        }
-    };
-
     private void updateSessionStatus() {
-        Session session = sessionService.currentSession();
+        Session session = sessionService.getSession();
         if (session == null) {
             sessionLabel.setText("not connected");
             sessionLabel.setImage(null);
@@ -84,7 +69,7 @@ public class StatusPart {
     }
 
     private void updateTimeStatus() {
-        Session session = sessionService.currentSession();
+        Session session = sessionService.getSession();
         if (session == null || !session.isConnected()) {
             timeLabel.setVisible(false);
             cycleLabel.setVisible(false);
@@ -106,7 +91,7 @@ public class StatusPart {
 
     private void updateSelectionStatus() {
         Object selection = selectionService.getSelection();
-        //System.out.println("Selection changed to " + selection);
+        // System.out.println("Selection changed to " + selection);
         if (selection instanceof Module) {
             selectionLabel.setVisible(true);
             selectionLabel.setText(((Module) selection).getName());
@@ -170,14 +155,18 @@ public class StatusPart {
         selectionLabel.setToolTipText("Currently Selected Object");
 
         updateStatus();
-
-        selectionService.addSelectionListener(selectionListener);
-        sessionService.addSessionChangeListener(sessionListener);
     }
 
-    void dispose() {
-        selectionService.removeSelectionListener(selectionListener);
-        sessionService.removeSessionChangeListener(sessionListener);
+    @Inject
+    @Optional
+    public void sessionChanged(@UIEventTopic(ISessionService.TOPIC_SESSION_ANY) Session session) {
+        updateStatus();
+    }
+
+    @Inject
+    public void selectionChanged(@Optional @Named(IServiceConstants.ACTIVE_SELECTION) Object selection) {
+        if (composite != null && !composite.isDisposed())
+            updateStatus();
     }
 
 }

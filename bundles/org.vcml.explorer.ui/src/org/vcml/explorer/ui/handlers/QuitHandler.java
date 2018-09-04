@@ -28,7 +28,7 @@ import org.vcml.session.Session;
 public class QuitHandler {
     @CanExecute
     public boolean canExecute(ISessionService service) {
-        Session current = service.currentSession();
+        Session current = service.getSession();
         if ((current == null) || !current.isConnected())
             return false;
         return true;
@@ -36,7 +36,7 @@ public class QuitHandler {
 
     @Execute
     public void execute(ISessionService service, EPartService partService) {
-        Session session = service.currentSession();
+        Session session = service.getSession();
         service.quitSimulation(session);
 
         for (MPart part : partService.getParts()) {

@@ -54,7 +54,7 @@ public class InspectModuleHandler {
     public void execute(EPartService partService, EModelService modelService, ESelectionService selectionService,
             MApplication application, ISessionService sessionService, IInspectionService inspectionService) {
         Module selection = (Module) selectionService.getSelection();
-        String selectionId = sessionService.currentSession() + "/" + selection.getName();
+        String selectionId = sessionService.getSession() + "/" + selection.getName();
 
         MPart part = partService.findPart(selectionId);
         if (part == null) {

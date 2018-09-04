@@ -20,12 +20,13 @@ package org.vcml.explorer.ui.parts;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.Focus;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
-import org.eclipse.e4.ui.workbench.modeling.ISelectionListener;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -36,8 +37,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
@@ -52,10 +51,12 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+
 import org.vcml.explorer.ui.Resources;
 import org.vcml.explorer.ui.services.ISessionService;
 import org.vcml.session.Attribute;
 import org.vcml.session.Module;
+import org.vcml.session.Session;
 import org.vcml.session.SessionException;
 
 public class AttributePart {
@@ -71,24 +72,17 @@ public class AttributePart {
     private TableViewerColumn attrColumn;
     private TableViewerColumn valueColumn;
 
-    private IPropertyChangeListener sessionListener = new IPropertyChangeListener() {
-        @Override
-        public void propertyChange(PropertyChangeEvent event) {
-            String property = event.getProperty();
-            if (property.equals(ISessionService.PROP_UPDATED) || property.equals(ISessionService.PROP_REMOVED)
-                    || property.equals(ISessionService.PROP_SELECT)) {
-                viewer.setInput(null);
-            }
-        }
-    };
+    @Inject
+    @Optional
+    public void sessionChanged(@UIEventTopic(ISessionService.TOPIC_SESSION_ANY) Session session) {
+        viewer.setInput(null);
+    }
 
-    private ISelectionListener selectionListener = new ISelectionListener() {
-        @Override
-        public void selectionChanged(MPart part, Object selection) {
-            if (selection instanceof Module)
-                viewer.setInput(selection);
-        }
-    };
+    @Inject
+    public void selectionChanged(@Optional @Named(IServiceConstants.ACTIVE_SELECTION) Module selection) {
+        if (selection != null)
+            viewer.setInput(selection);
+    }
 
     private ISelectionChangedListener viewerSelectionListener = new ISelectionChangedListener() {
         @Override
@@ -164,15 +158,6 @@ public class AttributePart {
         }
     };
 
-    public AttributePart() {
-
-    }
-
-    public void dispose() {
-        sessionService.removeSessionChangeListener(sessionListener);
-        selectionService.removeSelectionListener(selectionListener);
-    }
-
     @PostConstruct
     public void createComposite(Composite parent) {
         parent.setLayout(new GridLayout());
@@ -205,7 +190,7 @@ public class AttributePart {
                     ((Attribute) element).setValue(value.toString());
                     viewer.update(element, null);
                 } catch (SessionException e) {
-                    sessionService.reportSessionError(sessionService.currentSession(), e);
+                    sessionService.reportSessionError(sessionService.getSession(), e);
                 }
             }
 
@@ -235,9 +220,6 @@ public class AttributePart {
         table.setLinesVisible(true);
 
         ColumnViewerToolTipSupport.enableFor(viewer);
-
-        sessionService.addSessionChangeListener(sessionListener);
-        selectionService.addSelectionListener(selectionListener);
     }
 
     @Focus

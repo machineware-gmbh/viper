@@ -32,7 +32,7 @@ public class ConnectHandler {
 
     @CanExecute
     public boolean canExecute(ISessionService service) {
-        Session current = service.currentSession();
+        Session current = service.getSession();
         if ((current == null) || current.isConnected())
             return false;
         return true;
@@ -41,7 +41,7 @@ public class ConnectHandler {
     @Execute
     public void execute(Shell shell, ISessionService service, ECommandService commandService,
             EHandlerService handlerService) {
-        Session session = service.currentSession();
+        Session session = service.getSession();
         service.connectSession(session);
         if (session.isConnected()) {
             ParameterizedCommand inspect = commandService.createCommand("org.vcml.explorer.ui.command.inspect", null);

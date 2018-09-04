@@ -87,6 +87,7 @@ public class SessionPart {
         @Override
         public void selectionChanged(SelectionChangedEvent event) {
             Object selection = viewer.getStructuredSelection().getFirstElement();
+            sessionService.setSession((Session) selection);
             selectionService.setSelection(selection);
         }
     };
@@ -162,7 +163,7 @@ public class SessionPart {
 
     @Inject
     @Optional
-    public void sessionChanged(@UIEventTopic(ISessionService.SESSION_TOPIC) Session session) {
+    public void sessionChanged(@UIEventTopic(ISessionService.TOPIC_SESSION_ANY) Session session) {
         viewer.refresh();
     }
 

@@ -20,14 +20,16 @@ package org.vcml.explorer.ui.parts;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.Focus;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
-import org.eclipse.e4.ui.workbench.modeling.ISelectionListener;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuEvent;
@@ -45,9 +47,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -65,7 +64,6 @@ import org.vcml.session.Command;
 import org.vcml.session.Module;
 import org.vcml.session.Session;
 import org.vcml.session.SessionException;
-
 import org.vcml.explorer.ui.Resources;
 import org.vcml.explorer.ui.dialogs.CommandDialog;
 import org.vcml.explorer.ui.services.IInspectionService;
@@ -73,6 +71,10 @@ import org.vcml.explorer.ui.services.ISessionService;
 
 @SuppressWarnings("restriction")
 public class HierarchyPart {
+
+    public HierarchyPart() {
+        
+    }
 
     @Inject
     private ISessionService sessionService;
@@ -166,21 +168,18 @@ public class HierarchyPart {
 
     };
 
-    private IPropertyChangeListener sessionListener = new IPropertyChangeListener() {
-        @Override
-        public void propertyChange(PropertyChangeEvent event) {
-            Session session = (Session) event.getNewValue();
+    @Inject
+    @Optional
+    public void sessionChanged(@UIEventTopic(ISessionService.TOPIC_SESSION_ANY) Session session) {
+        if (viewer != null && !viewer.getControl().isDisposed())
             viewer.setInput(session);
-        }
-    };
+    }
 
-    private ISelectionListener selectionListener = new ISelectionListener() {
-        @Override
-        public void selectionChanged(MPart part, Object selection) {
-            if (selection instanceof Module)
-                selectedModule = (Module) selection;
-        }
-    };
+    @Inject
+    public void selectionChanged(@Optional @Named(IServiceConstants.ACTIVE_SELECTION) Object selection) {
+        if (selection instanceof Module)
+            selectedModule = (Module) selection;
+    }
 
     private ISelectionChangedListener viewerSelectionListener = new ISelectionChangedListener() {
         @Override
@@ -189,12 +188,11 @@ public class HierarchyPart {
             selectionService.setSelection(selection.getFirstElement());
         }
     };
-    
+
     private IDoubleClickListener doubleClickListener = new IDoubleClickListener() {
         @Override
         public void doubleClick(DoubleClickEvent event) {
-            ParameterizedCommand inspect = commandService
-                    .createCommand("org.vcml.explorer.ui.command.inspect", null);
+            ParameterizedCommand inspect = commandService.createCommand("org.vcml.explorer.ui.command.inspect", null);
             handlerService.executeHandler(inspect);
         }
     };
@@ -375,9 +373,6 @@ public class HierarchyPart {
         tree.setLayoutData(data);
         tree.setMenu(buildContextMenu(tree));
         ColumnViewerToolTipSupport.enableFor(viewer);
-
-        sessionService.addSessionChangeListener(sessionListener);
-        selectionService.addSelectionListener(selectionListener);
     }
 
     @Focus
@@ -391,11 +386,6 @@ public class HierarchyPart {
 
     public void expandAll() {
         viewer.expandAll();
-    }
-
-    public void dispose() {
-        sessionService.removeSessionChangeListener(sessionListener);
-        selectionService.removeSelectionListener(selectionListener);
     }
 
 }

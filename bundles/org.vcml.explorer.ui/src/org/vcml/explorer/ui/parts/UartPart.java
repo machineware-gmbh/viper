@@ -65,7 +65,7 @@ public class UartPart {
 
     @PostConstruct
     public void createComposite(Composite parent, ISessionService sessionService, ESelectionService selectionService) {
-        session = sessionService.currentSession();
+        session = sessionService.getSession();
         uart = (Module) selectionService.getSelection();
 
         viewer = new TerminalViewer(parent);
@@ -109,7 +109,7 @@ public class UartPart {
 
     @Inject
     @Optional
-    public void sessionChanged(@UIEventTopic(ISessionService.SESSION_TOPIC) Session current) {
+    public void sessionChanged(@UIEventTopic(ISessionService.TOPIC_SESSION_ANY) Session current) {
         if (session == current)
             update();
     }

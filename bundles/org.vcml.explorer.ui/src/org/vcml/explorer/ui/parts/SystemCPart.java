@@ -92,7 +92,7 @@ public class SystemCPart {
 
     @PostConstruct
     public void createComposite(Composite parent, ISessionService service) {
-        session = service.currentSession();
+        session = service.getSession();
         parent.setLayout(new GridLayout());
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -126,7 +126,7 @@ public class SystemCPart {
 
     @Inject
     @Optional
-    public void sessionChanged(@UIEventTopic(ISessionService.SESSION_TOPIC) Session current) {
+    public void sessionChanged(@UIEventTopic(ISessionService.TOPIC_SESSION_ANY) Session current) {
         if (session == current) {
             viewer.refresh();
             viewer.getTable().setEnabled(session.isConnected() && !session.isRunning());

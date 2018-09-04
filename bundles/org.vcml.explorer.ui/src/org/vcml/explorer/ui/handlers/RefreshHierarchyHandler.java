@@ -27,12 +27,12 @@ import org.vcml.session.SessionException;
 public class RefreshHierarchyHandler {
     @CanExecute
     public boolean canExecute(ISessionService service) {
-        return service.currentSession() != null;
+        return service.getSession() != null;
     }
 
     @Execute
     public void execute(ISessionService service) throws SessionException {
-        Session current = service.currentSession();
+        Session current = service.getSession();
         service.refreshSession(current);
     }
 }
