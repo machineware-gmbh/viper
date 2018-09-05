@@ -18,6 +18,9 @@
 
 package org.vcml.explorer.ui;
 
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -25,10 +28,9 @@ import org.eclipse.e4.ui.workbench.lifecycle.PostContextCreate;
 import org.eclipse.e4.ui.workbench.lifecycle.PreSave;
 import org.eclipse.e4.ui.workbench.lifecycle.ProcessAdditions;
 import org.eclipse.e4.ui.workbench.lifecycle.ProcessRemovals;
-import org.eclipse.jface.window.Window;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
-import org.vcml.explorer.ui.dialogs.ConnectDialog;
+
 import org.vcml.explorer.ui.services.ISessionService;
 
 @SuppressWarnings("restriction")
@@ -66,11 +68,12 @@ public class LifeCycle {
 
     void appStartupComplete() {
         ISessionService service = context.get(ISessionService.class);
+        ECommandService command = context.get(ECommandService.class);
+        EHandlerService handler = context.get(EHandlerService.class);
+
         if (service.getSessions().isEmpty()) {
-            ConnectDialog dialog = new ConnectDialog(null);
-            if (dialog.open() == Window.OK) {
-                service.addRemoteSession(dialog.getURI(), dialog.connectImmediately());
-            }
+            ParameterizedCommand newsession = command.createCommand("org.vcml.explorer.ui.command.new", null);
+            handler.executeHandler(newsession);
         }
     }
 

@@ -228,14 +228,17 @@ public class SessionService implements ISessionService {
     }
 
     @Override
-    public void addRemoteSession(String URI, boolean connect) {
+    public Session addRemoteSession(String URI) {
         try {
+            for (Session s : sessions)
+                if (URI.equals(s.getURI()))
+                    return s;
             Session session = new Session(URI);
             addSession(session);
-            if (connect)
-                connectSession(session);
+            return session;
         } catch (SessionException e) {
             MessageDialog.openError(null, "Session management", e.getMessage());
+            return null;
         }
     }
 

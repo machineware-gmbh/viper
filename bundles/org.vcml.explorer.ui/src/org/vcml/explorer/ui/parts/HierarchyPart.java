@@ -72,10 +72,6 @@ import org.vcml.explorer.ui.services.ISessionService;
 @SuppressWarnings("restriction")
 public class HierarchyPart {
 
-    public HierarchyPart() {
-        
-    }
-
     @Inject
     private ISessionService sessionService;
 
