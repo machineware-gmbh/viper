@@ -68,6 +68,7 @@ public class RemoteSerialProtocol {
     public void send_char(int val) throws SessionException {
         try {
             socket.getOutputStream().write(val);
+            socket.getOutputStream().flush();
         } catch (IOException e) {
             throw new SessionException("Failed to contact session", e);
         }
@@ -79,6 +80,7 @@ public class RemoteSerialProtocol {
             int checksum = calcChecksum(message);
             String packet = "$" + message + "#" + String.format("%02X", checksum);
             socket.getOutputStream().write(packet.getBytes());
+            socket.getOutputStream().flush();
 
             int response = socket.getInputStream().read();
             switch (response) {
