@@ -46,7 +46,8 @@ public class Module {
     public static final String KIND_VCML_XBAR = "vcml::xbar";
     public static final String KIND_VCML_PERIPHERAL = "vcml::peripheral";
     public static final String KIND_VCML_UART8250 = "vcml::uart8250";
-    public static final String KIND_VCML_ETHERNET = "vcl::ethernet";
+    public static final String KIND_VCML_ETHERNET = "vcml::ethernet";
+    public static final String KIND_VCML_ARM_PL011UART = "vcml::arm::pl011uart";
 
     private RemoteSerialProtocol protocol;
 
