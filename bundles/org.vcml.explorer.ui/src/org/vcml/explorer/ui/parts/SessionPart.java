@@ -40,6 +40,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 
@@ -165,6 +166,16 @@ public class SessionPart {
     @Optional
     public void sessionChanged(@UIEventTopic(ISessionService.TOPIC_SESSION_ANY) Session session) {
         viewer.refresh();
+    }
+
+    @Inject
+    @Optional
+    public void sessionSelectionChanged(@UIEventTopic(ISessionService.TOPIC_SESSION_SELECTED) Session session) {
+        Session selected = (Session) viewer.getStructuredSelection().getFirstElement();
+        if (session != selected) {
+            viewer.setSelection(new StructuredSelection(session));
+            viewer.refresh();
+        }
     }
 
 }
