@@ -26,14 +26,24 @@ import java.net.Socket;
 
 public class RemoteSerialProtocol {
 
-    private int calcChecksum(String str) {
+    private static String escape(String s) {
+        String esc = "";
+        for (char c : s.toCharArray()) {
+            if (c == '$' || c == '#' || c == '\\')
+                esc = esc + '\\';
+            esc = esc + c;
+        }
+        return esc;
+    }
+
+    private static int calcChecksum(String str) {
         int result = 0;
         for (int i = 0; i < str.length(); i++)
             result += (int) str.charAt(i);
         return result & 0xff;
     }
 
-    private int calcChecksum(int chr1, int chr2) {
+    private static int calcChecksum(int chr1, int chr2) {
         String txt = "" + (char) chr1 + (char) chr2;
         return Integer.parseInt(txt, 16);
     }
@@ -77,8 +87,9 @@ public class RemoteSerialProtocol {
     public void send(String message) throws SessionException {
         try {
             // Packet format: $<message>#<8bit-checksum>
-            int checksum = calcChecksum(message);
-            String packet = "$" + message + "#" + String.format("%02X", checksum);
+            String payload = escape(message);
+            int checksum = calcChecksum(payload);
+            String packet = "$" + payload + "#" + String.format("%02X", checksum);
             socket.getOutputStream().write(packet.getBytes());
             socket.getOutputStream().flush();
 
