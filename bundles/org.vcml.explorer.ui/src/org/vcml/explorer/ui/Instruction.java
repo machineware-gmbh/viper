@@ -1,0 +1,158 @@
+/******************************************************************************
+ *                                                                            *
+ * Copyright 2018 Jan Henrik Weinstock                                        *
+ *                                                                            *
+ * Licensed under the Apache License, Version 2.0 (the "License");            *
+ * you may not use this file except in compliance with the License.           *
+ * You may obtain a copy of the License at                                    *
+ *                                                                            *
+ *     http://www.apache.org/licenses/LICENSE-2.0                             *
+ *                                                                            *
+ * Unless required by applicable law or agreed to in writing, software        *
+ * distributed under the License is distributed on an "AS IS" BASIS,          *
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   *
+ * See the License for the specific language governing permissions and        *
+ * limitations under the License.                                             *
+ *                                                                            *
+ ******************************************************************************/
+
+package org.vcml.explorer.ui;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.vcml.session.Module;
+import org.vcml.session.SessionException;
+
+public class Instruction {
+
+    public static final long SIZE = 4;
+
+    public static final String CMD_DISASSEMBLE = "disas";
+
+    public static final String REGEX_HEX = "[0-9a-f]{8}";
+
+    public static final String REGEX_SYM = "\\[.*\\]";
+
+    public static final String REGEX_DISAS = ".*";
+
+    public static final String REGEX_VADDR = "[0-9a-f]{16}";
+
+    public static final String REGEX_PADDR = REGEX_HEX;
+
+    public static final String REGEX_INSN = REGEX_HEX;
+
+    public static final String REGEX = "\\s[>|\\s]\\s(" + REGEX_SYM + ")?\\s?(" + REGEX_VADDR + ")?\\s?("
+            + REGEX_PADDR + ")\\s(" + REGEX_INSN + ")\\s(" + REGEX_DISAS + ")?";
+
+    private long physAddress;
+
+    private long virtAddress;
+
+    private long instruction;
+
+    private String disassembly;
+
+    private String symbol;
+
+    private static String getDescription(long address, Module processor) {
+        try { // ToDo: do not run the command every time, better use caching!
+            String arg0 = Long.toString(address);
+            String arg1 = Long.toString(address + SIZE);
+            String result = processor.execute(CMD_DISASSEMBLE, arg0, arg1);
+            return result.split("\n")[1];
+        } catch (SessionException e) {
+            return e.getMessage();
+        }
+    }
+
+    public long getPhysicalAddress() {
+        return physAddress;
+    }
+
+    public long getVirtualAddress() {
+        return virtAddress;
+    }
+
+    public long getAddress() {
+        return virtAddress != 0 ? virtAddress : physAddress;
+    }
+
+    public long getInstruction() {
+        return instruction;
+    }
+
+    public String getDisassembly() {
+        return disassembly;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public Instruction(long address, String description) {
+        physAddress = address;
+        virtAddress = 0;
+        instruction = 0;
+        disassembly = description;
+
+        if (description.contains("????????")) {
+            // something went wrong with v->p translation
+            // try to at least get the symbol info
+            virtAddress = address;
+            disassembly = "<page missing>";
+
+            Pattern pattern = Pattern.compile("(" + REGEX_SYM + ")");
+            Matcher matcher = pattern.matcher(description);
+            if ((matcher.find()) && (matcher.groupCount() == 1))
+                symbol = matcher.group(1);
+
+            return;
+        }
+
+        Pattern pattern = Pattern.compile(REGEX);
+        Matcher matcher = pattern.matcher(description);
+
+        if (!matcher.find())
+            return;
+
+        if (matcher.groupCount() != 5)
+            return;
+
+        try {
+            physAddress = Long.parseLong(matcher.group(3), 16);
+            String virtual = matcher.group(2);
+            if (virtual != null)
+                virtAddress = Long.parseLong(virtual, 16);
+            instruction = Long.parseLong(matcher.group(4), 16);
+            disassembly = matcher.group(5);
+            symbol = matcher.group(1);
+            if (symbol == null)
+                symbol = "";
+        } catch (NumberFormatException e) {
+            disassembly = e.getMessage();
+        }
+    }
+
+    public Instruction(long address, Module processor) {
+        this(address, getDescription(address, processor));
+    }
+
+    @Override
+    public String toString() {
+        return disassembly;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof Instruction))
+            return false;
+
+        Instruction insn = (Instruction) other;
+        if ((insn.physAddress != physAddress) || (insn.virtAddress != virtAddress) || (insn.instruction != instruction))
+            return false;
+
+        return true;
+    }
+
+}

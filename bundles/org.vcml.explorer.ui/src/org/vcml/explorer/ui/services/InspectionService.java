@@ -50,6 +50,7 @@ public class InspectionService implements IInspectionService {
         registerModulePart(Module.KIND_VCML_MEMORY, "org.vcml.explorer.ui.parts.MemoryPart");
         registerModulePart(Module.KIND_VCML_UART8250, "org.vcml.explorer.ui.parts.UartPart");
         registerModulePart(Module.KIND_VCML_ARM_PL011UART, "org.vcml.explorer.ui.parts.UartPart");
+        registerModulePart(Module.KIND_VCML_PROCESSOR, "org.vcml.explorer.ui.parts.ProcessorPart");
     }
 
 }
