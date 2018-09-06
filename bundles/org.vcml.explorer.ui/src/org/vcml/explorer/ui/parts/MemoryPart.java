@@ -22,6 +22,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.viewers.CellLabelProvider;
@@ -209,6 +210,11 @@ public class MemoryPart {
         memory = service.findModule(session, name);
         viewer.setInput(memory);
         viewer.getControl().setEnabled(memory != null);
+    }
+
+    @Focus
+    public void setFocus() {
+        viewer.getTable().setFocus();
     }
 
     @Inject
