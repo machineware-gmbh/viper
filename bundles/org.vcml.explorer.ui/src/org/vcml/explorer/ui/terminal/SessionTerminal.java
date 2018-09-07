@@ -91,7 +91,7 @@ public class SessionTerminal extends CommandTerminal {
         addCommand("ls", (String[] args) -> {
             Module[] modules = current != null ? current.getChildren() : getTopLevelObjects();
             for (Module module : modules)
-                out.println(module.getName());
+                out.println(module.getBaseName());
         });
 
         addCommand("cd", (String[] args) -> {
