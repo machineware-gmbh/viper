@@ -30,20 +30,20 @@ public class Instruction {
 
     public static final String CMD_DISASSEMBLE = "disas";
 
-    public static final String REGEX_HEX = "[0-9a-f]{8}";
+    public static final String REGEX_HEX = "[0-9a-fA-F]*";
 
     public static final String REGEX_SYM = "\\[.*\\]";
 
     public static final String REGEX_DISAS = ".*";
 
-    public static final String REGEX_VADDR = "[0-9a-f]{16}";
+    public static final String REGEX_VADDR = "[0-9a-fA-F]{16}";
 
-    public static final String REGEX_PADDR = REGEX_HEX;
+    public static final String REGEX_PADDR = "[0-9a-fA-F]{16}";
 
-    public static final String REGEX_INSN = REGEX_HEX;
+    public static final String REGEX_INSN = "[0-9a-fA-F]*";
 
-    public static final String REGEX = "\\s[>|\\s]\\s(" + REGEX_SYM + ")?\\s?(" + REGEX_VADDR + ")?\\s?("
-            + REGEX_PADDR + ")\\s(" + REGEX_INSN + ")\\s(" + REGEX_DISAS + ")?";
+    public static final String REGEX = "\\s[>|\\s]\\s(" + REGEX_SYM + ")?\\s?(" + REGEX_VADDR + ")?\\s?(" + REGEX_PADDR
+            + ")\\s(" + REGEX_INSN + ")\\s(" + REGEX_DISAS + ")?";
 
     private long physAddress;
 
@@ -120,15 +120,16 @@ public class Instruction {
             return;
 
         try {
-            physAddress = Long.parseLong(matcher.group(3), 16);
-            String virtual = matcher.group(2);
-            if (virtual != null)
-                virtAddress = Long.parseLong(virtual, 16);
-            instruction = Long.parseLong(matcher.group(4), 16);
-            disassembly = matcher.group(5);
-            symbol = matcher.group(1);
-            if (symbol == null)
-                symbol = "";
+            String sym = matcher.group(1);
+            String virt = matcher.group(2);
+            String phys = matcher.group(3);
+            String insn = matcher.group(4);
+            String disas = matcher.group(5);
+            symbol = (sym != null) ? sym : "";
+            physAddress = Long.parseLong(phys, 16);
+            virtAddress = (virt != null) ? Long.parseLong(virt, 16) : physAddress;
+            instruction = Long.parseLong(insn, 16);
+            disassembly = (disas != null) ? disas : "--";
         } catch (NumberFormatException e) {
             disassembly = e.getMessage();
         }
