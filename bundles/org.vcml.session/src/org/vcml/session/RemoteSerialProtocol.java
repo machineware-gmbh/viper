@@ -115,6 +115,7 @@ public class RemoteSerialProtocol {
             BufferedReader breader = new BufferedReader(ireader);
             StringBuilder builder = new StringBuilder();
 
+            int checksum = 0;
             boolean inside = false;
             int ch;
 
@@ -130,7 +131,7 @@ public class RemoteSerialProtocol {
 
                     // Verify checksum. This should never fail since the transport layer assures
                     // correct transmission.
-                    boolean match = (calcChecksum(check1, check2) == calcChecksum(message));
+                    boolean match = (calcChecksum(check1, check2) == checksum);
 
                     String resp = match ? "+" : "-";
                     socket.getOutputStream().write(resp.getBytes());
@@ -139,8 +140,11 @@ public class RemoteSerialProtocol {
                         throw new SessionException("Checksum mismatch");
                     return message;
                 } else if (inside) {
-                    if (ch == '\\')
+                    if (ch == '\\') {
+                        checksum = (checksum + ch) & 0xFF;
                         ch = breader.read();
+                    }
+                    checksum = (checksum + ch) & 0xFF;
                     builder.append((char) ch);
                 } else {
                     // just drop characters until we read '$' again
