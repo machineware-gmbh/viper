@@ -30,6 +30,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -142,7 +143,8 @@ public class TerminalPart {
     }
 
     @Inject
-    public void sessionChanged(@Optional @Named(ISessionService.ACTIVE_SESSION) Session session) {
+    @Optional
+    public void sessionChanged(@UIEventTopic(ISessionService.TOPIC_SESSION_ANY) Session session) {
         if (session != null) {
             if (session.isConnected())
                 selectTerminalForSession(session);
