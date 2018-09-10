@@ -25,10 +25,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
-public class TerminalViewer extends Composite implements KeyListener {
+public class TerminalViewer extends Composite implements KeyListener, MouseListener {
 
     private StyledText text;
 
@@ -63,6 +65,7 @@ public class TerminalViewer extends Composite implements KeyListener {
 
         text = new StyledText(this, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
         text.addKeyListener(this);
+        text.addMouseListener(this);
         text.setText("");
         text.setData("org.eclipse.e4.ui.css.id", "TerminalViewer");
 
@@ -151,5 +154,20 @@ public class TerminalViewer extends Composite implements KeyListener {
 
     public StyledText getText() {
         return text;
+    }
+
+    @Override
+    public void mouseDoubleClick(MouseEvent e) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void mouseDown(MouseEvent e) {
+        refreshBuffer(current);
+    }
+
+    @Override
+    public void mouseUp(MouseEvent e) {
+        refreshBuffer(current);
     }
 }
