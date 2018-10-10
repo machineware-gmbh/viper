@@ -21,7 +21,7 @@ After the build, your binaries can be found in `product/target/products`.
 ## Pictures
 
 <a href="pictures/uart.png"><img src="pictures/uart.png" alt="viper uart view, Windows" width="500" /></a>
-<a href="pictures/smp2.png"><img src="pictures/smp2.png" alt "viper smp cpu view, Ubuntu" width="500" /></a>
+<a href="pictures/smp2.png"><img src="pictures/smp2.png" alt="viper smp cpu view, Ubuntu" width="500" /></a>
 
 ----
 ## License

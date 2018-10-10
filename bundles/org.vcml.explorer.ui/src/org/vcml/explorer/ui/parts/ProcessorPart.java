@@ -221,7 +221,7 @@ public class ProcessorPart {
     }
 
     public void createInstructionTableViewer(Composite parent) {
-        instructionViewer = new TableViewer(parent, SWT.VIRTUAL);
+        instructionViewer = new TableViewer(parent, SWT.BORDER | SWT.VIRTUAL);
         instructionViewer.setUseHashlookup(true);
         instructionViewer.setContentProvider(new ILazyContentProvider() {
             @Override
@@ -283,7 +283,7 @@ public class ProcessorPart {
             @Override
             public String getText(Object element) {
                 long addr = ((Instruction) element).getVirtualAddress();
-                if (addr == 0)
+                if (addr < 0)
                     return "";
                 return String.format("%08x", addr);
             }
@@ -444,7 +444,7 @@ public class ProcessorPart {
     public void createComposite(Composite parent) {
         parent.setLayout(new GridLayout());
 
-        Composite composite = new Composite(parent, SWT.NONE);
+        Composite composite = new Composite(parent, SWT.BORDER);
         composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         composite.setLayout(new GridLayout());
 

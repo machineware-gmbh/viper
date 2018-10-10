@@ -127,7 +127,7 @@ public class Instruction {
             String disas = matcher.group(5);
             symbol = (sym != null) ? sym : "";
             physAddress = Long.parseLong(phys, 16);
-            virtAddress = (virt != null) ? Long.parseLong(virt, 16) : physAddress;
+            virtAddress = (virt != null) ? Long.parseLong(virt, 16) : -1;
             instruction = Long.parseLong(insn, 16);
             disassembly = (disas != null) ? disas : "--";
         } catch (NumberFormatException e) {
