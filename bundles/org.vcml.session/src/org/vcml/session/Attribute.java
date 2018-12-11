@@ -24,6 +24,10 @@ public class Attribute {
 
     private String value;
 
+    private int size;
+
+    private int num;
+
     private RemoteSerialProtocol protocol;
 
     private void refresh() throws SessionException {
@@ -32,6 +36,10 @@ public class Attribute {
         if (val.length == 0)
             throw new SessionException("Failed to read attribute " + name);
         this.value = val[0];
+        String[] size = resp.getValues("size");
+        this.size = size.length > 0 ? Integer.parseInt(size[0]) : -1;
+        String[] num = resp.getValues("num");
+        this.num = num.length > 0 ? Integer.parseInt(num[0]) : 1;
     }
 
     public Attribute(String name, String value) {
@@ -64,17 +72,38 @@ public class Attribute {
         return value;
     }
 
+    public int getSize() {
+        return size;
+    }
+
+    public int getNumValues() {
+        return num;
+    }
+
+    public int getArraySize() {
+        return getNumValues() * getSize();
+    }
+
+    public boolean isArray() {
+        return getNumValues() > 1;
+    }
+
     public String getValuePretty() {
         if (value.isEmpty())
             return "<empty>";
 
+        if (isArray())
+            return value;
+
         try {
             long val = Long.parseLong(value);
-            String base = getBaseName();
-            if (base.contains("addr") || base.contains("size") || base.contains("offset") || base.contains("R")
-                    || base.contains("NPC") || base.contains("PPC") || base.contains("SR") || base.contains("CID"))
-                return String.format("0x%08x", val);
-            return value;
+            switch (size) {
+            case 1  : return String.format("0x%02x",  val);
+            case 2  : return String.format("0x%04x",  val);
+            case 4  : return String.format("0x%08x",  val);
+            case 8  : return String.format("0x%016x", val);
+            default : return String.format("0x%x",    val);
+            }
         } catch (NumberFormatException e) {
             // return "\"" + value + "\"";
             return value;
