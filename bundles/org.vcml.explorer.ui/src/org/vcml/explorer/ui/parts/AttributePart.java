@@ -67,6 +67,8 @@ public class AttributePart {
     @Inject
     private ESelectionService selectionService;
 
+    private String selectedModuleName = "";
+
     private Text filter;
     private TableViewer viewer;
     private TableViewerColumn attrColumn;
@@ -75,13 +77,25 @@ public class AttributePart {
     @Inject
     @Optional
     public void sessionChanged(@UIEventTopic(ISessionService.TOPIC_SESSION_ANY) Session session) {
-        viewer.setInput(null);
+        if (session == null || !session.isConnected() || session.isRunning() || selectedModuleName.isEmpty()) {
+            viewer.setInput(null);
+            return;
+        }
+
+        try {
+            viewer.setInput(session.findObject(selectedModuleName));
+        } catch (SessionException e) {
+            selectedModuleName = "";
+            viewer.setInput(null);
+        }
     }
 
     @Inject
     public void selectionChanged(@Optional @Named(IServiceConstants.ACTIVE_SELECTION) Module selection) {
-        if (selection != null)
+        if (selection != null) {
+            selectedModuleName = selection.getName();
             viewer.setInput(selection);
+        }
     }
 
     private ISelectionChangedListener viewerSelectionListener = new ISelectionChangedListener() {

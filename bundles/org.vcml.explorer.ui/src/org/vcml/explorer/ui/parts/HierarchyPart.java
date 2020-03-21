@@ -90,7 +90,9 @@ public class HierarchyPart {
 
     private TreeViewer viewer;
 
-    private Module selectedModule;
+    private String selectedModuleName = "";
+
+    private Module selectedModule = null;
 
     private ITreeContentProvider contentProvider = new ITreeContentProvider() {
         @Override
@@ -168,20 +170,30 @@ public class HierarchyPart {
     @Inject
     @Optional
     public void sessionChanged(@UIEventTopic(ISessionService.TOPIC_SESSION_ANY) Session session) {
-        if (viewer != null && !viewer.getControl().isDisposed()) {
-            viewer.setInput(session);
+        viewer.setInput(session);
 
+        if (session == null || !session.isConnected() || session.isRunning()) {
+            selectedModule = null;
+            return;
+        }
+
+        try { // try to restore previous selection
+            selectedModule = session.findObject(selectedModuleName);
             if (selectedModule != null) {
                 viewer.setSelection(new StructuredSelection(selectedModule), true);
                 selectionService.setSelection(selectedModule);
             }
+        } catch (SessionException e) {
+            selectedModuleName = "";
         }
     }
 
     @Inject
     public void selectionChanged(@Optional @Named(IServiceConstants.ACTIVE_SELECTION) Object selection) {
-        if (selection instanceof Module)
+        if (selection instanceof Module) {
             selectedModule = (Module) selection;
+            selectedModuleName = selectedModule.getName();
+        }
     }
 
     private ISelectionChangedListener viewerSelectionListener = new ISelectionChangedListener() {
