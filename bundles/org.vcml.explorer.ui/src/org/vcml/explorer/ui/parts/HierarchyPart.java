@@ -55,6 +55,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
@@ -167,8 +168,14 @@ public class HierarchyPart {
     @Inject
     @Optional
     public void sessionChanged(@UIEventTopic(ISessionService.TOPIC_SESSION_ANY) Session session) {
-        if (viewer != null && !viewer.getControl().isDisposed())
+        if (viewer != null && !viewer.getControl().isDisposed()) {
             viewer.setInput(session);
+
+            if (selectedModule != null) {
+                viewer.setSelection(new StructuredSelection(selectedModule), true);
+                selectionService.setSelection(selectedModule);
+            }
+        }
     }
 
     @Inject
@@ -228,7 +235,6 @@ public class HierarchyPart {
                 @Override
                 public void widgetDefaultSelected(SelectionEvent e) {
                     // TODO Auto-generated method stub
-
                 }
             });
         }

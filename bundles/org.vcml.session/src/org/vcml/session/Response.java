@@ -53,23 +53,26 @@ public class Response {
         if (response.startsWith(","))
             response = response.substring(1);
 
-        //String[] token = response.split("(?<!\\\\),");
         List<String> token = new ArrayList<String>();
-        String buffer = "";
-        for (int i = 0; i < response.length(); i++) {
-            char ch = response.charAt(i);
-            if (ch == '\\')
-                buffer += response.charAt(++i);
-            else if (ch != ',')
-                buffer += ch;
-            else {
-                token.add(buffer);
-                buffer = "";
+        if (cmd.endsWith("lsym,")) {
+            token.add(response.substring(17));
+        } else {
+            String buffer = "";
+            for (int i = 0; i < response.length(); i++) {
+                char ch = response.charAt(i);
+                if (ch == '\\')
+                    buffer += response.charAt(++i);
+                else if (ch != ',')
+                    buffer += ch;
+                else {
+                    token.add(buffer);
+                    buffer = "";
+                }
             }
-        }
 
-        if (!buffer.isEmpty())
-            token.add(buffer);
+            if (!buffer.isEmpty())
+                token.add(buffer);
+        }
 
         for (String entry : token) {
             String[] data = entry.split(":", 2);
