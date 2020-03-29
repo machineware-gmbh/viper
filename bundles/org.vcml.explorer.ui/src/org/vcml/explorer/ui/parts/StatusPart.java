@@ -30,7 +30,6 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-
 import org.vcml.explorer.ui.Resources;
 import org.vcml.explorer.ui.services.ISessionService;
 import org.vcml.session.Attribute;
@@ -73,25 +72,21 @@ public class StatusPart {
         if (session == null || !session.isConnected()) {
             timeLabel.setVisible(false);
             cycleLabel.setVisible(false);
-        } else {
-            timeLabel.setVisible(true);
-            cycleLabel.setVisible(true);
-            if (session.isRunning()) {
-                timeLabel.setText("running...");
-                cycleLabel.setText("running...");
-            } else {
-                timeLabel.setText(String.format("%.9fs", session.getTime()));
-                cycleLabel.setText(Integer.toString(session.getDeltaCycle()));
-            }
+            return;
         }
 
-        timeLabel.pack();
-        cycleLabel.pack();
+        timeLabel.setVisible(true);
+        cycleLabel.setVisible(true);
+
+        timeLabel.setText(session.getTimeFormatted());
+        cycleLabel.setText(Long.toString(session.getDeltaCycle()));
+
+        //timeLabel.pack();
+        //cycleLabel.pack();
     }
 
     private void updateSelectionStatus() {
         Object selection = selectionService.getSelection();
-        // System.out.println("Selection changed to " + selection);
         if (selection instanceof Module) {
             selectionLabel.setVisible(true);
             selectionLabel.setText(((Module) selection).getName());

@@ -21,6 +21,7 @@ package org.vcml.session;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -48,9 +49,9 @@ public class Session {
 
     private Module hierarchy = null;
 
-    private double simTime = 0.0;
+    private LocalTime simTime = LocalTime.MIN;
 
-    private int deltaCycle = -1;
+    private long deltaCycle = -1;
 
     private String syscVersion = "<unknown>";
 
@@ -82,11 +83,19 @@ public class Session {
         return exec;
     }
 
-    public double getTime() {
+    public LocalTime getTime() {
         return simTime;
     }
 
-    public int getDeltaCycle() {
+    public String getTimeFormatted() {
+        long hour = simTime.getHour();
+        long minute = simTime.getMinute();
+        long second = simTime.getSecond();
+        long nanos = simTime.getNano();
+        return String.format("%02d:%02d:%02d.%09d", hour, minute, second, nanos);
+    }
+
+    public long getDeltaCycle() {
         return deltaCycle;
     }
 
@@ -132,13 +141,22 @@ public class Session {
         vcmlVersion = respVcmlVersion.length > 0 ? respVcmlVersion[0] : "unknown";
     }
 
-    private void updateTime() throws SessionException {
-        simTime = Double.NaN;
-        deltaCycle = -1;
-        Response timeResp = protocol.command(RemoteSerialProtocol.TIME);
-        simTime = Double.parseDouble(timeResp.toString());
-        Response dcycResp = protocol.command(RemoteSerialProtocol.DCYC);
-        deltaCycle = Integer.parseInt(dcycResp.toString());
+    public void updateTime() throws SessionException {
+        Response resp = null;
+        if (isRunning()) {
+            protocol.send_char('u');
+            resp = new Response(RemoteSerialProtocol.TIME, protocol.recv());
+        } else {
+            resp = protocol.command(RemoteSerialProtocol.TIME);
+        }
+
+        String values[] = resp.getValues();
+        if (values.length != 2)
+            throw new SessionException("session returned invalid response: " + resp);
+
+        deltaCycle = Long.parseLong(values[1]);
+        long nanos = Long.parseLong(values[0]);
+        simTime = LocalTime.ofNanoOfDay(nanos);
     }
 
     public Session(String uri) throws SessionException {
@@ -246,6 +264,7 @@ public class Session {
 
         File directory = new File(ANNOUNCE_DIR);
         File[] files = directory.listFiles(new FilenameFilter() {
+            @Override
             public boolean accept(File dir, String name) {
                 return Pattern.matches("vcml_session_[0-9]+", name);
             }

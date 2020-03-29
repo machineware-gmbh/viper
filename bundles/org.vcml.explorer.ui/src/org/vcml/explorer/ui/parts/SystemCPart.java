@@ -24,21 +24,18 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
-
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
-
 import org.vcml.explorer.ui.Resources;
 import org.vcml.explorer.ui.services.ISessionService;
 import org.vcml.session.Session;
@@ -75,9 +72,9 @@ public class SystemCPart {
             case "VCML Version":
                 return session.getVCMLVersion();
             case "Time":
-                return String.format("%.9fs", session.getTime());
+                return session.getTimeFormatted();
             case "Delta Cycle":
-                return Integer.toString(session.getDeltaCycle());
+                return Long.toString(session.getDeltaCycle());
 
             default:
                 return "unknown";
@@ -129,7 +126,7 @@ public class SystemCPart {
     public void sessionChanged(@UIEventTopic(ISessionService.TOPIC_SESSION_ANY) Session current) {
         if (session == current) {
             viewer.refresh();
-            viewer.getTable().setEnabled(session.isConnected() && !session.isRunning());
+            viewer.getTable().setEnabled(session.isConnected());
         }
     }
 }

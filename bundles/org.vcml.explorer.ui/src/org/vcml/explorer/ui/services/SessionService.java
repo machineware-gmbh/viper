@@ -25,12 +25,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
-
+import org.eclipse.ui.progress.UIJob;
 import org.vcml.session.Module;
 import org.vcml.session.Session;
 import org.vcml.session.SessionException;
@@ -43,7 +46,27 @@ public class SessionService implements ISessionService {
 
     private List<Session> sessions = new ArrayList<Session>();
 
-    private Session current = null;
+    public static final long UPDATE_INTERVAL = 500; // milliseconds
+
+    private UIJob updateJob = new UIJob(Display.getDefault(), "sessionStatusUpdate") {
+        @Override
+        public IStatus runInUIThread(IProgressMonitor monitor) {
+            for (Session session : sessions) {
+                if (session.isConnected() && session.isRunning()) {
+                    try {
+                        session.updateTime();
+                        updateSession(session, TOPIC_SESSION_UPDATED);
+                        schedule(UPDATE_INTERVAL);
+                    } catch (SessionException e) {
+                        reportSessionError(session, e);
+                    }
+                }
+            }
+
+            return Status.OK_STATUS;
+        }
+    };
+
 
     @Inject
     public SessionService(IEclipseContext eclipseContext, IEventBroker eventBroker) {
@@ -71,8 +94,6 @@ public class SessionService implements ISessionService {
             return;
 
         sessions.remove(session);
-        if (session == current)
-            current = null;
         updateSession(session, TOPIC_SESSION_REMOVED);
     }
 
@@ -142,6 +163,7 @@ public class SessionService implements ISessionService {
                 connectSession(session);
             session.continueSimulation();
             updateSession(session, TOPIC_SESSION_UPDATED);
+            updateJob.schedule(UPDATE_INTERVAL);
         } catch (SessionException e) {
             reportSessionError(session, e);
         }
