@@ -27,10 +27,12 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
-public class TerminalViewer extends Composite implements KeyListener, MouseListener {
+public class TerminalViewer extends Composite implements KeyListener, MouseListener, TraverseListener {
 
     private StyledText text;
 
@@ -42,21 +44,14 @@ public class TerminalViewer extends Composite implements KeyListener, MouseListe
         if ((buffer == null) || (buffer != current))
             return;
 
-        int cursor;
         synchronized (buffer) {
             text.setText(buffer.getBuffer());
-            cursor = buffer.getCursor();
+            text.setSelection(buffer.getCursor());
         }
+    }
 
-        // Adjust cursor for newlines being two bytes on Windows (CR+LF, 0xd+0xa)
-        if (text.getText().indexOf('\r') != -1 && cursor > 0) {
-            String beforeCursor = buffer.getBuffer().substring(0, cursor);
-            for (char c : beforeCursor.toCharArray())
-                if (c == '\n')
-                    cursor++;
-        }
-
-        text.setSelection(cursor);
+    public StyledText getText() {
+        return text;
     }
 
     public TerminalViewer(Composite parent) {
@@ -64,8 +59,11 @@ public class TerminalViewer extends Composite implements KeyListener, MouseListe
         setLayout(new FillLayout());
 
         text = new StyledText(this, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+
         text.addKeyListener(this);
         text.addMouseListener(this);
+        text.addTraverseListener(this);
+
         text.setText("");
         text.setData("org.eclipse.e4.ui.css.id", "TerminalViewer");
 
@@ -89,7 +87,6 @@ public class TerminalViewer extends Composite implements KeyListener, MouseListe
 
         current = buffer;
         refreshBuffer(buffer);
-
     }
 
     public void removeBuffer(Terminal terminal) {
@@ -133,6 +130,10 @@ public class TerminalViewer extends Composite implements KeyListener, MouseListe
                 current.transmit(SWT.LF);
                 break;
 
+            case SWT.TAB:
+                current.transmit(SWT.TAB);
+                break;
+
             default:
                 if (Character.isISOControl(event.character))
                     System.out.println("dropping control character 0x" + Integer.toHexString(event.character));
@@ -149,16 +150,12 @@ public class TerminalViewer extends Composite implements KeyListener, MouseListe
 
     @Override
     public void keyReleased(KeyEvent e) {
-        //
-    }
-
-    public StyledText getText() {
-        return text;
+        // nothing to do
     }
 
     @Override
     public void mouseDoubleClick(MouseEvent e) {
-        // TODO Auto-generated method stub
+        // nothing to do
     }
 
     @Override
@@ -170,4 +167,11 @@ public class TerminalViewer extends Composite implements KeyListener, MouseListe
     public void mouseUp(MouseEvent e) {
         refreshBuffer(current);
     }
+
+    @Override
+    public void keyTraversed(TraverseEvent e) {
+        if (e.detail == SWT.TRAVERSE_TAB_NEXT)
+            e.doit = false;
+    }
+
 }

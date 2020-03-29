@@ -30,8 +30,11 @@ import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Caret;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.vcml.explorer.ui.services.ISessionService;
 import org.vcml.explorer.ui.terminal.NetTerminal;
 import org.vcml.explorer.ui.terminal.TerminalViewer;
@@ -49,6 +52,10 @@ public class UartPart {
 
     private TerminalViewer viewer = null;
 
+    private static final Color activeColor = Display.getDefault().getSystemColor(SWT.COLOR_WHITE);
+
+    private static final Color inactiveColor = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY);
+
     private int getPort() {
         for (Module child : uart.getChildren())
             if (child.getKind().equals("vcml::backend_tcp"))
@@ -59,8 +66,15 @@ public class UartPart {
     }
 
     private void update() {
-        viewer.getText().setEnabled(session.isConnected() && session.isRunning());
-        viewer.getText().setFocus();
+        // This updates colors immediately, CSS waits for focus
+        StyledText text = viewer.getText();
+        if (session.isConnected() && session.isRunning()) {
+            text.setEnabled(true);
+            text.setForeground(activeColor);
+        } else {
+            text.setEnabled(false);
+            text.setForeground(inactiveColor);
+        }
     }
 
     @PostConstruct

@@ -36,7 +36,7 @@ public class TerminalBuffer {
 
     private Terminal terminal;
 
-    private String buffer = "";
+    private StringBuilder buffer = new StringBuilder();
 
     private int cursor = 0;
 
@@ -51,7 +51,7 @@ public class TerminalBuffer {
     }
 
     public String getBuffer() {
-        return buffer;
+        return buffer.toString();
     }
 
     public int getCursor() {
@@ -59,7 +59,7 @@ public class TerminalBuffer {
     }
 
     public void clear() {
-        buffer = "";
+        buffer.setLength(0);
         cursor = 0;
     }
 
@@ -80,7 +80,7 @@ public class TerminalBuffer {
 
     private void handleEscapeCode(String code) {
         if (code.equals("[J")) {
-            buffer = buffer.substring(0, cursor);
+            buffer.delete(cursor, buffer.length());
         } else if (code.equals("[H")) {
             cursor = 0;
         } else if (code.endsWith("m")) {
@@ -102,6 +102,7 @@ public class TerminalBuffer {
         };
 
         new Thread("ioThread_" + terminal.getName()) {
+            @Override
             public void run() {
                 ioThread();
             }
@@ -124,15 +125,25 @@ public class TerminalBuffer {
 
         switch (character) {
         case -1:
-            buffer += MSG_IO_ERROR;
+            buffer.append(MSG_IO_ERROR);
             cursor += MSG_IO_ERROR.length();
             break;
 
         case '\b':
-            if (!buffer.isEmpty()) {
-                buffer = buffer.substring(0, buffer.length() - 1);
+            if (buffer.length() > 0) {
+                buffer.delete(buffer.length() - 1, buffer.length());
                 cursor--;
             }
+            break;
+
+        case '\r':
+            cursor = buffer.lastIndexOf("\n") + 1;
+            break;
+
+        case '\n':
+            cursor = buffer.length();
+            buffer.insert(cursor, (char)character);
+            cursor++;
             break;
 
         case 0x1b: // escape
@@ -143,7 +154,7 @@ public class TerminalBuffer {
             return;
 
         default:
-            buffer += (char) character;
+            buffer.insert(cursor, (char)character);
             cursor++;
         }
 

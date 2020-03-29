@@ -39,10 +39,12 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-
+import org.eclipse.swt.widgets.Display;
 import org.vcml.explorer.ui.services.ISessionService;
 import org.vcml.explorer.ui.terminal.SessionTerminal;
 import org.vcml.explorer.ui.terminal.Terminal;
@@ -60,6 +62,10 @@ public class TerminalPart {
 
     @Inject
     private ISessionService sessionService;
+
+    private static final Color activeColor = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
+
+    private static final Color inactiveColor = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY);
 
     private Terminal findTerminalForSession(Session session) {
         for (Terminal terminal : terminals)
@@ -80,6 +86,16 @@ public class TerminalPart {
                 System.out.println("unable to create session terminal: " + e.getMessage());
                 return;
             }
+        }
+
+        // This updates colors immediately, CSS waits for focus
+        StyledText text = terminalViewer.getText();
+        if (session.isRunning()) {
+            text.setEnabled(false);
+            text.setForeground(inactiveColor);
+        } else {
+            text.setEnabled(true);
+            text.setForeground(activeColor);
         }
 
         comboViewer.setSelection(new StructuredSelection(terminal), true);
@@ -109,7 +125,6 @@ public class TerminalPart {
         public void selectionChanged(SelectionChangedEvent event) {
             Terminal term = (Terminal) event.getStructuredSelection().getFirstElement();
             terminalViewer.setTerminal(term);
-            terminalViewer.setFocus();
         }
     };
 

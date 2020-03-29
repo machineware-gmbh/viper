@@ -1,6 +1,11 @@
-#TerminalViewer {
+#TerminalViewer: enabled {
     font-family: "Courier New";
-    background-color: white;
+    color: black;
+}
+
+#TerminalViewer: disabled {
+    font-family: "Courier New";
+    color: gray;
 }
 
 #UartViewer:enabled {
@@ -11,6 +16,6 @@
 
 #UartViewer:disabled {
     font-family: "Courier New";
-    color: black;
-    background-color: gray;
+    color: gray;
+    background-color: black;
 }
