@@ -53,34 +53,16 @@ public class Response {
         if (response.startsWith(","))
             response = response.substring(1);
 
-        List<String> token = new ArrayList<String>();
-        if (cmd.endsWith("lsym,")) {
-            token.add(response.substring(17));
-        } else {
-            String buffer = "";
-            for (int i = 0; i < response.length(); i++) {
-                char ch = response.charAt(i);
-                if (ch == '\\')
-                    buffer += response.charAt(++i);
-                else if (ch != ',')
-                    buffer += ch;
-                else {
-                    token.add(buffer);
-                    buffer = "";
-                }
-            }
-
-            if (!buffer.isEmpty())
-                token.add(buffer);
-        }
-
+        String token[] = response.split("(?<!\\\\),");
         for (String entry : token) {
             String[] data = entry.split(":", 2);
-            String value = data.length > 1 ? data[1] : "";
-            entries.add(new KeyValuePair(data[0], value));
+            String key = data.length > 1 ? data[0] : "";
+            String val = data.length > 1 ? data[1] : data[0];
+            entries.add(new KeyValuePair(key, val));
         }
     }
 
+    @Override
     public String toString() {
         return response.replaceAll("\\\\,", ",");
     }
@@ -93,6 +75,10 @@ public class Response {
         }
 
         return list.toArray(new String[list.size()]);
+    }
+
+    public String[] getValues() {
+        return getValues("");
     }
 
 }
