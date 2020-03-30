@@ -27,15 +27,6 @@ import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -51,7 +42,15 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Text;
 import org.vcml.explorer.ui.Resources;
 import org.vcml.explorer.ui.services.ISessionService;
 import org.vcml.session.Attribute;
@@ -67,34 +66,40 @@ public class AttributePart {
     @Inject
     private ESelectionService selectionService;
 
-    private String selectedModuleName = "";
+    private Module currentModule;
 
     private Text filter;
+
     private TableViewer viewer;
+
     private TableViewerColumn attrColumn;
+
     private TableViewerColumn valueColumn;
 
     @Inject
     @Optional
     public void sessionChanged(@UIEventTopic(ISessionService.TOPIC_SESSION_ANY) Session session) {
-        if (session == null || !session.isConnected() || session.isRunning() || selectedModuleName.isEmpty()) {
+        if (currentModule == null  || session != currentModule.getSession())
+            return;
+
+        if (!session.isConnected()) {
+            currentModule = null;
             viewer.setInput(null);
+            viewer.getControl().setEnabled(false);
             return;
         }
 
-        try {
-            viewer.setInput(session.findObject(selectedModuleName));
-        } catch (SessionException e) {
-            selectedModuleName = "";
-            viewer.setInput(null);
-        }
+        viewer.getControl().setEnabled(!session.isRunning());
+        if (!session.isRunning())
+            viewer.refresh();
     }
 
     @Inject
     public void selectionChanged(@Optional @Named(IServiceConstants.ACTIVE_SELECTION) Module selection) {
         if (selection != null) {
-            selectedModuleName = selection.getName();
+            currentModule = selection;
             viewer.setInput(selection);
+            viewer.getControl().setEnabled(!selection.getSession().isRunning());
         }
     }
 

@@ -30,7 +30,18 @@ import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
-
+import org.eclipse.jface.viewers.CellLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
@@ -47,28 +58,14 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.jface.viewers.CellLabelProvider;
-import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.jface.viewers.ViewerComparator;
-
-import org.vcml.session.Command;
-import org.vcml.session.Module;
-import org.vcml.session.Session;
-import org.vcml.session.SessionException;
 import org.vcml.explorer.ui.Resources;
 import org.vcml.explorer.ui.dialogs.CommandDialog;
 import org.vcml.explorer.ui.services.IInspectionService;
 import org.vcml.explorer.ui.services.ISessionService;
+import org.vcml.session.Command;
+import org.vcml.session.Module;
+import org.vcml.session.Session;
+import org.vcml.session.SessionException;
 
 @SuppressWarnings("restriction")
 public class HierarchyPart {
@@ -89,8 +86,6 @@ public class HierarchyPart {
     private EHandlerService handlerService;
 
     private TreeViewer viewer;
-
-    private String selectedModuleName = "";
 
     private Module selectedModule = null;
 
@@ -153,7 +148,6 @@ public class HierarchyPart {
         public void update(ViewerCell cell) {
             cell.setText(getText(cell.getElement()));
             cell.setImage(getImage(cell.getElement()));
-
         }
     };
 
@@ -170,30 +164,24 @@ public class HierarchyPart {
     @Inject
     @Optional
     public void sessionChanged(@UIEventTopic(ISessionService.TOPIC_SESSION_ANY) Session session) {
-        viewer.setInput(session);
-
-        if (session == null || !session.isConnected() || session.isRunning()) {
+        if (session == null || !session.isConnected()) {
+            viewer.getControl().setEnabled(false);
+            viewer.setInput(null);
             selectedModule = null;
             return;
         }
 
-        try { // try to restore previous selection
-            selectedModule = session.findObject(selectedModuleName);
-            if (selectedModule != null) {
-                viewer.setSelection(new StructuredSelection(selectedModule), true);
-                selectionService.setSelection(selectedModule);
-            }
-        } catch (SessionException e) {
-            selectedModuleName = "";
-        }
+        viewer.setInput(session);
+        viewer.getControl().setEnabled(!session.isRunning());
+
+        if (!session.isRunning())
+            viewer.refresh();
     }
 
     @Inject
     public void selectionChanged(@Optional @Named(IServiceConstants.ACTIVE_SELECTION) Object selection) {
-        if (selection instanceof Module) {
+        if (selection instanceof Module)
             selectedModule = (Module) selection;
-            selectedModuleName = selectedModule.getName();
-        }
     }
 
     private ISelectionChangedListener viewerSelectionListener = new ISelectionChangedListener() {
