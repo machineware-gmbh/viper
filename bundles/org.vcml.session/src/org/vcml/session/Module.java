@@ -49,6 +49,8 @@ public class Module {
     public static final String KIND_VCML_ETHERNET = "vcml::ethernet";
     public static final String KIND_VCML_ARM_PL011UART = "vcml::arm::pl011uart";
 
+    private Session session;
+
     private RemoteSerialProtocol protocol;
 
     private String name;
@@ -65,7 +67,7 @@ public class Module {
 
     private void addChild(String name) {
         try {
-            children.add(new Module(protocol, this, name));
+            children.add(new Module(session, this, name));
         } catch (SessionException e) {
             System.err.println(name + ": " + e.getMessage());
         }
@@ -73,7 +75,7 @@ public class Module {
 
     private void addAttribute(String name) {
         try {
-            attributes.add(new Attribute(protocol, name));
+            attributes.add(new Attribute(session, name));
         } catch (SessionException e) {
             System.err.println(name + ": " + e.getMessage());
         }
@@ -93,6 +95,10 @@ public class Module {
 
     public boolean isRoot() {
         return parent == null;
+    }
+
+    public Session getSession() {
+        return session;
     }
 
     public String getBaseName() {
@@ -125,8 +131,9 @@ public class Module {
         return commands.toArray(new Command[commands.size()]);
     }
 
-    public Module(RemoteSerialProtocol protocol, Module parent, String name) throws SessionException {
-        this.protocol = protocol;
+    public Module(Session session, Module parent, String name) throws SessionException {
+        this.session = session;
+        this.protocol = session.getProtocol();
         this.parent = parent;
         this.name = name;
         this.children = new ArrayList<Module>();
@@ -187,6 +194,13 @@ public class Module {
         if (args.length == 1)
             return c.execute();
         return c.execute(Arrays.copyOfRange(args, 1, args.length));
+    }
+
+    public void refresh() throws SessionException {
+        for (Attribute attr : attributes)
+            attr.refresh();
+        for (Module child : children)
+            child.refresh();
     }
 
     @Override

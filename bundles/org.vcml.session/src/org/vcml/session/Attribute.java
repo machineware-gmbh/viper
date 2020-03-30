@@ -28,35 +28,47 @@ public class Attribute {
 
     private int num;
 
+    private Session session;
+
     private RemoteSerialProtocol protocol;
 
-    private void refresh() throws SessionException {
+    public Attribute(String name, String value) {
+        this.name = name;
+        this.value = value;
+        this.session = null;
+        this.protocol = null;
+    }
+
+    public Attribute(Session session, String name) throws SessionException {
+        this.name = name;
+        this.value = "unknown";
+        this.session = session;
+        this.protocol = session.getProtocol();
+
+        refresh();
+    }
+
+    public void refresh() throws SessionException {
+        if (protocol == null)
+            return;
+
         Response resp = protocol.command(RemoteSerialProtocol.GETA, name);
         String[] values = resp.getValues();
         if (values.length == 0)
             throw new SessionException("Failed to read attribute " + name);
 
-        this.name = values[0];
-        this.value = values.length > 1 ? values[1] : "";
-        this.size = values.length > 2 ? Integer.parseInt(values[2]) : -1;
-        this.num = values.length > 3 ? Integer.parseInt(values[3]) : 1;
-    }
-
-    public Attribute(String name, String value) {
-        this.name = name;
-        this.value = value;
-        this.protocol = null;
-    }
-
-    public Attribute(RemoteSerialProtocol protocol, String name) throws SessionException {
-        this.name = name;
-        this.protocol = protocol;
-
-        refresh();
+        name = values[0];
+        value = values.length > 1 ? values[1] : "";
+        size = values.length > 2 ? Integer.parseInt(values[2]) : -1;
+        num = values.length > 3 ? Integer.parseInt(values[3]) : 1;
     }
 
     public boolean isEditable() {
         return protocol != null;
+    }
+
+    public Session getSession() {
+        return session;
     }
 
     public String getName() {

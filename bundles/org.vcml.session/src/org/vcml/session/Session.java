@@ -107,6 +107,10 @@ public class Session {
         return vcmlVersion;
     }
 
+    public RemoteSerialProtocol getProtocol() {
+        return protocol;
+    }
+
     public boolean isConnected() {
         return protocol != null;
     }
@@ -201,22 +205,22 @@ public class Session {
     }
 
     public void refresh() throws SessionException {
-        hierarchy = null; // forces recreation during next call to getTopLevelObjects
         updateTime();
+        hierarchy.refresh();
     }
 
     public Module[] getTopLevelObjects() throws SessionException {
-        if (!isConnected() || isRunning())
+        if (!isConnected())
             return null;
 
         if (hierarchy == null)
-            hierarchy = new Module(protocol, null, "");
+            hierarchy = new Module(this, null, "");
         return hierarchy.getChildren();
     }
 
     public Module findObject(String name) throws SessionException {
         if (hierarchy == null)
-            hierarchy = new Module(protocol, null, "");
+            hierarchy = new Module(this, null, "");
         return hierarchy.findChild(name);
     }
 
@@ -226,7 +230,6 @@ public class Session {
 
         protocol.send(RemoteSerialProtocol.CONT);
         running = true;
-        hierarchy = null; // needs to be rebuild
     }
 
     public void stopSimulation() throws SessionException {
@@ -239,7 +242,7 @@ public class Session {
             throw new SessionException("Simulator responded with error : " + resp);
         running = false;
 
-        updateTime();
+        refresh();
     }
 
     public void stepSimulation() throws SessionException {
@@ -247,9 +250,7 @@ public class Session {
             return;
 
         protocol.command(RemoteSerialProtocol.STEP);
-        hierarchy = null; // needs to be rebuild
-
-        updateTime();
+        refresh();
     }
 
     public void quitSimulation() throws SessionException {
@@ -291,4 +292,5 @@ public class Session {
 
         return avail;
     }
+
 }
