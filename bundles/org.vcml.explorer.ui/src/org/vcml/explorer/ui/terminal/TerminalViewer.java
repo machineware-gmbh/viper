@@ -50,6 +50,43 @@ public class TerminalViewer extends Composite implements KeyListener, MouseListe
         }
     }
 
+    void handleEscapeCode(int keyCode) throws IOException {
+        switch (keyCode) {
+        case SWT.ARROW_UP:
+            current.transmit(0x00);
+            current.transmit(0x1b);
+            current.transmit('[');
+            current.transmit('A');
+            break;
+
+        case SWT.ARROW_DOWN:
+            current.transmit(0x00);
+            current.transmit(0x1b);
+            current.transmit('[');
+            current.transmit('B');
+            break;
+
+        case SWT.ARROW_RIGHT:
+            current.transmit(0x00);
+            current.transmit(0x1b);
+            current.transmit('[');
+            current.transmit('C');
+            break;
+
+        case SWT.ARROW_LEFT:
+            current.transmit(0x00);
+            current.transmit(0x1b);
+            current.transmit('[');
+            current.transmit('D');
+            break;
+
+        default:
+            break;
+        }
+
+        text.setSelection(text.getText().length());
+    }
+
     public StyledText getText() {
         return text;
     }
@@ -112,6 +149,7 @@ public class TerminalViewer extends Composite implements KeyListener, MouseListe
         try {
             switch (event.character) {
             case 0:
+                handleEscapeCode(event.keyCode);
                 break;
 
             case 0x3: // ctrl+c
@@ -135,10 +173,7 @@ public class TerminalViewer extends Composite implements KeyListener, MouseListe
                 break;
 
             default:
-                if (Character.isISOControl(event.character))
-                    System.out.println("dropping control character 0x" + Integer.toHexString(event.character));
-                else
-                    current.transmit(event.character);
+                current.transmit(event.character);
                 break;
             }
 
@@ -170,8 +205,15 @@ public class TerminalViewer extends Composite implements KeyListener, MouseListe
 
     @Override
     public void keyTraversed(TraverseEvent e) {
-        if (e.detail == SWT.TRAVERSE_TAB_NEXT)
+        switch (e.detail) {
+        case SWT.TRAVERSE_TAB_NEXT:
+        case SWT.TRAVERSE_TAB_PREVIOUS:
             e.doit = false;
+            break;
+
+        default:
+            break;
+        }
     }
 
 }

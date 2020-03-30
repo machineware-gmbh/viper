@@ -70,7 +70,6 @@ public class TerminalBuffer {
             handleEscapeCode(escapeCode);
             escapeCode = "";
             readingEscapeCode = false;
-            return;
         } else if (escapeCode.length() > 10) {
             System.err.println(terminal.getName() + ": giving up reading escape code '" + escapeCode + "'");
             escapeCode = "";
@@ -144,6 +143,9 @@ public class TerminalBuffer {
             cursor = buffer.length();
             buffer.insert(cursor, (char)character);
             cursor++;
+            break;
+
+        case 0x1a: // ctrl+z ignored
             break;
 
         case 0x1b: // escape
