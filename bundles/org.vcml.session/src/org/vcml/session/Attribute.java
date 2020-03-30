@@ -32,14 +32,14 @@ public class Attribute {
 
     private void refresh() throws SessionException {
         Response resp = protocol.command(RemoteSerialProtocol.GETA, name);
-        String[] val = resp.getValues("value");
-        if (val.length == 0)
+        String[] values = resp.getValues();
+        if (values.length == 0)
             throw new SessionException("Failed to read attribute " + name);
-        this.value = val[0];
-        String[] size = resp.getValues("size");
-        this.size = size.length > 0 ? Integer.parseInt(size[0]) : -1;
-        String[] num = resp.getValues("num");
-        this.num = num.length > 0 ? Integer.parseInt(num[0]) : 1;
+
+        this.name = values[0];
+        this.value = values.length > 1 ? values[1] : "";
+        this.size = values.length > 2 ? Integer.parseInt(values[2]) : -1;
+        this.num = values.length > 3 ? Integer.parseInt(values[3]) : 1;
     }
 
     public Attribute(String name, String value) {

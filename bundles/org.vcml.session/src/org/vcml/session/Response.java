@@ -53,7 +53,31 @@ public class Response {
         if (response.startsWith(","))
             response = response.substring(1);
 
-        String token[] = response.split("(?<!\\\\),");
+        //String token[] = response.split("(?<!\\\\),"); // just 1 char look-back :(
+        ArrayList<String> token = new ArrayList<String>();
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < response.length(); i++) {
+            char c = response.charAt(i);
+            switch  (c) {
+            case '\\':
+                builder.append(response.charAt(++i));
+                break;
+
+            case ',':
+                token.add(builder.toString());
+                builder = new StringBuilder();
+                break;
+
+            default:
+                builder.append(c);
+                break;
+            }
+
+        }
+
+        if (builder.length() > 0)
+            token.add(builder.toString());
+
         for (String entry : token) {
             String[] data = entry.split(":", 2);
             String key = data.length > 1 ? data[0] : "";

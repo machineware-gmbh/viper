@@ -134,11 +134,12 @@ public class Session {
 
     private void updateVersion() throws SessionException {
         Response resp = protocol.command(RemoteSerialProtocol.VERS);
+        String version[] = resp.getValues();
+        if (version.length != 2)
+            throw new SessionException("received bogus response from session: " + resp.toString());
 
-        String respSyscVersion[] = resp.getValues("sysc");
-        syscVersion = respSyscVersion.length > 0 ? respSyscVersion[0] : "unknown";
-        String respVcmlVersion[] = resp.getValues("vcml");
-        vcmlVersion = respVcmlVersion.length > 0 ? respVcmlVersion[0] : "unknown";
+        syscVersion = version[0];
+        vcmlVersion = version[1];
     }
 
     public void updateTime() throws SessionException {
