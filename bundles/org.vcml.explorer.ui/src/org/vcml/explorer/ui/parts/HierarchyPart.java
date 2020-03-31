@@ -171,11 +171,12 @@ public class HierarchyPart {
             return;
         }
 
-        viewer.setInput(session);
         viewer.getControl().setEnabled(!session.isRunning());
 
-        if (!session.isRunning())
-            viewer.refresh();
+        if (!session.isRunning()) {
+            viewer.setInput(session);
+            //viewer.refresh();
+        }
     }
 
     @Inject
