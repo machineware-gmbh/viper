@@ -19,8 +19,6 @@
 package org.vcml.explorer.ui.terminal;
 
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -31,8 +29,6 @@ import org.eclipse.ui.progress.UIJob;
 public class TerminalBuffer {
 
     public static final String MSG_IO_ERROR = "I/O Error";
-
-    public static final Pattern ESCREGEX = Pattern.compile("\\[\\?*(\\d+)*(;\\d+)*[a-zA-Z]");
 
     private Terminal terminal;
 
@@ -63,30 +59,59 @@ public class TerminalBuffer {
         cursor = 0;
     }
 
-    private void readEscapeCode(int character) {
+    private boolean readEscapeCode(int character) {
         escapeCode += (char) character;
-        Matcher m = ESCREGEX.matcher(escapeCode);
-        if (m.matches()) {
-            handleEscapeCode(escapeCode);
-            escapeCode = "";
-            readingEscapeCode = false;
-        } else if (escapeCode.length() > 10) {
-            System.err.println(terminal.getName() + ": giving up reading escape code '" + escapeCode + "'");
-            escapeCode = "";
-            readingEscapeCode = false;
-        }
-    }
 
-    private void handleEscapeCode(String code) {
-        if (code.equals("[J")) {
-            buffer.delete(cursor, buffer.length());
-        } else if (code.equals("[H")) {
+        if (escapeCode.equals("c")) { // reset
+            buffer.delete(0, buffer.length());
             cursor = 0;
-        } else if (code.endsWith("m")) {
-            // ignore color for now
-        } else {
-            System.out.println(terminal.getName() + ": got unknown escape code '" + code + "'");
+            return true;
         }
+
+        if (escapeCode.equals("[J")) { // clear screen
+            buffer.delete(cursor, buffer.length());
+            return true;
+        }
+
+        if (escapeCode.equals("[H")) { // move to upper left corner
+            cursor = 0;
+            return true;
+        }
+
+        if (escapeCode.equals("[A") || escapeCode.equals("[B")) { // up and down arrows
+            cursor = buffer.length();
+            return true;
+        }
+
+        if (escapeCode.startsWith("[") && escapeCode.endsWith("C")) { // right arrow
+            String count = escapeCode.substring(1, escapeCode.length() - 2);
+            cursor += count.isEmpty() ? 1 : Integer.valueOf(count);
+            return true;
+        }
+
+        if (escapeCode.startsWith("[") && escapeCode.endsWith("D")) { // left arrow
+            String count = escapeCode.substring(1, escapeCode.length() - 2);
+            cursor -= count.isEmpty() ? 1 : Integer.valueOf(count);
+            return true;
+        }
+
+        if (escapeCode.endsWith("m"))  // color (ignored)
+            return true;
+
+        if (escapeCode.endsWith("h")) // options (ignored)
+            return true;
+
+        if (escapeCode.equals("(B")) // keyboard layout (ignored)
+            return true;
+
+
+        if (escapeCode.length() > 20) { // stop if we have read too much
+            System.err.println(terminal.getName() + ": giving up reading escape code '" + escapeCode + "'");
+            return true;
+        }
+
+        // continue reading
+        return false;
     }
 
     public TerminalBuffer(TerminalViewer viewer, Terminal terminal) {
@@ -108,6 +133,16 @@ public class TerminalBuffer {
         }.start();
     }
 
+    public void transmit(byte str[]) throws IOException {
+        terminal.getTx().write(str);
+        terminal.getTx().flush();
+
+        if (getTerminal().isEcho()) {
+            for (byte s : str)
+                receive(s);
+        }
+    }
+
     public void transmit(int character) throws IOException {
         terminal.getTx().write(character);
         terminal.getTx().flush();
@@ -118,7 +153,11 @@ public class TerminalBuffer {
 
     public void receive(int character) {
         if (readingEscapeCode) {
-            readEscapeCode(character);
+            if (readEscapeCode(character)) {
+                readingEscapeCode = false;
+                update.schedule();
+            }
+
             return;
         }
 
@@ -129,10 +168,8 @@ public class TerminalBuffer {
             break;
 
         case '\b':
-            if (buffer.length() > 0) {
-                buffer.delete(buffer.length() - 1, buffer.length());
+            if (buffer.length() > 0)
                 cursor--;
-            }
             break;
 
         case '\r':
@@ -150,12 +187,15 @@ public class TerminalBuffer {
 
         case 0x1b: // escape
             readingEscapeCode = true;
+            escapeCode = "";
             return; // wait with update until we read the entire code
 
         case 0x07: // bell
             return;
 
         default:
+            if (cursor < buffer.length())
+                buffer.delete(cursor, buffer.length());
             buffer.insert(cursor, (char)character);
             cursor++;
         }

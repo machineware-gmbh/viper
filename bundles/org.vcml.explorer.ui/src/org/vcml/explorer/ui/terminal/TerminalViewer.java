@@ -50,34 +50,56 @@ public class TerminalViewer extends Composite implements KeyListener, MouseListe
         }
     }
 
-    void handleEscapeCode(int keyCode) throws IOException {
+    void handleSpecialKeys(int keyCode) throws IOException {
         switch (keyCode) {
         case SWT.ARROW_UP:
-            current.transmit(0x00);
-            current.transmit(0x1b);
-            current.transmit('[');
-            current.transmit('A');
+            byte[] up = { 0x1b, '[', 'A' };
+            current.transmit(up);
             break;
 
         case SWT.ARROW_DOWN:
-            current.transmit(0x00);
-            current.transmit(0x1b);
-            current.transmit('[');
-            current.transmit('B');
+            byte[] down = { 0x1b, '[', 'B' };
+            current.transmit(down);
             break;
 
         case SWT.ARROW_RIGHT:
-            current.transmit(0x00);
-            current.transmit(0x1b);
-            current.transmit('[');
-            current.transmit('C');
+            byte[] right = { 0x1b, '[', 'C' };
+            current.transmit(right);
             break;
 
         case SWT.ARROW_LEFT:
-            current.transmit(0x00);
-            current.transmit(0x1b);
-            current.transmit('[');
-            current.transmit('D');
+            byte[] left = { 0x1b, '[', 'D' };
+            current.transmit(left);
+            break;
+
+        case SWT.HOME:
+            byte[] home = { 0x1b, '[', '1', '~' };
+            current.transmit(home);
+            break;
+
+        case SWT.INSERT:
+            byte[] insert = { 0x1b, '[', '2', '~' };
+            current.transmit(insert);
+            break;
+
+        case SWT.DEL:
+            byte[] del = { 0x1b, '[', '3', '~' };
+            current.transmit(del);
+            break;
+
+        case SWT.END:
+            byte[] end = { 0x1b, '[', '4', '~' };
+            current.transmit(end);
+            break;
+
+        case SWT.PAGE_UP:
+            byte[] pgup = { 0x1b, '[', '5', '~' };
+            current.transmit(pgup);
+            break;
+
+        case SWT.PAGE_DOWN:
+            byte[] pgdn = { 0x1b, '[', '6', '~' };
+            current.transmit(pgdn);
             break;
 
         default:
@@ -149,7 +171,8 @@ public class TerminalViewer extends Composite implements KeyListener, MouseListe
         try {
             switch (event.character) {
             case 0:
-                handleEscapeCode(event.keyCode);
+            case 0x7f:
+                handleSpecialKeys(event.keyCode);
                 break;
 
             case 0x3: // ctrl+c
