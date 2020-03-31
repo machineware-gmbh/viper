@@ -68,12 +68,16 @@ public class UartPart {
     private void update() {
         // This updates colors immediately, CSS waits for focus
         StyledText text = viewer.getText();
-        if (session.isConnected() && session.isRunning()) {
-            text.setEnabled(true);
-            text.setForeground(activeColor);
-        } else {
+
+        if (!session.isConnected() || !session.isRunning()) {
             text.setEnabled(false);
             text.setForeground(inactiveColor);
+            return;
+        }
+
+        if (!text.isEnabled()) {
+            text.setEnabled(true);
+            text.setForeground(activeColor);
         }
     }
 
