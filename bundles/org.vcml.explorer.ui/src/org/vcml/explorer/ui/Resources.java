@@ -76,6 +76,11 @@ public class Resources {
     }
 
     public static Image getImageForModule(Module module) {
+        String kind = module.getKind();
+        if (kind == null) {
+            System.out.println("module has null kind " + module);
+            return getImage("icons/chip.png");
+        }
         switch (module.getKind()) {
         case Module.KIND_SC_OBJECT:
             return getImage("icons/chip.png");

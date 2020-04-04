@@ -28,9 +28,9 @@ public class Command {
 
     private int argc;
 
-    private RemoteSerialProtocol protocol;
-
     private Module parent;
+
+    private Session session;
 
     public String getName() {
         return name;
@@ -44,20 +44,27 @@ public class Command {
         return argc;
     }
 
-    public Command(RemoteSerialProtocol protocol, Module parent, String desc) {
-        this.protocol = protocol;
-        this.parent = parent;
+    public Module getParent() {
+        return parent;
+    }
 
-        String[] info = desc.split(":", 3);
-        this.name = info[0];
-        this.argc = info.length > 1 ? Integer.parseInt(info[1]) : 0;
-        this.desc = info.length > 2 ? info[2] : "no description available";
+    public Session getSession() {
+        return session;
+    }
+
+    public Command(Module parent, String name, String desc, int argc) {
+        this.name = name;
+        this.desc = desc;
+        this.argc = argc;
+        this.parent = parent;
+        this.session = parent.getSession();
     }
 
     public String execute() throws SessionException {
         if (argc != 0)
             throw new SessionException("Not enough arguments");
 
+        RemoteSerialProtocol protocol = session.getProtocol();
         Response resp = protocol.command(RemoteSerialProtocol.EXEC, parent.getName(), getName());
         return resp.toString();
     }
@@ -73,6 +80,7 @@ public class Command {
         for (String arg : args)
             fullArgs.add(arg);
 
+        RemoteSerialProtocol protocol = session.getProtocol();
         Response resp = protocol.command(fullArgs.toArray(new String[fullArgs.size()]));
         return resp.toString();
     }

@@ -18,8 +18,14 @@
 
 package org.vcml.session;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 public class Module {
 
@@ -49,9 +55,9 @@ public class Module {
     public static final String KIND_VCML_ETHERNET = "vcml::ethernet";
     public static final String KIND_VCML_ARM_PL011UART = "vcml::arm::pl011uart";
 
-    private Session session;
+    public static final String HIERARCHY_CHAR = ".";
 
-    private RemoteSerialProtocol protocol;
+    private Session session;
 
     private String name;
 
@@ -65,32 +71,50 @@ public class Module {
 
     private ArrayList<Command> commands;
 
-    private void addChild(String name) {
-        try {
-            children.add(new Module(session, this, name));
-        } catch (SessionException e) {
-            System.err.println(name + ": " + e.getMessage());
+    private void parseXML(String xml) throws XMLStreamException, SessionException {
+        InputStream in = new ByteArrayInputStream(xml.getBytes());
+        XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+        XMLStreamReader streamReader = inputFactory.createXMLStreamReader(in);
+
+        Module current = this;
+        while (streamReader.hasNext()) {
+            streamReader.next();
+            switch (streamReader.getEventType()) {
+            case XMLStreamReader.START_ELEMENT: {
+                if (streamReader.getLocalName().equalsIgnoreCase("object")) {
+                    String name = streamReader.getAttributeValue(null, "name");
+                    String kind = streamReader.getAttributeValue(null, "kind");
+                    current = new Module(current, name, kind);
+                }
+
+                if (streamReader.getLocalName().equalsIgnoreCase("attribute")) {
+                    String name = streamReader.getAttributeValue(null, "name");
+                    String type = streamReader.getAttributeValue(null, "type");
+                    Long count = Long.parseLong(streamReader.getAttributeValue(null, "count"));
+                    current.attributes.add(new Attribute(current, name, type, count));
+                }
+
+                if (streamReader.getLocalName().equalsIgnoreCase("command")) {
+                    String name = streamReader.getAttributeValue(null, "name");
+                    String desc = streamReader.getAttributeValue(null, "type");
+                    int argc = Integer.parseInt(streamReader.getAttributeValue(null, "argc"));
+                    current.commands.add(new Command(current, name, desc, argc));
+                }
+
+                break;
+            }
+
+            case XMLStreamReader.END_ELEMENT: {
+                if (streamReader.getLocalName().equalsIgnoreCase("object"))
+                    current = current.getParent();
+
+                break;
+            }
+
+            default:
+                break;
+            }
         }
-    }
-
-    private void addAttribute(String name) {
-        try {
-            attributes.add(new Attribute(session, name));
-        } catch (SessionException e) {
-            System.err.println(name + ": " + e.getMessage());
-        }
-    }
-
-    private void addCommand(String name) {
-        commands.add(new Command(protocol, this, name));
-    }
-
-    private Response readObjectInfo() throws SessionException {
-        String fullName = getName();
-        if (fullName.isEmpty())
-            return protocol.command(RemoteSerialProtocol.INFO);
-        return protocol.command(RemoteSerialProtocol.INFO, fullName);
-
     }
 
     public boolean isRoot() {
@@ -108,7 +132,7 @@ public class Module {
     public String getName() {
         if ((parent == null) || parent.isRoot())
             return getBaseName();
-        return parent.getName() + "." + getBaseName();
+        return parent.getName() + HIERARCHY_CHAR + getBaseName();
     }
 
     public String getKind() {
@@ -131,37 +155,33 @@ public class Module {
         return commands.toArray(new Command[commands.size()]);
     }
 
-    public Module(Session session, Module parent, String name) throws SessionException {
-        this.session = session;
-        this.protocol = session.getProtocol();
+    private Module(Module parent, String name, String kind) {
         this.parent = parent;
+        this.session = parent.getSession();
         this.name = name;
+        this.kind = kind;
+        this.children = new ArrayList<Module>();
+        this.attributes = new ArrayList<Attribute>();
+        this.commands = new ArrayList<Command>();
+        this.parent.children.add(this);
+    }
+
+    public Module(Session session) throws SessionException {
+        this.session = session;
+        this.parent = null;
+        this.name = "root";
         this.children = new ArrayList<Module>();
         this.attributes = new ArrayList<Attribute>();
         this.commands = new ArrayList<Command>();
 
-        Response info = readObjectInfo();
+        RemoteSerialProtocol protocol = session.getProtocol();
+        Response resp = protocol.command(RemoteSerialProtocol.LIST, "xml");
 
-        String[] kindInfo = info.getValues("kind");
-        this.kind = (kindInfo.length != 0) ? kindInfo[0] : "unknown";
-
-        attributes.add(new Attribute("name", name));
-        attributes.add(new Attribute("kind", kind));
-
-        if (parent != null && !parent.isRoot())
-            attributes.add(new Attribute("parent", parent.getName()));
-
-        String[] childInfo = info.getValues("child");
-        for (String child : childInfo)
-            addChild(child);
-
-        String[] attrInfo = info.getValues("attr");
-        for (String attr : attrInfo)
-            addAttribute(attr);
-
-        String[] commands = info.getValues("cmd");
-        for (String command : commands)
-            addCommand(command);
+        try {
+            parseXML(resp.toString());
+        } catch (XMLStreamException e) {
+            throw new SessionException("failed to parse object hierarchy", e);
+        }
     }
 
     public Module findChild(String name) {

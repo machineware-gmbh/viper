@@ -214,13 +214,13 @@ public class Session {
             return null;
 
         if (hierarchy == null)
-            hierarchy = new Module(this, null, "");
+            hierarchy = new Module(this);
         return hierarchy.getChildren();
     }
 
     public Module findObject(String name) throws SessionException {
         if (hierarchy == null)
-            hierarchy = new Module(this, null, "");
+            hierarchy = new Module(this);
         return hierarchy.findChild(name);
     }
 

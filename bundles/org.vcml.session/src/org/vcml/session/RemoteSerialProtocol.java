@@ -39,7 +39,7 @@ public class RemoteSerialProtocol {
     private static int calcChecksum(String str) {
         int result = 0;
         for (int i = 0; i < str.length(); i++)
-            result += (int) str.charAt(i);
+            result += str.charAt(i);
         return result & 0xff;
     }
 
@@ -60,19 +60,20 @@ public class RemoteSerialProtocol {
         }
     }
 
-    public static final String NONE = "n"; /* do nothing */
-    public static final String CONT = "c"; /* call sc_start */
-    public static final String STOP = "a"; /* call sc_pause */
-    public static final String STEP = "s"; /* call sc_start with duration */
-    public static final String INFO = "i"; /* retrieve info string */
-    public static final String EXEC = "e"; /* execute command on module */
-    public static final String TIME = "t"; /* read current time and cycle */
-    public static final String RDGQ = "q"; /* read global quantum */
-    public static final String WRGQ = "Q"; /* write global quantum */
-    public static final String GETA = "a"; /* read attribute */
-    public static final String SETA = "A"; /* write attribute */
-    public static final String QUIT = "x"; /* quit session */
-    public static final String VERS = "v"; /* version information */
+    public static final String NONE = "n"; // do nothing
+    public static final String CONT = "c"; // call sc_start
+    public static final String STOP = "a"; // call sc_pause
+    public static final String STEP = "s"; // call sc_start with duration
+    public static final String LIST = "l"; // list module hierarchy
+    public static final String INFO = "i"; // retrieve info string
+    public static final String EXEC = "e"; // execute command on module
+    public static final String TIME = "t"; // read current time and cycle
+    public static final String RDGQ = "q"; // read global quantum
+    public static final String WRGQ = "Q"; // write global quantum
+    public static final String GETA = "a"; // read attribute
+    public static final String SETA = "A"; // write attribute
+    public static final String QUIT = "x"; // quit session
+    public static final String VERS = "v"; // version information
 
     public void send_char(int val) throws SessionException {
         try {
@@ -154,23 +155,24 @@ public class RemoteSerialProtocol {
         }
 
         // Unexpected end of file
-        throw new SessionException("Disconnected");
+        throw new SessionException("Lost session connection");
     }
 
     public Response command(String... args) throws SessionException {
-        String command = "";
-        for (String arg : args)
-            command += arg + ",";
+        StringBuilder command = new StringBuilder();
+        for (int i = 0; i < args.length - 1; i++)
+            command.append(args[i] + ",");
+        command.append(args[args.length - 1]);
 
-        send(command);
-        return new Response(command, recv());
+        send(command.toString());
+        return new Response(command.toString(), recv());
     }
 
     public void close() throws SessionException {
         try {
             socket.close();
         } catch (IOException e) {
-            throw new SessionException("Failed to contact session", e);
+            // silently ignore this, we were disconnecting anyway
         }
     }
 

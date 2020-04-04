@@ -27,34 +27,24 @@ public class Response {
 
     private String response;
 
-    private List<KeyValuePair> entries;
-
-    private class KeyValuePair {
-        public String key;
-        public String val;
-
-        public KeyValuePair(String key, String val) {
-            this.key = key;
-            this.val = val;
-        }
-    }
+    private List<String> entries;
 
     public Response(String cmd, String resp) throws SessionException {
         this.command = cmd;
         this.response = resp;
-        this.entries = new ArrayList<KeyValuePair>();
+        this.entries = new ArrayList<String>();
 
         if (response.isEmpty())
             throw new SessionException("Command '" + command + "' not supported");
         if (response.startsWith("ERROR,"))
             throw new SessionException("Command '" + command + "' returned error: " + response.substring(6));
+        if (response.startsWith("E,"))
+            throw new SessionException("Command '" + command + "' returned error: " + response.substring(2));
         if (response.startsWith("OK"))
             response = response.substring(2);
         if (response.startsWith(","))
             response = response.substring(1);
 
-        //String token[] = response.split("(?<!\\\\),"); // just 1 char look-back :(
-        ArrayList<String> token = new ArrayList<String>();
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < response.length(); i++) {
             char c = response.charAt(i);
@@ -64,7 +54,7 @@ public class Response {
                 break;
 
             case ',':
-                token.add(builder.toString());
+                entries.add(builder.toString());
                 builder = new StringBuilder();
                 break;
 
@@ -75,34 +65,20 @@ public class Response {
 
         }
 
-        if (builder.length() > 0)
-            token.add(builder.toString());
+        entries.add(builder.toString());
+    }
 
-        for (String entry : token) {
-            String[] data = entry.split(":", 2);
-            String key = data.length > 1 ? data[0] : "";
-            String val = data.length > 1 ? data[1] : data[0];
-            entries.add(new KeyValuePair(key, val));
-        }
+    public String getRaw() {
+        return response;
+    }
+
+    public String[] getValues() {
+        return entries.toArray(new String[entries.size()]);
     }
 
     @Override
     public String toString() {
-        return response.replaceAll("\\\\,", ",");
-    }
-
-    public String[] getValues(String key) {
-        ArrayList<String> list = new ArrayList<String>();
-        for (KeyValuePair pair : entries) {
-            if (pair.key.equals(key))
-                list.add(pair.val);
-        }
-
-        return list.toArray(new String[list.size()]);
-    }
-
-    public String[] getValues() {
-        return getValues("");
+        return response.replace("\\,", ",");
     }
 
 }

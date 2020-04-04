@@ -156,8 +156,18 @@ public class AttributePart {
 
         @Override
         public String getToolTipText(Object element) {
-            return ((Attribute) element).getName();
+            Attribute attr = (Attribute) element;
+            String tooltip = "Name: " + attr.getName() + "\nType: " + attr.getType();
+            if (attr.getCount() > 1)
+                tooltip  += "[" + attr.getCount() + "]";
+            return tooltip;
         }
+
+        @Override
+        public Font getToolTipFont(Object element) {
+            return Resources.getMonoSpaceFont();
+        }
+
     };
 
     private ColumnLabelProvider columnValueProvider = new ColumnLabelProvider() {

@@ -20,55 +20,60 @@ package org.vcml.session;
 
 public class Attribute {
 
+    private Module parent;
+
+    private String base;
+
     private String name;
 
-    private String value;
+    private String type;
 
-    private int size;
+    private long count;
 
-    private int num;
+    private String[] values;
 
     private Session session;
 
-    private RemoteSerialProtocol protocol;
+    public Attribute(Module parent, String base, String type, long count) throws SessionException {
+        assert count >= 0 : "count must not be negative";
+        assert count <= Integer.MAX_VALUE : "attribute count limit exceeded";
 
-    public Attribute(String name, String value) {
-        this.name = name;
-        this.value = value;
-        this.session = null;
-        this.protocol = null;
-    }
-
-    public Attribute(Session session, String name) throws SessionException {
-        this.name = name;
-        this.value = "unknown";
-        this.session = session;
-        this.protocol = session.getProtocol();
+        this.parent = parent;
+        this.base = base;
+        this.name = parent.getName() + Module.HIERARCHY_CHAR + getBaseName();
+        this.type = type;
+        this.count = count;
+        this.values = count > 0 ? new String [(int)count] : null;
+        this.session = parent.getSession();
 
         refresh();
     }
 
     public void refresh() throws SessionException {
+        RemoteSerialProtocol protocol = session.getProtocol();
         if (protocol == null)
             return;
 
         Response resp = protocol.command(RemoteSerialProtocol.GETA, name);
         String[] values = resp.getValues();
-        if (values.length == 0)
-            throw new SessionException("Failed to read attribute " + name);
 
-        name = values[0];
-        value = values.length > 1 ? values[1] : "";
-        size = values.length > 2 ? Integer.parseInt(values[2]) : -1;
-        num = values.length > 3 ? Integer.parseInt(values[3]) : 1;
+        if (values.length == 0 || values.length != count)
+            throw new SessionException("Failed to update attribute " + name);
+
+        for (int i = 0; i < values.length; i++)
+            this.values[i] = values[i];
     }
 
     public boolean isEditable() {
-        return protocol != null;
+        return count > 0;
     }
 
     public Session getSession() {
         return session;
+    }
+
+    public Module getParent() {
+        return parent;
     }
 
     public String getName() {
@@ -76,56 +81,94 @@ public class Attribute {
     }
 
     public String getBaseName() {
-        String[] temp = name.split("\\.");
-        return temp[temp.length - 1];
+        return base;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public long getCount() {
+        return count;
+    }
+
+    public String getValue(int idx) {
+        if (idx < 0 || idx >= count)
+            return null;
+        return values[idx];
     }
 
     public String getValue() {
-        return value;
+        StringBuilder builder = new StringBuilder(getValue(0));
+
+        for (int idx = 1; idx < values.length; idx++) {
+            builder.append(", ");
+            builder.append(getValue(idx));
+        }
+
+        return builder.toString();
     }
 
-    public int getSize() {
-        return size;
-    }
-
-    public int getNumValues() {
-        return num;
-    }
-
-    public int getArraySize() {
-        return getNumValues() * getSize();
-    }
-
-    public boolean isArray() {
-        return getNumValues() > 1;
-    }
-
-    public String getValuePretty() {
-        if (value.isEmpty())
+    public String getValuePretty(int idx) {
+        String val = getValue(idx);
+        if (val.isEmpty())
             return "<empty>";
 
-        if (isArray())
-            return value;
-
         try {
-            long val = Long.parseLong(value);
-            switch (size) {
-            case 1  : return String.format("0x%02x",  val);
-            case 2  : return String.format("0x%04x",  val);
-            case 4  : return String.format("0x%08x",  val);
-            case 8  : return String.format("0x%016x", val);
-            default : return String.format("0x%x",    val);
+            // ugly hack until we have something better
+            if (name.contains("port") || name.contains("clock") || name.contains("size") ||
+                name.contains("latency") || base.equals("session") || base.equals("nrcpu"))
+                return String.format("%d", Long.valueOf(val));
+
+            switch (type) {
+            case  "i8": return String.format("%d", Long.valueOf(val));
+            case "i16": return String.format("%d", Long.valueOf(val));
+            case "i32": return String.format("%d", Long.valueOf(val));
+            case "i64": return String.format("%d", Long.valueOf(val));
+            case  "u8": return String.format("0x%02x",  Long.valueOf(val));
+            case "u16": return String.format("0x%04x",  Long.valueOf(val));
+            case "u32": return String.format("0x%08x",  Long.valueOf(val));
+            case "u64": return String.format("0x%016x", Long.valueOf(val));
+            default:
+                return val;
             }
-        } catch (NumberFormatException e) {
-            // return "\"" + value + "\"";
-            return value;
+        } catch (Exception e) {
+            return val; // we tried :>
         }
     }
 
-    public void setValue(String newValue) throws SessionException {
-        if (!isEditable() || (newValue == value))
+    public String getValuePretty() {
+        StringBuilder builder = new StringBuilder(getValuePretty(0));
+
+        for (int idx = 1; idx < values.length; idx++) {
+            builder.append(", ");
+            builder.append(getValuePretty(idx));
+        }
+
+        return builder.toString();
+    }
+
+    public void setValue(String newValue, int idx) throws SessionException {
+        if (idx < 0 || idx >= values.length)
             return;
 
+        values[idx] = newValue;
+        String vals = String.join(",", values);
+
+        RemoteSerialProtocol protocol = session.getProtocol();
+        protocol.command(RemoteSerialProtocol.SETA, name, vals);
+        refresh();
+    }
+
+    public void setValue(String newValue) throws SessionException {
+        if (!isEditable())
+            return;
+
+        String values[] = newValue.split(",", -1);
+        if (values.length != count)
+            return;
+
+        RemoteSerialProtocol protocol = session.getProtocol();
         protocol.command(RemoteSerialProtocol.SETA, name, newValue);
         refresh();
     }
