@@ -27,26 +27,57 @@ public class Response {
 
     private String response;
 
-    private List<String> entries;
+    private String[] values;
+
+    public boolean isError() {
+        return !response.startsWith("OK");
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public String getRaw() {
+        return response;
+    }
+
+    public String getValue(int idx) {
+        if (idx < 0 || idx >= values.length)
+            return null;
+        return values[idx];
+    }
+
+    public String[] getValues() {
+        return values;
+    }
+
+    public int countValues() {
+        return values.length;
+    }
 
     public Response(String cmd, String resp) throws SessionException {
+        if (resp.isEmpty())
+            throw new SessionException("Command '" + command + "' not supported");
+
         this.command = cmd;
         this.response = resp;
-        this.entries = new ArrayList<String>();
+        this.values = parseResponse(resp);
+    }
 
-        if (response.isEmpty())
-            throw new SessionException("Command '" + command + "' not supported");
-        if (response.startsWith("ERROR,"))
-            throw new SessionException("Command '" + command + "' returned error: " + response.substring(6));
-        if (response.startsWith("E,"))
-            throw new SessionException("Command '" + command + "' returned error: " + response.substring(2));
-        if (response.startsWith("OK"))
-            response = response.substring(2);
-        if (response.startsWith(","))
-            response = response.substring(1);
+    @Override
+    public String toString() {
+        return getRaw().replace("\\,", ",");
+    }
 
+    private static String[] parseResponse(String response) {
+        List<String> entries = new ArrayList<String>();
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < response.length(); i++) {
+
+        int idx = response.indexOf(',');
+        if (idx == -1)
+            return new String[0];
+
+        for (int i = idx + 1; i < response.length(); i++) {
             char c = response.charAt(i);
             switch  (c) {
             case '\\':
@@ -66,19 +97,7 @@ public class Response {
         }
 
         entries.add(builder.toString());
-    }
-
-    public String getRaw() {
-        return response;
-    }
-
-    public String[] getValues() {
         return entries.toArray(new String[entries.size()]);
-    }
-
-    @Override
-    public String toString() {
-        return response.replace("\\,", ",");
     }
 
 }

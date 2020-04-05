@@ -169,8 +169,10 @@ public class Attribute {
             return;
 
         RemoteSerialProtocol protocol = session.getProtocol();
-        protocol.command(RemoteSerialProtocol.SETA, name, newValue);
-        refresh();
+        if (protocol != null) {
+            protocol.command(RemoteSerialProtocol.SETA, name, newValue);
+            refresh();
+        }
     }
 
     @Override

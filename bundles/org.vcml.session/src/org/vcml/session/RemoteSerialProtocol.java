@@ -165,7 +165,12 @@ public class RemoteSerialProtocol {
         command.append(args[args.length - 1]);
 
         send(command.toString());
-        return new Response(command.toString(), recv());
+        Response resp = new Response(command.toString(), recv());
+
+        if (resp.isError())
+            throw new SessionException(resp.getValue(0));
+
+        return resp;
     }
 
     public void close() throws SessionException {

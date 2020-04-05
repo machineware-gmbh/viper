@@ -25,6 +25,6 @@ import org.eclipse.swt.widgets.Shell;
 public class AboutHandler {
     @Execute
     public void execute(Shell shell) {
-        MessageDialog.openInformation(shell, "About", "Virtual Platform Explorer (VIPER)");
+        MessageDialog.openInformation(shell, "About", "Virtual Platform Explorer (ViPEr)");
     }
 }

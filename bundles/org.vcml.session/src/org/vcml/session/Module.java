@@ -178,7 +178,7 @@ public class Module {
         Response resp = protocol.command(RemoteSerialProtocol.LIST, "xml");
 
         try {
-            parseXML(resp.toString());
+            parseXML(resp.getValue(0));
         } catch (XMLStreamException e) {
             throw new SessionException("failed to parse object hierarchy", e);
         }
