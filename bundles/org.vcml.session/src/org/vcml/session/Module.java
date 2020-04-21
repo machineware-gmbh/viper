@@ -96,7 +96,7 @@ public class Module {
 
                 if (streamReader.getLocalName().equalsIgnoreCase("command")) {
                     String name = streamReader.getAttributeValue(null, "name");
-                    String desc = streamReader.getAttributeValue(null, "type");
+                    String desc = streamReader.getAttributeValue(null, "desc");
                     int argc = Integer.parseInt(streamReader.getAttributeValue(null, "argc"));
                     current.commands.add(new Command(current, name, desc, argc));
                 }
