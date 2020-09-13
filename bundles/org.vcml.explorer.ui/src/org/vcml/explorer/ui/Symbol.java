@@ -45,7 +45,7 @@ public class Symbol {
                 if (!matcher.find() || matcher.groupCount() != 2)
                     continue;
 
-                long address = Long.parseLong(matcher.group(1), 16);
+                long address = Long.parseUnsignedLong(matcher.group(1), 16);
                 String name = matcher.group(2);
                 symbols.add(new Symbol(name, address, line.startsWith("F")));
             }
@@ -93,7 +93,8 @@ public class Symbol {
 
     @Override
     public String toString() {
-        return name + String.format(" @ 0x%08x", address);
+        String fmt = address > 0xffffffffl ? " @ 0x%016x" : " @ 0x%08x";
+        return name + String.format(fmt, address);
     }
 
     public Symbol(String name, long address, boolean func) {

@@ -121,14 +121,14 @@ public class Attribute {
                 return String.format("%d", Long.valueOf(val));
 
             switch (type) {
-            case  "i8": return String.format("%d", Long.valueOf(val));
-            case "i16": return String.format("%d", Long.valueOf(val));
-            case "i32": return String.format("%d", Long.valueOf(val));
-            case "i64": return String.format("%d", Long.valueOf(val));
-            case  "u8": return String.format("0x%02x",  Long.valueOf(val));
-            case "u16": return String.format("0x%04x",  Long.valueOf(val));
-            case "u32": return String.format("0x%08x",  Long.valueOf(val));
-            case "u64": return String.format("0x%016x", Long.valueOf(val));
+            case  "i8": return String.format("%d", Long.parseUnsignedLong(val));
+            case "i16": return String.format("%d", Long.parseUnsignedLong(val));
+            case "i32": return String.format("%d", Long.parseUnsignedLong(val));
+            case "i64": return String.format("%d", Long.parseUnsignedLong(val));
+            case  "u8": return String.format("0x%02x",  Long.parseUnsignedLong(val));
+            case "u16": return String.format("0x%04x",  Long.parseUnsignedLong(val));
+            case "u32": return String.format("0x%08x",  Long.parseUnsignedLong(val));
+            case "u64": return String.format("0x%016x", Long.parseUnsignedLong(val));
             default:
                 return val;
             }
