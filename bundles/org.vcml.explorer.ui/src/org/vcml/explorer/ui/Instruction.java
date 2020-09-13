@@ -26,8 +26,6 @@ import org.vcml.session.SessionException;
 
 public class Instruction {
 
-    public static final long SIZE = 4;
-
     public static final String CMD_DISASSEMBLE = "disas";
 
     public static final String REGEX_HEX = "[0-9a-fA-F]*";
@@ -51,14 +49,16 @@ public class Instruction {
 
     private long instruction;
 
+    private long size;
+
     private String disassembly;
 
     private String symbol;
 
     private static String getDescription(long address, Module processor) {
         try { // ToDo: do not run the command every time, better use caching!
-            String arg0 = Long.toString(address);
-            String arg1 = Long.toString(address + SIZE);
+            String arg0 = Long.toUnsignedString(address);
+            String arg1 = Long.toUnsignedString(address + 1);
             String result = processor.execute(CMD_DISASSEMBLE, arg0, arg1);
             return result.split("\n")[1];
         } catch (SessionException e) {
@@ -82,6 +82,10 @@ public class Instruction {
         return instruction;
     }
 
+    public long getSize() {
+        return size;
+    }
+
     public String getDisassembly() {
         return disassembly;
     }
@@ -94,13 +98,14 @@ public class Instruction {
         physAddress = address;
         virtAddress = 0;
         instruction = 0;
+        size = 4;
         disassembly = description;
 
         if (description.contains("????????")) {
             // something went wrong with v->p translation
             // try to at least get the symbol info
             virtAddress = address;
-            disassembly = "<page missing>";
+            disassembly = "<page unmapped>";
 
             Pattern pattern = Pattern.compile("(" + REGEX_SYM + ")");
             Matcher matcher = pattern.matcher(description);
@@ -126,9 +131,10 @@ public class Instruction {
             String insn = matcher.group(4);
             String disas = matcher.group(5);
             symbol = (sym != null) ? sym : "";
-            physAddress = Long.parseLong(phys, 16);
-            virtAddress = (virt != null) ? Long.parseLong(virt, 16) : -1;
-            instruction = Long.parseLong(insn, 16);
+            physAddress = Long.parseUnsignedLong(phys, 16);
+            virtAddress = (virt != null) ? Long.parseUnsignedLong(virt, 16) : physAddress;
+            instruction = Long.parseUnsignedLong(insn, 16);
+            size = insn.length() / 2;
             disassembly = (disas != null) ? disas : "--";
         } catch (NumberFormatException e) {
             disassembly = e.getMessage();

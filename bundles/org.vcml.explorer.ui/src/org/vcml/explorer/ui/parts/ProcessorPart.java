@@ -53,7 +53,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
-
 import org.vcml.explorer.ui.Instruction;
 import org.vcml.explorer.ui.Resources;
 import org.vcml.explorer.ui.Symbol;
@@ -67,7 +66,9 @@ public class ProcessorPart {
 
     public static final String ERROR_CELL = "--"; //$NON-NLS-1$
 
-    public static final int SCROLL_SIZE = 100;
+    public static final int SCROLL_COUNT = 100;
+
+    public static final long SCROLL_BYTES = SCROLL_COUNT * 4l;
 
     public static long getProgramCounter(Module processor) {
         try {
@@ -76,7 +77,7 @@ public class ProcessorPart {
             Matcher matcher = pattern.matcher(result);
 
             if (matcher.find())
-                return Long.parseLong(matcher.group(1), 16);
+                return Long.parseUnsignedLong(matcher.group(1), 16);
 
             System.err.println("Error fetching program counter");
             return 0;
@@ -109,28 +110,74 @@ public class ProcessorPart {
     private TableViewerColumn dissColumn;
     private TableViewerColumn symbColumn;
 
+    private long addrOf(int idx) {
+        long addr = topAddress;
+        for (int i = 0; i < idx; i++)
+            addr += fetchInstruction(addr).getSize();
+        return addr;
+    }
+
+    private int indexOf(long addr) {
+        int idx = 0;
+        if (addr - topAddress < 0) // if addr < topAddr (workaround for no unsigned long in Java)
+            return -1;
+
+        long curr = topAddress;
+        while (curr - addr < 0) { // while (curr < addr) ...
+            curr += fetchInstruction(curr).getSize();
+            idx++;
+        }
+
+        return idx;
+    }
+
+    private Instruction fetchInstruction(long addr) {
+        Instruction insn = instructions.get(addr);
+        if (insn != null)
+            return insn;
+
+        insn = new Instruction(addr, processor);
+        if (insn.getVirtualAddress() != addr) {
+            System.err.println(String.format("Disassembling address 0x%016x returned instruction at address 0x%016x",
+                                             addr, insn.getVirtualAddress()));
+        }
+
+        instructions.put(insn.getVirtualAddress(), insn);
+        return insn;
+    }
+
     private void scrollDown() {
         int count = instructionViewer.getTable().getItemCount();
-        instructionViewer.setItemCount(count + SCROLL_SIZE);
+        instructionViewer.setItemCount(count + SCROLL_COUNT);
     }
 
     private void scrollUp() {
-        topAddress -= SCROLL_SIZE * Instruction.SIZE;
-        if (topAddress < 0)
+        if (topAddress == 0)
+            return;
+
+        Table table = instructionViewer.getTable();
+        int selected = table.getSelectionIndex();
+        long selectedAddr = addrOf(selected);
+
+        long oldTop = topAddress;
+        topAddress -= SCROLL_BYTES;
+        if ((oldTop > 0 && topAddress < 0) || (oldTop < 0 && topAddress > 0))
             topAddress = 0;
+
+        int added = indexOf(oldTop) + 1;
         int count = instructionViewer.getTable().getItemCount();
-        instructionViewer.setItemCount(count + SCROLL_SIZE);
+        instructionViewer.setItemCount(count + added);
         instructionViewer.refresh();
 
-        int selected = (int) ((programCounter - topAddress) / Instruction.SIZE);
-        Table table = instructionViewer.getTable();
+        selected = indexOf(selectedAddr);
         table.setSelection(selected);
-        table.setTopIndex(SCROLL_SIZE);
+        table.setTopIndex(SCROLL_COUNT);
     }
 
     private Listener scrollListener = new Listener() {
         private int lastIndex = -1;
 
+        @Override
         public void handleEvent(Event e) {
             Table table = instructionViewer.getTable();
             int index = table.getTopIndex();
@@ -144,7 +191,7 @@ public class ProcessorPart {
                 lastIndex = index;
                 if (index > (count - visibleElements))
                     scrollDown();
-                if ((index == 0) && (topAddress > 0))
+                if (index == 0)
                     scrollUp();
             }
         }
@@ -160,20 +207,27 @@ public class ProcessorPart {
     }
 
     private void showRange(long address, long size) {
-        topAddress = (address / size) * size;
+        topAddress = address & ~0xffl;
         instructions = new HashMap<Long, Instruction>();
 
         instructionViewer.setInput(processor);
-        instructionViewer.setItemCount(SCROLL_SIZE);
+        instructionViewer.setItemCount(SCROLL_COUNT);
 
-        int selected = (int) ((address - topAddress) / Instruction.SIZE);
+        int selected = 0;
+        long addr = topAddress;
+        while (addr < address) {
+            addr += fetchInstruction(addr).getSize();
+            selected++;
+        }
+
         Table table = instructionViewer.getTable();
         table.setSelection(selected);
         table.setTopIndex(selected);
     }
 
     private void showRange(long address) {
-        showRange(address, SCROLL_SIZE * Instruction.SIZE);
+        long size = SCROLL_COUNT * 4;
+        showRange(address, size);
     }
 
     private void createSymbolComboViewer(Composite parent) {
@@ -190,7 +244,7 @@ public class ProcessorPart {
 
                     try {
                         if (sym == null)
-                            Long.parseLong(target, 16);
+                            Long.parseUnsignedLong(target, 16);
                         if (combo.indexOf(target) == -1)
                             combo.add(target);
                     } catch (NumberFormatException e) {
@@ -209,7 +263,7 @@ public class ProcessorPart {
                     showRange(sym.getAddress());
                 else
                     try {
-                        showRange(Long.parseLong(target, 16));
+                        showRange(Long.parseUnsignedLong(target, 16));
                     } catch (NumberFormatException ex) {
                         showRange(programCounter);
                     }
@@ -239,13 +293,8 @@ public class ProcessorPart {
                 if (instructionViewer.isBusy())
                     return;
 
-                long address = topAddress + index * Instruction.SIZE;
-                Instruction insn = instructions.get(address);
-                if ((insn == null) || (insn.getAddress() != address)) {
-                    insn = new Instruction(address, processor);
-                    instructions.put(address, insn);
-                }
-
+                long address = addrOf(index);
+                Instruction insn = fetchInstruction(address);
                 instructionViewer.replace(insn, index);
             }
         });
@@ -278,14 +327,13 @@ public class ProcessorPart {
 
         virtColumn = new TableViewerColumn(instructionViewer, SWT.CENTER);
         virtColumn.getColumn().setText("Virtual");
-        virtColumn.getColumn().setWidth(120);
+        virtColumn.getColumn().setWidth(128);
         virtColumn.setLabelProvider(new ColumnLabelProvider() {
             @Override
             public String getText(Object element) {
                 long addr = ((Instruction) element).getVirtualAddress();
-                if (addr < 0)
-                    return "";
-                return String.format("%08x", addr);
+                String fmt = addr > 0xffffffffl ? "%016x" : "%08x";
+                return String.format(fmt, addr);
             }
 
             @Override
@@ -308,11 +356,13 @@ public class ProcessorPart {
 
         physColumn = new TableViewerColumn(instructionViewer, SWT.CENTER);
         physColumn.getColumn().setText("Address");
-        physColumn.getColumn().setWidth(120);
+        physColumn.getColumn().setWidth(128);
         physColumn.setLabelProvider(new ColumnLabelProvider() {
             @Override
             public String getText(Object element) {
-                return String.format("%08x", ((Instruction) element).getPhysicalAddress());
+                long addr = ((Instruction) element).getPhysicalAddress();
+                String fmt = addr > 0xffffffffl ? "%016x" : "%08x";
+                return String.format(fmt, addr);
             }
 
             @Override
@@ -336,12 +386,13 @@ public class ProcessorPart {
         insnColumn = new TableViewerColumn(instructionViewer, SWT.CENTER);
         insnColumn.getColumn().setText("Instruction");
         insnColumn.getColumn().setWidth(140);
+        insnColumn.getColumn().setAlignment(SWT.LEFT);
         insnColumn.setLabelProvider(new ColumnLabelProvider() {
             @Override
             public String getText(Object element) {
-                if (((Instruction) element).getInstruction() == 0)
-                    return "";
-                return String.format("[%08x]", ((Instruction) element).getInstruction());
+                Instruction insn = (Instruction)element;
+                String fmt  = (insn.getSize() == 2) ? "[%04x]" : "[%08x]";
+                return String.format(fmt, insn.getInstruction());
             }
 
             @Override
@@ -368,8 +419,6 @@ public class ProcessorPart {
         dissColumn.setLabelProvider(new ColumnLabelProvider() {
             @Override
             public String getText(Object element) {
-                if (((Instruction) element).getInstruction() == 0)
-                    return "";
                 return ((Instruction) element).getDisassembly();
             }
 
@@ -397,8 +446,6 @@ public class ProcessorPart {
         symbColumn.setLabelProvider(new ColumnLabelProvider() {
             @Override
             public String getText(Object element) {
-                if (((Instruction) element).getInstruction() == 0)
-                    return "";
                 return ((Instruction) element).getSymbol();
             }
 
