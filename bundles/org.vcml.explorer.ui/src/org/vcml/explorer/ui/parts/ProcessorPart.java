@@ -258,15 +258,17 @@ public class ProcessorPart {
             @Override
             public void selectionChanged(SelectionChangedEvent event) {
                 String target = symbolViewer.getCombo().getText();
-                Symbol sym = lookupSymbol(target);
-                if (sym != null)
-                    showRange(sym.getAddress());
-                else
+                if (target.startsWith("0x")) {
                     try {
-                        showRange(Long.parseUnsignedLong(target, 16));
+                        showRange(Long.parseUnsignedLong(target.substring(2), 16));
                     } catch (NumberFormatException ex) {
-                        showRange(programCounter);
+                        // nothing to do
                     }
+                } else {
+                    Symbol sym = lookupSymbol(target);
+                    if (sym != null)
+                        showRange(sym.getAddress());
+                }
             }
         });
 
@@ -391,8 +393,7 @@ public class ProcessorPart {
             @Override
             public String getText(Object element) {
                 Instruction insn = (Instruction)element;
-                String fmt  = (insn.getSize() == 2) ? "[%04x]" : "[%08x]";
-                return String.format(fmt, insn.getInstruction());
+                return insn.getInstruction();
             }
 
             @Override
