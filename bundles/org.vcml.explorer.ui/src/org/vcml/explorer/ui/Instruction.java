@@ -38,16 +38,16 @@ public class Instruction {
 
     public static final String REGEX_PADDR = "[0-9a-fA-F]{16}";
 
-    public static final String REGEX_INSN = "[0-9a-fA-F]*";
+    public static final String REGEX_INSN = "\\[[[0-9a-fA-F]{2}\\s]*[[0-9a-fA-F]{2}]{1}\\]";
 
     public static final String REGEX = "\\s[>|\\s]\\s(" + REGEX_SYM + ")?\\s?(" + REGEX_VADDR + ")?\\s?(" + REGEX_PADDR
-            + ")\\s(" + REGEX_INSN + ")\\s(" + REGEX_DISAS + ")?";
+            + "):\\s(" + REGEX_INSN + ")\\s(" + REGEX_DISAS + ")?";
 
     private long physAddress;
 
     private long virtAddress;
 
-    private long instruction;
+    private String instruction;
 
     private long size;
 
@@ -78,7 +78,7 @@ public class Instruction {
         return virtAddress != 0 ? virtAddress : physAddress;
     }
 
-    public long getInstruction() {
+    public String getInstruction() {
         return instruction;
     }
 
@@ -97,7 +97,7 @@ public class Instruction {
     public Instruction(long address, String description) {
         physAddress = address;
         virtAddress = 0;
-        instruction = 0;
+        instruction = "";
         size = 4;
         disassembly = description;
 
@@ -130,12 +130,14 @@ public class Instruction {
             String phys = matcher.group(3);
             String insn = matcher.group(4);
             String disas = matcher.group(5);
+
             symbol = (sym != null) ? sym : "";
             physAddress = Long.parseUnsignedLong(phys, 16);
             virtAddress = (virt != null) ? Long.parseUnsignedLong(virt, 16) : physAddress;
-            instruction = Long.parseUnsignedLong(insn, 16);
-            size = insn.length() / 2;
-            disassembly = (disas != null) ? disas : "--";
+            instruction = insn;
+            size = (insn.length() - 1) / 3;
+            disassembly = (disas != null) ? disas.trim() : "--";
+
         } catch (NumberFormatException e) {
             disassembly = e.getMessage();
         }
