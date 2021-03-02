@@ -34,9 +34,9 @@ public class Instruction {
 
     public static final String REGEX_DISAS = ".*";
 
-    public static final String REGEX_VADDR = "[0-9a-fA-F]{16}";
+    public static final String REGEX_VADDR = "[0-9a-fA-F]+";
 
-    public static final String REGEX_PADDR = "[0-9a-fA-F]{16}";
+    public static final String REGEX_PADDR = "[0-9a-fA-F]+";
 
     public static final String REGEX_INSN = "\\[[[0-9a-fA-F]{2}\\s]*[[0-9a-fA-F]{2}]{1}\\]";
 
