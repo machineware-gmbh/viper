@@ -59,6 +59,8 @@ public class Session {
 
     private boolean running = false;
 
+    private String stopReason = "";
+
     public String getURI() {
         return uri;
     }
@@ -117,6 +119,10 @@ public class Session {
 
     public boolean isRunning() {
         return running;
+    }
+
+    public String getStopReason() {
+        return stopReason;
     }
 
     @Override
@@ -238,9 +244,13 @@ public class Session {
 
         protocol.send_char('a');
         String resp = protocol.recv();
-        if (!resp.equals("OK"))
+        if (!resp.startsWith("OK"))
             throw new SessionException("Simulator responded with error : " + resp);
+
         running = false;
+        stopReason = "unknown";
+        if (resp.length() > 3)
+            stopReason = resp.substring(3);
 
         refresh();
     }
