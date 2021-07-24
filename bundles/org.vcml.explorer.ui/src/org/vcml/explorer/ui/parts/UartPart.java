@@ -38,9 +38,9 @@ import org.eclipse.swt.widgets.Display;
 import org.vcml.explorer.ui.services.ISessionService;
 import org.vcml.explorer.ui.terminal.NetTerminal;
 import org.vcml.explorer.ui.terminal.TerminalViewer;
-import org.vcml.session.Attribute;
 import org.vcml.session.Module;
 import org.vcml.session.Session;
+import org.vcml.session.SessionException;
 
 public class UartPart {
 
@@ -56,13 +56,42 @@ public class UartPart {
 
     private static final Color inactiveColor = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY);
 
-    private int getPort() {
-        for (Module child : uart.getChildren())
-            if (child.getKind().equals("vcml::backend_tcp"))
-                for (Attribute attr : child.getAttributes())
-                    if (attr.getBaseName().equals("port"))
-                        return Integer.parseInt(attr.getValue());
-        return -1;
+    private String backend = "";
+
+    private int port = -1;
+
+    public int getPort() {
+        return port;
+    }
+
+    private void lookupPort() {
+        port = -1;
+
+        try {
+            if (backend.isEmpty()) {
+                String expected = "OK,created backend ";
+                String resp = uart.execute("create_backend", "tcp");
+                if (!resp.startsWith(expected))
+                    return;
+                backend = resp.substring(expected.length());
+            }
+
+            String expected = backend + ": tcp:";
+            String resp = uart.execute("list_backends");
+
+            int pos = resp.indexOf(expected);
+            if (pos == -1)
+                return;
+
+            int end = resp.indexOf(",", pos);
+            if (end == -1)
+                end = resp.length();
+
+            port = Integer.valueOf(resp.substring(pos + expected.length(), end));
+
+        } catch (SessionException e) {
+            e.printStackTrace();
+        }
     }
 
     private void update() {
@@ -95,7 +124,8 @@ public class UartPart {
 
         String name = uart.getName();
         String host = session.getHost();
-        int port = getPort();
+
+        lookupPort();
 
         if (port < 0) {
             MessageDialog.openError(parent.getShell(), uart.getName(),
@@ -118,6 +148,14 @@ public class UartPart {
     public void preDestroy() {
         if (terminal != null)
             terminal.close();
+
+        try {
+            if (!backend.isEmpty())
+                uart.execute("destroy_backend", backend);
+        } catch (SessionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     @Focus
