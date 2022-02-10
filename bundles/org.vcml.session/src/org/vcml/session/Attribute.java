@@ -57,6 +57,12 @@ public class Attribute {
         Response resp = protocol.command(RemoteSerialProtocol.GETA, name);
         String[] values = resp.getValues();
 
+        if (values.length > 1)
+            System.err.println("Property " + name + "has multiple initializers");
+
+        if (this.count > 1)
+            values = values[0].split("\\s+");
+
         if (values.length == 0 || values.length != count)
             throw new SessionException("Failed to update attribute " + name);
 
