@@ -63,7 +63,6 @@ public class RemoteSerialProtocol {
     public static final String NONE = "n"; // do nothing
     public static final String CONT = "c"; // call sc_start
     public static final String STOP = "a"; // call sc_pause
-    public static final String STEP = "s"; // call sc_start with duration
     public static final String LIST = "l"; // list module hierarchy
     public static final String INFO = "i"; // retrieve info string
     public static final String EXEC = "e"; // execute command on module

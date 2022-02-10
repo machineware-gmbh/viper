@@ -21,6 +21,7 @@ package org.vcml.session;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,8 @@ public class Session {
     private Module hierarchy = null;
 
     private LocalTime simTime = LocalTime.MIN;
+
+    private Duration quantum;
 
     private long deltaCycle = -1;
 
@@ -95,6 +98,10 @@ public class Session {
         long second = simTime.getSecond();
         long nanos = simTime.getNano();
         return String.format("%02d:%02d:%02d.%09d", hour, minute, second, nanos);
+    }
+
+    public Duration getQuantum() {
+        return quantum;
     }
 
     public long getDeltaCycle() {
@@ -170,6 +177,20 @@ public class Session {
         simTime = LocalTime.ofNanoOfDay(nanos);
     }
 
+    public void updateQuantum() throws SessionException {
+        if (isRunning())
+            return;
+
+        Response resp = protocol.command(RemoteSerialProtocol.RDGQ);
+        String values[] = resp.getValues();
+
+        if (values.length != 1)
+            throw new SessionException("session returned invalid response: " + resp);
+
+        quantum = Duration.ofNanos(Long.parseLong(values[0]));
+        System.out.println("quantum:" + quantum);
+    }
+
     public Session(String uri) throws SessionException {
         this.uri = uri;
 
@@ -199,6 +220,7 @@ public class Session {
 
         updateVersion();
         updateTime();
+        updateQuantum();
     }
 
     public void disconnect() throws SessionException {
@@ -259,7 +281,8 @@ public class Session {
         if (!isConnected() || isRunning())
             return;
 
-        protocol.command(RemoteSerialProtocol.STEP);
+        String duration = String.format("%dns", quantum.toNanos());
+        protocol.command(RemoteSerialProtocol.CONT, duration);
         refresh();
     }
 
