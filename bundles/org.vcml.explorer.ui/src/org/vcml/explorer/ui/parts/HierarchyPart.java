@@ -136,7 +136,11 @@ public class HierarchyPart {
         @Override
         public String getToolTipText(Object element) {
             Module module = (Module) element;
-            return "Name: " + module.getName() + "\nKind: " + module.getKind();
+            String text = "Name: " + module.getName() +"\nKind: " + module.getKind();
+            String version = module.getVersion();
+            if (version != Module.VERSION_UNKNOWN)
+                text += "\nVersion: " + version;
+            return text;
         }
 
         @Override

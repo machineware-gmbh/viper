@@ -55,6 +55,8 @@ public class Module {
     public static final String KIND_VCML_ETHERNET = "vcml::ethernet";
     public static final String KIND_VCML_ARM_PL011UART = "vcml::arm::pl011uart";
 
+    public static final String VERSION_UNKNOWN = "unknown";
+
     public static final String HIERARCHY_CHAR = ".";
 
     private Session session;
@@ -62,6 +64,8 @@ public class Module {
     private String name;
 
     private String kind;
+
+    private String version;
 
     private Module parent;
 
@@ -84,7 +88,8 @@ public class Module {
                 if (streamReader.getLocalName().equalsIgnoreCase("object")) {
                     String name = streamReader.getAttributeValue(null, "name");
                     String kind = streamReader.getAttributeValue(null, "kind");
-                    current = new Module(current, name, kind);
+                    String version = streamReader.getAttributeValue(null, "version");
+                    current = new Module(current, name, kind, version);
                 }
 
                 if (streamReader.getLocalName().equalsIgnoreCase("attribute")) {
@@ -139,6 +144,10 @@ public class Module {
         return kind;
     }
 
+    public String getVersion() {
+        return version;
+    }
+
     public Module getParent() {
         return parent;
     }
@@ -155,11 +164,12 @@ public class Module {
         return commands.toArray(new Command[commands.size()]);
     }
 
-    private Module(Module parent, String name, String kind) {
+    private Module(Module parent, String name, String kind, String version) {
         this.parent = parent;
         this.session = parent.getSession();
         this.name = name;
         this.kind = kind;
+        this.version = version != null ? version : VERSION_UNKNOWN;
         this.children = new ArrayList<Module>();
         this.attributes = new ArrayList<Attribute>();
         this.commands = new ArrayList<Command>();
