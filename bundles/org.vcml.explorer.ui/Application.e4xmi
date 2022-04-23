@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_6wlLcMgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.application" bindingContexts="_6wlLecgZEeSyMNYR5xypkQ">
-  <children xsi:type="basic:TrimmedWindow" xmi:id="_6wlLccgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.window.main" selectedElement="_PEYbsJoyEeiPmt14w3Wkkg" label="viper" width="1280" height="720">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_6wlLccgZEeSyMNYR5xypkQ" elementId="org.vcml.explorer.ui.window.main" selectedElement="_PEYbsJoyEeiPmt14w3Wkkg" label="ViPER - Virtual Platform Explorer" width="1280" height="720">
     <children xsi:type="advanced:PerspectiveStack" xmi:id="_PEYbsJoyEeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.perspectivestack.0">
       <children xsi:type="advanced:Perspective" xmi:id="_Px4a4JoyEeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.perspective.default" label="Default">
         <children xsi:type="basic:PartSashContainer" xmi:id="_zHEC8Jo2EeiPmt14w3Wkkg" elementId="org.vcml.explorer.ui.partsashcontainer.0">
