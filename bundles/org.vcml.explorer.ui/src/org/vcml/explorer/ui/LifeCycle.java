@@ -33,7 +33,6 @@ import org.osgi.service.event.EventHandler;
 
 import org.vcml.explorer.ui.services.ISessionService;
 
-@SuppressWarnings("restriction")
 public class LifeCycle {
 
     private IEclipseContext context;

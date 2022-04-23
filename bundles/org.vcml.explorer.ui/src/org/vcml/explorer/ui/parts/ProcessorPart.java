@@ -273,7 +273,7 @@ public class ProcessorPart {
         });
 
         symbolViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-        symbolAutoComplete = new AutoCompleteField(symbolViewer.getControl(), new ComboContentAdapter(), null);
+        symbolAutoComplete = new AutoCompleteField(symbolViewer.getControl(), new ComboContentAdapter(), (String[])null);
     }
 
     public void createInstructionTableViewer(Composite parent) {

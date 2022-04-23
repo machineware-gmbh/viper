@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.vcml.explorer.ui.services.ISessionService;
 import org.vcml.session.Session;
 
-@SuppressWarnings("restriction")
 public class ConnectHandler {
 
     @CanExecute

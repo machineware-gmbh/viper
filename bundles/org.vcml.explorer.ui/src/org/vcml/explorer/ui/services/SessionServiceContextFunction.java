@@ -25,8 +25,6 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.osgi.service.component.annotations.Component;
 
-import org.vcml.explorer.ui.services.ISessionService;
-
 @Component(name = "SessionServiceContextFunction", service = IContextFunction.class, property = "service.context.key=org.vcml.explorer.ui.services.ISessionService")
 public class SessionServiceContextFunction extends ContextFunction {
     @Override

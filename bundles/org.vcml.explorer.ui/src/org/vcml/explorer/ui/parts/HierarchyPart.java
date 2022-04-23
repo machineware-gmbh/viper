@@ -67,7 +67,6 @@ import org.vcml.session.Module;
 import org.vcml.session.Session;
 import org.vcml.session.SessionException;
 
-@SuppressWarnings("restriction")
 public class HierarchyPart {
 
     @Inject

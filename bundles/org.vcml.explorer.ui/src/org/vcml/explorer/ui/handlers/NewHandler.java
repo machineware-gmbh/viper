@@ -36,7 +36,6 @@ import org.vcml.explorer.ui.dialogs.ConnectDialog;
 import org.vcml.explorer.ui.services.ISessionService;
 import org.vcml.session.Session;
 
-@SuppressWarnings("restriction")
 public class NewHandler {
     @Execute
     public void execute(Shell shell, ISessionService service, ECommandService command, EHandlerService handler,

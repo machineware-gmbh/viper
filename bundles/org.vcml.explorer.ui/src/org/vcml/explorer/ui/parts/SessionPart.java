@@ -55,7 +55,6 @@ import org.vcml.explorer.ui.services.ISessionService;
 
 import org.vcml.session.Session;
 
-@SuppressWarnings("restriction")
 public class SessionPart {
 
     public static final String MENU_ID = "org.vcml.explorer.ui.popupmenu.sessions";

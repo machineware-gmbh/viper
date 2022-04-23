@@ -8,11 +8,9 @@
     <packaging>pom</packaging>
 
     <properties>
-        <tycho-version>1.1.0</tycho-version>
-        <tycho-versions-version>0.26.0</tycho-versions-version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
-        <eclipse-p2-repo.url>http://download.eclipse.org/releases/photon/</eclipse-p2-repo.url>
+      <tycho-version>2.6.0</tycho-version>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <eclipse-repo.url>http://download.eclipse.org/releases/latest</eclipse-repo.url>
     </properties>
 
     <modules>
@@ -23,8 +21,8 @@
 
     <repositories>
         <repository>
-            <id>eclipse-p2-repo</id>
-            <url>${eclipse-p2-repo.url}</url>
+            <id>eclipse-latest</id>
+            <url>${eclipse-repo.url}</url>
             <layout>p2</layout>
         </repository>
     </repositories>
