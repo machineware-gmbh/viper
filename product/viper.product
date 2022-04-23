@@ -3,6 +3,7 @@
 
 <product name="org.vcml.explorer" uid="viper" id="org.vcml.explorer.ui.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
 
+
    <configIni use="default">
    </configIni>
 
@@ -16,14 +17,20 @@
 
    <windowImages/>
 
+
    <launcher name="viper">
       <win useIco="false">
          <bmp/>
       </win>
    </launcher>
 
+
    <vm>
+      <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11</linux>
+      <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11</macos>
+      <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11</windows>
    </vm>
+
 
    <plugins>
    </plugins>
@@ -32,19 +39,13 @@
       <feature id="org.vcml.explorer.ui.feature" version="1.0.0.qualifier"/>
    </features>
 
-   <configurations>
-      <plugin id="org.apache.felix.scr" autoStart="true" startLevel="1" />
-      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
-      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
-      <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
-      <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
-   </configurations>
 
    <preferencesInfo>
       <targetfile overwrite="false"/>
    </preferencesInfo>
 
    <cssInfo>
+      <file path="/org.vcml.explorer.ui/css/default.css"/>
    </cssInfo>
 
 </product>
