@@ -3,7 +3,7 @@ The **Vi**rtual **P**latform **E**xplore**R** `ViPER` is a gui program used to i
 control SystemC simulations built with
 [`vcml`](https://github.com/janweinstock/vcml).
 
-[![Build Status](https://github.com/janweinstock/viper/actions/workflows/maven.yml/badge.svg)](https://github.com/janweinstock/viper/actions/workflows/maven.yml)
+[![Build Status](https://github.com/machineware-gmbh/viper/actions/workflows/maven.yml/badge.svg)](https://github.com/machineware-gmbh/viper/actions/workflows/maven.yml)
 
 ----
 ## Build
