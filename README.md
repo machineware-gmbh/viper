@@ -1,7 +1,7 @@
 # Virtual Platform Explorer (VIPER)
 The **Vi**rtual **P**latform **E**xplore**R** `ViPER` is a gui program used to inspect and
 control SystemC simulations built with
-[`vcml`](https://github.com/janweinstock/vcml).
+[`vcml`](https://github.com/machineware-gmbh/vcml).
 
 [![Build Status](https://github.com/machineware-gmbh/viper/actions/workflows/maven.yml/badge.svg)](https://github.com/machineware-gmbh/viper/actions/workflows/maven.yml)
 
@@ -10,7 +10,7 @@ control SystemC simulations built with
 In order to build `ViPER` you need a Java `JDK 11` and Apache `Maven` (version 3+).
 
 ```
-git clone https://github.com/janweinstock/viper
+git clone https://github.com/machineware-gmbh/viper
 cd viper
 mvn clean verify
 ```
