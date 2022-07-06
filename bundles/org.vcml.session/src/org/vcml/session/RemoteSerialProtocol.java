@@ -27,12 +27,17 @@ import java.net.Socket;
 
 public class RemoteSerialProtocol {
 
+    private static boolean needsEscape(char c) {
+        return c == '$' || c == '#' || c == '*' || c == '}';
+    }
+
     private static String escape(String s) {
         String esc = "";
         for (char c : s.toCharArray()) {
-            if (c == '$' || c == '#' || c == '\\')
-                esc = esc + '\\';
-            esc = esc + c;
+            if (needsEscape(c))
+                esc = esc + '}' + (char)(c ^ 0x20);
+            else
+                esc = esc + c;
         }
         return esc;
     }
@@ -122,6 +127,7 @@ public class RemoteSerialProtocol {
             while ((ch = breader.read()) != -1) {
                 if (ch == '$') {
                     inside = true;
+                    checksum = 0;
                 } else if (ch == '#') {
                     inside = false;
                     String message = builder.toString();
@@ -140,12 +146,15 @@ public class RemoteSerialProtocol {
                         throw new SessionException("Checksum mismatch");
                     return message;
                 } else if (inside) {
-                    if (ch == '\\') {
+                    if (ch == '}') {
                         checksum = (checksum + ch) & 0xFF;
                         ch = breader.read();
+                        checksum = (checksum + ch) & 0xFF;
+                        builder.append((char) (ch ^ 0x20));
+                    } else {
+                        checksum = (checksum + ch) & 0xFF;
+                        builder.append((char) ch);
                     }
-                    checksum = (checksum + ch) & 0xFF;
-                    builder.append((char) ch);
                 } else {
                     // just drop characters until we read '$' again
                 }
