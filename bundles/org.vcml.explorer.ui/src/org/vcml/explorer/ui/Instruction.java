@@ -37,7 +37,7 @@ public class Instruction {
 
     public static final String REGEX_VADDR = "[0-9a-fA-F]+";
 
-    public static final String REGEX_PADDR = "[0-9a-fA-F]+";
+    public static final String REGEX_PADDR = "[0-9a-fA-F]*";
 
     public static final String REGEX_INSN = "\\[[[0-9a-fA-F]{2}\\s]*[[0-9a-fA-F]{2}]{1}\\]";
 
@@ -131,6 +131,9 @@ public class Instruction {
             String phys = matcher.group(3);
             String insn = matcher.group(4);
             String disas = matcher.group(5);
+
+            if (phys == null || phys == "")
+                phys = virt;
 
             symbol = (sym != null) ? sym : "";
             physAddress = Long.parseUnsignedLong(phys, 16);
