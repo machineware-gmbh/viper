@@ -113,22 +113,8 @@ public class Resources {
             return getImage("icons/initiator.png");
         case Module.KIND_VCML_SLAVE_SOCKET:
             return getImage("icons/target.png");
-        case Module.KIND_VCML_COMPONENT:
-            return getImage("icons/chip.png");
-        case Module.KIND_VCML_PROCESSOR:
-            return getImage("icons/chip.png");
         case Module.KIND_VCML_BUS:
             return getImage("icons/bus.gif");
-        case Module.KIND_VCML_MEMORY:
-            return getImage("icons/chip.png");
-        case Module.KIND_VCML_XBAR:
-            return getImage("icons/chip.png");
-        case Module.KIND_VCML_PERIPHERAL:
-            return getImage("icons/chip.png");
-        case Module.KIND_VCML_UART8250:
-            return getImage("icons/chip.png");
-        case Module.KIND_VCML_ETHERNET:
-            return getImage("icons/chip.png");
         default:
             return getImage("icons/chip.png");
         }

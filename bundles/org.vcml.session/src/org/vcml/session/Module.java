@@ -50,11 +50,10 @@ public class Module {
     public static final String KIND_VCML_PROCESSOR = "vcml::processor";
     public static final String KIND_VCML_BUS = "vcml::bus";
     public static final String KIND_VCML_MEMORY = "vcml::memory";
-    public static final String KIND_VCML_XBAR = "vcml::xbar";
-    public static final String KIND_VCML_PERIPHERAL = "vcml::peripheral";
-    public static final String KIND_VCML_UART8250 = "vcml::uart8250";
-    public static final String KIND_VCML_ETHERNET = "vcml::ethernet";
-    public static final String KIND_VCML_ARM_PL011UART = "vcml::arm::pl011uart";
+    public static final String KIND_VCML_ETHERNET = "vcml::ethernet::gateway";
+    public static final String KIND_VCML_TERMINAL = "vcml::serial::terminal";
+
+    public static final String KIND_VCML_SIMV_HART = "vcml::simv::hart";
 
     public static final String VERSION_UNKNOWN = "unknown";
 
