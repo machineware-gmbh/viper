@@ -100,8 +100,10 @@ public class UartPart {
         StyledText text = viewer.getText();
 
         if (!session.isConnected() || !session.isRunning()) {
-            text.setEnabled(false);
-            text.setForeground(inactiveColor);
+            if (!text.isDisposed()) {
+                text.setEnabled(false);
+                text.setForeground(inactiveColor);
+            }
             return;
         }
 
@@ -151,7 +153,7 @@ public class UartPart {
             terminal.close();
 
         try {
-            if (!backend.isEmpty())
+            if (!backend.isEmpty() && uart.getSession().isConnected())
                 uart.execute("destroy_backend", backend);
         } catch (SessionException e) {
             // TODO Auto-generated catch block
