@@ -47,7 +47,7 @@ public class Session {
 
     private String name = "<unknown>";
 
-    private RemoteSerialProtocol protocol = null;
+    private Protocol protocol = null;
 
     private Module hierarchy = null;
 
@@ -117,7 +117,7 @@ public class Session {
         return vcmlVersion;
     }
 
-    public RemoteSerialProtocol getProtocol() {
+    public Protocol getProtocol() {
         return protocol;
     }
 
@@ -151,7 +151,7 @@ public class Session {
     }
 
     private void updateVersion() throws SessionException {
-        Response resp = protocol.command(RemoteSerialProtocol.VERS);
+        Response resp = protocol.command(Protocol.VERS);
         String version[] = resp.getValues();
         if (version.length != 2)
             throw new SessionException("received bogus response from session: " + resp.toString());
@@ -164,9 +164,9 @@ public class Session {
         Response resp = null;
         if (isRunning()) {
             protocol.send_char('u');
-            resp = new Response(RemoteSerialProtocol.TIME, protocol.recv());
+            resp = new Response(Protocol.TIME, protocol.recv());
         } else {
-            resp = protocol.command(RemoteSerialProtocol.TIME);
+            resp = protocol.command(Protocol.TIME);
         }
 
         String values[] = resp.getValues();
@@ -182,7 +182,7 @@ public class Session {
         if (isRunning())
             return;
 
-        Response resp = protocol.command(RemoteSerialProtocol.RDGQ);
+        Response resp = protocol.command(Protocol.GETQ);
         String values[] = resp.getValues();
 
         if (values.length != 1)
@@ -217,7 +217,7 @@ public class Session {
         if (isConnected())
             return;
 
-        protocol = new RemoteSerialProtocol(host, port);
+        protocol = new Protocol(host, port);
 
         updateVersion();
         updateTime();
@@ -257,7 +257,7 @@ public class Session {
         if (!isConnected() || isRunning())
             return;
 
-        protocol.send(RemoteSerialProtocol.CONT);
+        protocol.send(Protocol.CONT);
         running = true;
     }
 
@@ -283,7 +283,7 @@ public class Session {
             return;
 
         String duration = String.format("%dns", quantum.toNanos());
-        protocol.command(RemoteSerialProtocol.CONT, duration);
+        protocol.command(Protocol.CONT, duration);
         refresh();
     }
 
@@ -291,7 +291,7 @@ public class Session {
         if (!isConnected())
             return;
 
-        protocol.send(RemoteSerialProtocol.QUIT);
+        protocol.send(Protocol.QUIT);
         running = false;
     }
 

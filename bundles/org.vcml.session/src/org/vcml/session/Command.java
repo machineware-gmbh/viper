@@ -65,8 +65,8 @@ public class Command {
         if (argc != 0)
             throw new SessionException("Not enough arguments");
 
-        RemoteSerialProtocol protocol = session.getProtocol();
-        Response resp = protocol.command(RemoteSerialProtocol.EXEC, parent.getName(), getName());
+        Protocol protocol = session.getProtocol();
+        Response resp = protocol.command(Protocol.EXEC, parent.getName(), getName());
         return resp.toString();
     }
 
@@ -75,13 +75,13 @@ public class Command {
             throw new SessionException("Not enough arguments");
 
         ArrayList<String> fullArgs = new ArrayList<String>();
-        fullArgs.add(RemoteSerialProtocol.EXEC);
+        fullArgs.add(Protocol.EXEC);
         fullArgs.add(parent.getName());
         fullArgs.add(getName());
         for (String arg : args)
             fullArgs.add(arg);
 
-        RemoteSerialProtocol protocol = session.getProtocol();
+        Protocol protocol = session.getProtocol();
         Response resp = protocol.command(fullArgs.toArray(new String[fullArgs.size()]));
         return resp.toString();
     }

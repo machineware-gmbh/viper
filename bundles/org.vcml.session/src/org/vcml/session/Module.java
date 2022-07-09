@@ -184,8 +184,8 @@ public class Module {
         this.attributes = new ArrayList<Attribute>();
         this.commands = new ArrayList<Command>();
 
-        RemoteSerialProtocol protocol = session.getProtocol();
-        Response resp = protocol.command(RemoteSerialProtocol.LIST, "xml");
+        Protocol protocol = session.getProtocol();
+        Response resp = protocol.command(Protocol.LIST, "xml");
 
         try {
             parseXML(resp.getValue(0));

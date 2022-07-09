@@ -25,7 +25,7 @@ import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-public class RemoteSerialProtocol {
+public class Protocol {
 
     private static boolean needsEscape(char c) {
         return c == '$' || c == '#' || c == '*' || c == '}';
@@ -56,7 +56,7 @@ public class RemoteSerialProtocol {
 
     private Socket socket;
 
-    public RemoteSerialProtocol(String host, int port) throws SessionException {
+    public Protocol(String host, int port) throws SessionException {
         try {
             socket = new Socket();
             socket.setTcpNoDelay(true);
@@ -66,19 +66,16 @@ public class RemoteSerialProtocol {
         }
     }
 
-    public static final String NONE = "n"; // do nothing
-    public static final String CONT = "c"; // call sc_start
-    public static final String STOP = "a"; // call sc_pause
-    public static final String LIST = "l"; // list module hierarchy
-    public static final String INFO = "i"; // retrieve info string
-    public static final String EXEC = "e"; // execute command on module
+    public static final String VERS = "v"; // version information
+    public static final String CONT = "c"; // resume simulation
+    public static final String QUIT = "x"; // quit session
     public static final String TIME = "t"; // read current time and cycle
-    public static final String RDGQ = "q"; // read global quantum
-    public static final String WRGQ = "Q"; // write global quantum
+    public static final String LIST = "l"; // list module hierarchy
+    public static final String EXEC = "e"; // execute command on module
+    public static final String GETQ = "q"; // read global quantum
+    public static final String SETQ = "Q"; // write global quantum
     public static final String GETA = "a"; // read attribute
     public static final String SETA = "A"; // write attribute
-    public static final String QUIT = "x"; // quit session
-    public static final String VERS = "v"; // version information
 
     public void send_char(int val) throws SessionException {
         try {

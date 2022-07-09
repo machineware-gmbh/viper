@@ -51,11 +51,11 @@ public class Attribute {
     }
 
     public void refresh() throws SessionException {
-        RemoteSerialProtocol protocol = session.getProtocol();
+        Protocol protocol = session.getProtocol();
         if (protocol == null)
             return;
 
-        Response resp = protocol.command(RemoteSerialProtocol.GETA, name);
+        Response resp = protocol.command(Protocol.GETA, name);
         String[] values = resp.getValues();
 
         if (values.length > 1)
@@ -162,8 +162,8 @@ public class Attribute {
         values[idx] = newValue;
         String vals = String.join(",", values);
 
-        RemoteSerialProtocol protocol = session.getProtocol();
-        protocol.command(RemoteSerialProtocol.SETA, name, vals);
+        Protocol protocol = session.getProtocol();
+        protocol.command(Protocol.SETA, name, vals);
         refresh();
     }
 
@@ -175,9 +175,9 @@ public class Attribute {
         if (values.length != count)
             return;
 
-        RemoteSerialProtocol protocol = session.getProtocol();
+        Protocol protocol = session.getProtocol();
         if (protocol != null) {
-            protocol.command(RemoteSerialProtocol.SETA, name, newValue);
+            protocol.command(Protocol.SETA, name, newValue);
             refresh();
         }
     }
