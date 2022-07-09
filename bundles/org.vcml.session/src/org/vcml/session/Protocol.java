@@ -66,16 +66,17 @@ public class Protocol {
         }
     }
 
-    public static final String VERS = "v"; // version information
-    public static final String CONT = "c"; // resume simulation
-    public static final String QUIT = "x"; // quit session
-    public static final String TIME = "t"; // read current time and cycle
-    public static final String LIST = "l"; // list module hierarchy
-    public static final String EXEC = "e"; // execute command on module
-    public static final String GETQ = "q"; // read global quantum
-    public static final String SETQ = "Q"; // write global quantum
-    public static final String GETA = "a"; // read attribute
-    public static final String SETA = "A"; // write attribute
+    public static final String VERSION = "version";
+    public static final String STATUS = "status";
+    public static final String RESUME = "resume";
+    public static final String STOP = "stop";
+    public static final String QUIT = "quit";
+    public static final String LIST = "list";
+    public static final String EXEC = "exec";
+    public static final String GETQ = "getq";
+    public static final String SETQ = "setq";
+    public static final String GETA = "geta";
+    public static final String SETA = "seta";
 
     public void send_char(int val) throws SessionException {
         try {

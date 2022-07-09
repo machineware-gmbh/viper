@@ -47,17 +47,18 @@ public class SessionService implements ISessionService {
 
     private List<Session> sessions = new ArrayList<Session>();
 
-    public static final long UPDATE_INTERVAL = 500; // milliseconds
+    public static final long UPDATE_INTERVAL = 200; // milliseconds
 
     private UIJob updateJob = new UIJob(Display.getDefault(), "sessionStatusUpdate") {
         @Override
         public IStatus runInUIThread(IProgressMonitor monitor) {
             for (Session session : sessions) {
-                if (session.isConnected() && session.isRunning()) {
+                if (session.isConnected()) {
                     try {
-                        session.updateTime();
+                        session.updateStatus();
                         updateSession(session, TOPIC_SESSION_UPDATED);
-                        schedule(UPDATE_INTERVAL);
+                        if (session.isRunning())
+                            schedule(UPDATE_INTERVAL);
                     } catch (SessionException e) {
                         reportSessionError(session, e);
                     }
@@ -67,7 +68,6 @@ public class SessionService implements ISessionService {
             return Status.OK_STATUS;
         }
     };
-
 
     @Inject
     public SessionService(IEclipseContext eclipseContext, IEventBroker eventBroker) {
@@ -191,6 +191,7 @@ public class SessionService implements ISessionService {
                 connectSession(session);
             session.stepSimulation();
             updateSession(session, TOPIC_SESSION_UPDATED);
+            updateJob.schedule(UPDATE_INTERVAL);
         } catch (SessionException e) {
             reportSessionError(session, e);
         }

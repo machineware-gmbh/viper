@@ -85,7 +85,7 @@ public class ConnectDialog extends TitleAreaDialog {
         portSpinner = new Spinner(container, SWT.BORDER);
         portSpinner.setMinimum(1);
         portSpinner.setMaximum(65535);
-        portSpinner.setSelection(44444);
+        portSpinner.setSelection(4444);
         portSpinner.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
 
         new Label(container, SWT.NONE); // just to fill the grid layout

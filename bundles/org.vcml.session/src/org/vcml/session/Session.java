@@ -151,7 +151,7 @@ public class Session {
     }
 
     private void updateVersion() throws SessionException {
-        Response resp = protocol.command(Protocol.VERS);
+        Response resp = protocol.command(Protocol.VERSION);
         String version[] = resp.getValues();
         if (version.length != 2)
             throw new SessionException("received bogus response from session: " + resp.toString());
@@ -160,22 +160,24 @@ public class Session {
         vcmlVersion = version[1];
     }
 
-    public void updateTime() throws SessionException {
-        Response resp = null;
-        if (isRunning()) {
-            protocol.send_char('u');
-            resp = new Response(Protocol.TIME, protocol.recv());
+    public void updateStatus() throws SessionException {
+        Response resp = protocol.command(Protocol.STATUS);
+        String values[] = resp.getValues();
+        if (values.length != 3)
+            throw new SessionException("session returned invalid status response: " + resp);
+
+        String status = values[0];
+        if (status.equals("running")) {
+            running = true;
+        } else if (status.startsWith("stopped:")) {
+            stopReason = status.substring(8);
+            running = false;
         } else {
-            resp = protocol.command(Protocol.TIME);
+            throw new SessionException("invalid session status: " + status);
         }
 
-        String values[] = resp.getValues();
-        if (values.length != 2)
-            throw new SessionException("session returned invalid response: " + resp);
-
-        deltaCycle = Long.parseLong(values[1]);
-        long nanos = Long.parseLong(values[0]);
-        simTime = LocalTime.ofNanoOfDay(nanos);
+        simTime = LocalTime.ofNanoOfDay(Long.parseLong(values[1]));
+        deltaCycle = Long.parseLong(values[2]);
     }
 
     public void updateQuantum() throws SessionException {
@@ -189,7 +191,6 @@ public class Session {
             throw new SessionException("session returned invalid response: " + resp);
 
         quantum = Duration.ofNanos(Long.parseLong(values[0]));
-        System.out.println("quantum:" + quantum);
     }
 
     public Session(String uri) throws SessionException {
@@ -220,7 +221,7 @@ public class Session {
         protocol = new Protocol(host, port);
 
         updateVersion();
-        updateTime();
+        updateStatus();
         updateQuantum();
     }
 
@@ -234,7 +235,7 @@ public class Session {
     }
 
     public void refresh() throws SessionException {
-        updateTime();
+        updateStatus();
         hierarchy.refresh();
     }
 
@@ -257,7 +258,7 @@ public class Session {
         if (!isConnected() || isRunning())
             return;
 
-        protocol.send(Protocol.CONT);
+        protocol.command(Protocol.RESUME);
         running = true;
     }
 
@@ -265,15 +266,10 @@ public class Session {
         if (!isConnected() || !isRunning())
             return;
 
-        protocol.send_char('a');
-        String resp = protocol.recv();
-        if (!resp.startsWith("OK"))
-            throw new SessionException("Simulator responded with error : " + resp);
+        Response resp = protocol.command(Protocol.STOP, "user");
 
         running = false;
-        stopReason = "unknown";
-        if (resp.length() > 3)
-            stopReason = resp.substring(3);
+        stopReason = resp.getValue(0);
 
         refresh();
     }
@@ -283,8 +279,7 @@ public class Session {
             return;
 
         String duration = String.format("%dns", quantum.toNanos());
-        protocol.command(Protocol.CONT, duration);
-        refresh();
+        protocol.command(Protocol.RESUME, duration);
     }
 
     public void quitSimulation() throws SessionException {

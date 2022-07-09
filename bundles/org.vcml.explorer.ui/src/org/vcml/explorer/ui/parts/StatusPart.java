@@ -44,6 +44,8 @@ public class StatusPart {
 
     private CLabel sessionLabel;
 
+    private CLabel statusLabel;
+
     private CLabel timeLabel;
 
     private CLabel cycleLabel;
@@ -56,7 +58,7 @@ public class StatusPart {
     @Inject
     private ISessionService sessionService;
 
-    private void updateSessionStatus() {
+    private void updateSessionLabel() {
         Session session = sessionService.getSession();
         if (session == null) {
             sessionLabel.setText("not connected");
@@ -67,6 +69,16 @@ public class StatusPart {
         }
 
         sessionLabel.pack();
+    }
+
+    private void updateSessionStatus() {
+        Session session = sessionService.getSession();
+        statusLabel.setVisible(session != null);
+
+        if (session != null)
+            statusLabel.setText(session.isRunning() ? "running" : "stopped: " + session.getStopReason());
+
+        statusLabel.pack();
     }
 
     private void updateTimeStatus() {
@@ -105,6 +117,7 @@ public class StatusPart {
     }
 
     private void updateStatus() {
+        updateSessionLabel();
         updateSessionStatus();
         updateTimeStatus();
         updateSelectionStatus();
@@ -114,7 +127,7 @@ public class StatusPart {
     @PostConstruct
     public void createComposite(Composite parent) {
         composite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout(4, false);
+        GridLayout layout = new GridLayout(5, false);
         layout.marginHeight = layout.marginWidth = 3;
         layout.verticalSpacing = 0;
         layout.horizontalSpacing = 1;
@@ -126,6 +139,13 @@ public class StatusPart {
         sessionLabel.setRightMargin(20);
         sessionLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         sessionLabel.setToolTipText("Active Session");
+
+        statusLabel = new CLabel(composite, SWT.LEFT | SWT.BORDER);
+        statusLabel.setFont(Resources.getMonoSpaceFont());
+        statusLabel.setLeftMargin(10);
+        statusLabel.setRightMargin(20);
+        statusLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        statusLabel.setToolTipText("Active Session Status");
 
         timeLabel = new CLabel(composite, SWT.LEFT | SWT.BORDER);
         timeLabel.setFont(Resources.getMonoSpaceFont());
