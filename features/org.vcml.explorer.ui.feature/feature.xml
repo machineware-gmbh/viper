@@ -31,6 +31,7 @@
       <import plugin="org.eclipse.e4.ui.services"/>
       <import plugin="org.eclipse.e4.ui.workbench"/>
       <import plugin="org.vcml.session"/>
+      <import plugin="org.eclipse.equinox.simpleconfigurator"/>
    </requires>
 
    <plugin
