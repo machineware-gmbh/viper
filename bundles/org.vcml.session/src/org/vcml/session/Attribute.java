@@ -44,7 +44,7 @@ public class Attribute {
         this.name = parent.getName() + Module.HIERARCHY_CHAR + getBaseName();
         this.type = type;
         this.count = count;
-        this.values = count > 0 ? new String [(int)count] : null;
+        this.values = new String [(int)count];
         this.session = parent.getSession();
 
         refresh();
@@ -54,6 +54,9 @@ public class Attribute {
         Protocol protocol = session.getProtocol();
         if (protocol == null)
             return;
+        
+        if (this.count == 0)
+        	return;
 
         Response resp = protocol.command(Protocol.GETA, name);
         String[] values = resp.getValues();
@@ -118,7 +121,7 @@ public class Attribute {
 
     public String getValuePretty(int idx) {
         String val = getValue(idx);
-        if (val.isEmpty())
+        if (val == null || val.isEmpty())
             return "<empty>";
 
         try {
