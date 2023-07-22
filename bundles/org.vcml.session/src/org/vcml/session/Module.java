@@ -53,7 +53,7 @@ public class Module {
     public static final String KIND_VCML_ETHERNET = "vcml::ethernet::gateway";
     public static final String KIND_VCML_TERMINAL = "vcml::serial::terminal";
 
-    public static final String KIND_VCML_SIMV_HART = "vcml::simv::hart";
+    public static final String KIND_SIMV_HART = "simv::hart";
 
     public static final String VERSION_UNKNOWN = "unknown";
 
