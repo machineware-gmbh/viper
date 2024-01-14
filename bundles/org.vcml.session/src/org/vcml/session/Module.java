@@ -54,6 +54,8 @@ public class Module {
     public static final String KIND_VCML_TERMINAL = "vcml::serial::terminal";
 
     public static final String KIND_SIMV_HART = "simv::hart";
+    public static final String KIND_SIMA_CORE = "sima::core";
+    public static final String KIND_USIMA_CORE = "usima::core";
 
     public static final String VERSION_UNKNOWN = "unknown";
 

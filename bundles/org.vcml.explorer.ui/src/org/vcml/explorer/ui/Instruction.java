@@ -132,7 +132,7 @@ public class Instruction {
             String insn = matcher.group(4);
             String disas = matcher.group(5);
 
-            if (phys == null || phys == "")
+            if (phys == null || phys.isEmpty() || phys == "")
                 phys = virt;
 
             symbol = (sym != null) ? sym : "";

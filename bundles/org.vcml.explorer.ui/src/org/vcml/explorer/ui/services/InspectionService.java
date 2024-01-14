@@ -52,6 +52,8 @@ public class InspectionService implements IInspectionService {
         registerModulePart(Module.KIND_VCML_TERMINAL, "org.vcml.explorer.ui.parts.UartPart");
         registerModulePart(Module.KIND_VCML_PROCESSOR, "org.vcml.explorer.ui.parts.ProcessorPart");
         registerModulePart(Module.KIND_SIMV_HART, "org.vcml.explorer.ui.parts.ProcessorPart");
+        registerModulePart(Module.KIND_SIMA_CORE, "org.vcml.explorer.ui.parts.ProcessorPart");
+        registerModulePart(Module.KIND_USIMA_CORE, "org.vcml.explorer.ui.parts.ProcessorPart");
     }
 
 }
