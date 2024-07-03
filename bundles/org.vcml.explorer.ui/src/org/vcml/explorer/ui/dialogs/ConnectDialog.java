@@ -93,7 +93,7 @@ public class ConnectDialog extends TitleAreaDialog {
         connectButton = new Button(container, SWT.CHECK);
         connectButton.setSelection(true);
         connectButton.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-        connectButton.setText("Connect immediatly");
+        connectButton.setText("Connect immediately");
 
         return area;
     }
