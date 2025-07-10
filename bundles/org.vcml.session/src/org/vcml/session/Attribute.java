@@ -44,34 +44,45 @@ public class Attribute {
         this.name = parent.getName() + Module.HIERARCHY_CHAR + getBaseName();
         this.type = type;
         this.count = count;
-        this.values = new String [(int)count];
+        this.values = null;
         this.session = parent.getSession();
-
-        refresh();
     }
 
-    public void refresh() throws SessionException {
+    public void refresh() {
+        this.values = null;
+    }
+
+    private boolean reload() {
+        if (values != null)
+            return true;
+        if (count == 0)
+            return true;
+
         Protocol protocol = session.getProtocol();
         if (protocol == null)
-            return;
-        
-        if (this.count == 0)
-        	return;
+            return false;
 
-        Response resp = protocol.command(Protocol.GETA, name);
-        String[] values = resp.getValues();
+        try {
+            Response resp = protocol.command(Protocol.GETA, name);
+            String[] values = resp.getValues();
 
-        if (values.length > 1)
-            System.err.println("Property " + name + "has multiple initializers");
+            if (values.length > 1)
+                System.err.println("Property " + name + "has multiple initializers");
 
-        if (this.count > 1)
-            values = values[0].split("\\s+");
+            if (this.count > 1)
+                values = values[0].split("\\s+");
 
-        if (values.length == 0 || values.length != count)
-            throw new SessionException("Failed to update attribute " + name);
+            if (values.length == 0 || values.length != count)
+                return false;
 
-        for (int i = 0; i < values.length; i++)
-            this.values[i] = values[i];
+            this.values = new String[(int) count];
+            for (int i = 0; i < values.length; i++)
+                this.values[i] = values[i];
+
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     public boolean isEditable() {
@@ -105,12 +116,21 @@ public class Attribute {
     public String getValue(int idx) {
         if (idx < 0 || idx >= count)
             return null;
+        if (values == null && !reload())
+            return null;
         return values[idx];
     }
 
     public String getValue() {
-        StringBuilder builder = new StringBuilder(getValue(0));
+        String val = getValue(0);
+        if (val == null)
+            return "<unknown>";
+        if (val.isEmpty())
+            return "<empty>";
+        if (values.length == 1)
+            return val;
 
+        StringBuilder builder = new StringBuilder(val);
         for (int idx = 1; idx < values.length; idx++) {
             builder.append(", ");
             builder.append(getValue(idx));
@@ -121,7 +141,9 @@ public class Attribute {
 
     public String getValuePretty(int idx) {
         String val = getValue(idx);
-        if (val == null || val.isEmpty())
+        if (val == null)
+            return "<unknown>";
+        if (val.isEmpty())
             return "<empty>";
 
         try {
@@ -148,8 +170,15 @@ public class Attribute {
     }
 
     public String getValuePretty() {
-        StringBuilder builder = new StringBuilder(getValuePretty(0));
+        String val = getValuePretty(0);
+        if (val == null)
+            return "<unknown>";
+        if (val.isEmpty())
+            return "<empty>";
+        if (values.length == 1)
+            return val;
 
+        StringBuilder builder = new StringBuilder(val);
         for (int idx = 1; idx < values.length; idx++) {
             builder.append(", ");
             builder.append(getValuePretty(idx));
