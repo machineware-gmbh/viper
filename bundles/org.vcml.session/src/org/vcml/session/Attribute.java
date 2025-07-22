@@ -146,6 +146,11 @@ public class Attribute {
         if (val.isEmpty())
             return "<empty>";
 
+        // VCML registers report their value as hex by default,
+        // no need for further formatting
+        if (val.startsWith("0x"))
+            return val;
+
         try {
             // ugly hack until we have something better
             if (name.contains("port") || name.contains("clock") || name.contains("size") ||
