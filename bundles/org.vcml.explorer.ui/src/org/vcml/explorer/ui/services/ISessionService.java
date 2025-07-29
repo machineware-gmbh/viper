@@ -65,7 +65,7 @@ public interface ISessionService {
 
     /**
      * The collection of sessions we are currently connected to.
-     * 
+     *
      * @return an unmodifiable Collection. For looking, not touching. Will not be
      *         <code>null</code>.
      */
@@ -73,12 +73,15 @@ public interface ISessionService {
 
     /**
      * Adds a remote session.
-     * 
-     * @param URI Specifies session location as a string value.
-     * 
+     *
+     * @param host host name to connect to
+     * @param port port to connect to
+     * @param remote user running the simulation
+     * @param exec remote executable path
+     *
      * @return newly created session
      */
-    public Session addRemoteSession(String URI);
+    public Session addRemoteSession(String host, int port, String user, String exec);
 
     /**
      * Checks for new sessions.

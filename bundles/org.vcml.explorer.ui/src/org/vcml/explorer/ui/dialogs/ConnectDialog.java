@@ -38,7 +38,11 @@ import org.eclipse.swt.widgets.Spinner;
 
 public class ConnectDialog extends TitleAreaDialog {
 
-    private String sessionURI;
+    private String sessionHost;
+    private int sessionPort;
+    private String sessionUser;
+    private String sessionExec;
+
     private boolean connect;
 
     private Text nameText;
@@ -117,8 +121,20 @@ public class ConnectDialog extends TitleAreaDialog {
         setTitleImage(Resources.getImage("icons/new2x.png"));
     }
 
-    public String getURI() {
-        return sessionURI;
+    public String getSessionHost() {
+        return sessionHost;
+    }
+
+    public int getSessionPort() {
+        return sessionPort;
+    }
+
+    public String getSessionUser() {
+        return sessionUser;
+    }
+
+    public String getSessionExec() {
+        return sessionExec;
     }
 
     public boolean connectImmediately() {
@@ -127,8 +143,10 @@ public class ConnectDialog extends TitleAreaDialog {
 
     @Override
     protected void okPressed() {
-        sessionURI = hostText.getText() + ":" + portSpinner.getSelection() + ":" + System.getProperty("user.name") + ":"
-                + nameText.getText();
+        sessionHost = hostText.getText();
+        sessionPort = portSpinner.getSelection();
+        sessionUser = System.getProperty("user.name");
+        sessionExec = nameText.getText();
         connect = connectButton.getSelection();
         super.okPressed();
     }

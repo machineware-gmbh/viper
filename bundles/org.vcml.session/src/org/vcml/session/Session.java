@@ -193,25 +193,22 @@ public class Session {
         quantum = Duration.ofNanos(Long.parseLong(values[0]));
     }
 
-    public Session(String uri) throws SessionException {
-        this.uri = uri;
+    public Session(String host, int port, String user, String executable) throws SessionException {
+        if (host.isEmpty())
+            throw new SessionException("invalid session hostname: " + host);
+        if (port < 1 || port > 65535)
+            throw new SessionException("invalid session port: " + port);
 
-        String[] info = uri.split(":");
-        if (info.length >= 2) {
-            host = info[0];
-            port = Integer.parseInt(info[1]);
-            if (info.length > 2)
-                user = info[2];
-            if (info.length > 3) {
-                exec = info[3];
+        this.host = host;
+        this.port = port;
 
-                Path path = new Path(exec);
-                name = path.segment(path.segmentCount() - 1);
-            }
+        if (!user.isEmpty())
+            this.user = user;
+        if (!executable.isEmpty()) {
+            this.exec = executable;
+            Path path = new Path(exec);
+            this.name = path.segment(path.segmentCount() - 1);
         }
-
-        if (host.isEmpty() || port == 0)
-            throw new SessionException("invalid URI: " + uri);
     }
 
     public void connect() throws SessionException {
@@ -305,8 +302,11 @@ public class Session {
             try {
                 Scanner scanner = new Scanner(it);
                 try {
-                    String uri = scanner.nextLine();
-                    Session session = new Session(uri);
+                    String host = scanner.nextLine();
+                    String port = scanner.nextLine();
+                    String user = scanner.hasNextLine() ? scanner.nextLine() : "";
+                    String exec = scanner.hasNextLine() ? scanner.nextLine() : "";
+                    Session session = new Session(host, Integer.parseInt(port), user, exec);
                     if (!avail.contains(session))
                         avail.add(session);
                 } catch (SessionException ex) {

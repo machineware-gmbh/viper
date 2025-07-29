@@ -43,7 +43,8 @@ public class NewHandler {
             EPartService partService, EModelService modelService, MApplication application) {
         ConnectDialog dialog = new ConnectDialog(shell);
         if (dialog.open() == Window.OK) {
-            Session session = service.addRemoteSession(dialog.getURI());
+            Session session = service.addRemoteSession(dialog.getSessionHost(), dialog.getSessionPort(),
+                                                       dialog.getSessionUser(), dialog.getSessionExec());
             if (session == null)
                 return;
             service.setSession(session);

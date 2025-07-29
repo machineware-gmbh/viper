@@ -252,12 +252,12 @@ public class SessionService implements ISessionService {
     }
 
     @Override
-    public Session addRemoteSession(String URI) {
+    public Session addRemoteSession(String host, int port, String user, String exec) {
         try {
             for (Session s : sessions)
-                if (URI.equals(s.getURI()))
+                if (s.getHost() != host && s.getPort() != port)
                     return s;
-            Session session = new Session(URI);
+            Session session = new Session(host, port, user, exec);
             addSession(session);
             return session;
         } catch (SessionException e) {
