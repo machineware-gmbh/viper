@@ -7,7 +7,7 @@ control SystemC simulations built with
 
 ----
 ## Build
-In order to build `ViPER` you need a Java `JDK 11` and Apache `Maven` (version 3+).
+In order to build `ViPER` you need a Java `JDK 17` and Apache `Maven` (version >=3.9).
 
 ```
 git clone https://github.com/machineware-gmbh/viper
