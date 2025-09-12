@@ -83,8 +83,7 @@ public class CommandDialog extends Dialog {
 
     private void update() {
         String[] args = commandBoxInput.getText().split(" ");
-        String name = args[0];
-        command = module.findCommand(name);
+        command = (args.length > 0) ? module.findCommand(args[0]) : null;
         execBtn.setEnabled(false);
         if (command == null) {
             commandBoxLabel.setText("invalid command '" + commandBoxInput.getText() + "'");
