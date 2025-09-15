@@ -35,8 +35,6 @@ public class Session {
 
     public final static String ANNOUNCE_DIR = System.getProperty("java.io.tmpdir");
 
-    private String uri = "";
-
     private String host = "";
 
     private int port = 0;
@@ -64,10 +62,6 @@ public class Session {
     private boolean running = false;
 
     private String stopReason = "";
-
-    public String getURI() {
-        return uri;
-    }
 
     public String getHost() {
         return host;
@@ -147,7 +141,7 @@ public class Session {
             return false;
 
         Session session = (Session) other;
-        return uri.equals(session.getURI());
+        return port == session.port && host.equals(session.host);
     }
 
     private void updateVersion() throws SessionException {
