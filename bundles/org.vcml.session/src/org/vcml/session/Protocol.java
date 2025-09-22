@@ -22,7 +22,7 @@ package org.vcml.session;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetSocketAddress;
+import java.net.InetAddress;
 import java.net.Socket;
 
 public class Protocol {
@@ -35,7 +35,7 @@ public class Protocol {
         String esc = "";
         for (char c : s.toCharArray()) {
             if (needsEscape(c))
-                esc = esc + '}' + (char)(c ^ 0x20);
+                esc = esc + '}' + (char) (c ^ 0x20);
             else
                 esc = esc + c;
         }
@@ -58,11 +58,19 @@ public class Protocol {
 
     public Protocol(String host, int port) throws SessionException {
         try {
-            socket = new Socket();
-            socket.setTcpNoDelay(true);
-            socket.connect(new InetSocketAddress(host, port), 1000);
-        } catch (IOException e) {
-            throw new SessionException("Failed to connect to session", e);
+            InetAddress[] allAddrs = InetAddress.getAllByName(host);
+            for (InetAddress addr : allAddrs) {
+                try {
+                    socket = new Socket(addr, port);
+                    socket.setTcpNoDelay(true);
+                    return;
+                } catch (IOException ex) {
+                    continue;
+                }
+            }
+            throw new SessionException("Failed to connect to " + host);
+        } catch (IOException ex) {
+            throw new SessionException("Failed to resolve " + host, ex);
         }
     }
 

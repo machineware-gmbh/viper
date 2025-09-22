@@ -22,7 +22,7 @@ package org.vcml.explorer.ui.terminal;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
+import java.net.InetAddress;
 import java.net.Socket;
 
 public class NetTerminal extends Terminal {
@@ -37,10 +37,20 @@ public class NetTerminal extends Terminal {
 
     public NetTerminal(String name, String host, int port) throws IOException {
         super(name, false);
-        socket = new Socket();
-        socket.connect(new InetSocketAddress(host, port), TIMEOUT_MS);
-        rx = socket.getInputStream();
-        tx = socket.getOutputStream();
+        InetAddress[] allAddrs = InetAddress.getAllByName(host);
+        for (InetAddress addr : allAddrs) {
+            try {
+                socket = new Socket(addr, port);
+                socket.setTcpNoDelay(true);
+                rx = socket.getInputStream();
+                tx = socket.getOutputStream();
+                return;
+            } catch (IOException ex) {
+                continue;
+            }
+        }
+
+        throw new IOException("Failed to connect to " + host);
     }
 
     public NetTerminal(String host, int port) throws IOException {
