@@ -109,9 +109,13 @@ public class Resources {
             return getImage("icons/in.png");
         case Module.KIND_VCML_OUT_PORT:
             return getImage("icons/out.png");
-        case Module.KIND_VCML_MASTER_SOCKET:
+        case Module.KIND_VCML_INITIATOR_SOCKET:
             return getImage("icons/initiator.png");
-        case Module.KIND_VCML_SLAVE_SOCKET:
+        case Module.KIND_VCML_BASE_INITIATOR_SOCKET:
+            return getImage("icons/initiator.png");
+        case Module.KIND_VCML_TARGET_SOCKET:
+            return getImage("icons/target.png");
+        case Module.KIND_VCML_BASE_TARGET_SOCKET:
             return getImage("icons/target.png");
         case Module.KIND_VCML_BUS:
             return getImage("icons/bus.gif");

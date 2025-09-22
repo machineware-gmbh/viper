@@ -44,13 +44,15 @@ public class Module {
 
     public static final String KIND_VCML_IN_PORT = "vcml::in_port";
     public static final String KIND_VCML_OUT_PORT = "vcml::out_port";
-    public static final String KIND_VCML_MASTER_SOCKET = "vcml::master_socket";
-    public static final String KIND_VCML_SLAVE_SOCKET = "vcml::slave_socket";
+    public static final String KIND_VCML_INITIATOR_SOCKET = "vcml::tlm_initiator_socket";
+    public static final String KIND_VCML_TARGET_SOCKET = "vcml::tlm_target_socket";
+    public static final String KIND_VCML_BASE_INITIATOR_SOCKET = "vcml::tlm_base_initiator_socket";
+    public static final String KIND_VCML_BASE_TARGET_SOCKET = "vcml::tlm_base_target_socket";
     public static final String KIND_VCML_COMPONENT = "vcml::component";
     public static final String KIND_VCML_PROCESSOR = "vcml::processor";
-    public static final String KIND_VCML_BUS = "vcml::bus";
-    public static final String KIND_VCML_MEMORY = "vcml::memory";
-    public static final String KIND_VCML_ETHERNET = "vcml::ethernet::gateway";
+    public static final String KIND_VCML_BUS = "vcml::generic::bus";
+    public static final String KIND_VCML_MEMORY = "vcml::generic::memory";
+    public static final String KIND_VCML_ETHERNET = "vcml::ethernet::bridge";
     public static final String KIND_VCML_TERMINAL = "vcml::serial::terminal";
 
     public static final String KIND_SIMV_HART = "simv::hart";
