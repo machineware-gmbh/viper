@@ -59,6 +59,8 @@ public class Session {
 
     private String vcmlVersion = "<unknown>";
 
+    private int protoVersion = 0;
+
     private boolean running = false;
 
     private String stopReason = "";
@@ -146,12 +148,15 @@ public class Session {
 
     private void updateVersion() throws SessionException {
         Response resp = protocol.command(Protocol.VERSION);
-        String version[] = resp.getValues();
-        if (version.length != 2)
+        String[] version = resp.getValues();
+        if (version.length < 2)
             throw new SessionException("received bogus response from session: " + resp.toString());
 
         syscVersion = version[0];
         vcmlVersion = version[1];
+
+        if (version.length > 2)
+            protoVersion = Integer.parseInt(version[2]);
     }
 
     public void updateStatus() throws SessionException {
