@@ -20,7 +20,7 @@ jobs:
 
     - name: Setup Maven
       run: |
-        MAVEN_VERSION=3.9.11
+        MAVEN_VERSION=3.9.14
         wget https://downloads.apache.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz
         tar -xzf apache-maven-${MAVEN_VERSION}-bin.tar.gz
         echo "MAVEN_HOME=$PWD/apache-maven-${MAVEN_VERSION}" >> $GITHUB_ENV
